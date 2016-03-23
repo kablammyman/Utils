@@ -124,7 +124,7 @@ int SimilarImage::HanmingDistance(string &str1, string &str2)
 
 float SimilarImage::getPercentDiff(int diff)
 {
-	float percent = (maxNumBits - diff);
+	float percent = (float)(maxNumBits - diff);
 	percent /= maxNumBits;
 	percent *= 100;
 	return percent;

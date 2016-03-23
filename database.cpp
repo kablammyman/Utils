@@ -32,7 +32,7 @@ static void testFunc(sqlite3_context *context, int argc, sqlite3_value **argv)
 	//cout <<"mine: " << ret << endl;
 	char *buffer = new char[ret.size()];
 	strcpy(buffer, ret.c_str());
-	sqlite3_result_text(context, buffer, strlen(buffer),NULL);
+	sqlite3_result_text(context, buffer, (int)strlen(buffer),NULL);
 }
 static void testFunc2(sqlite3_context *context, int argc, sqlite3_value **argv)
 {
@@ -46,7 +46,7 @@ static void testFunc2(sqlite3_context *context, int argc, sqlite3_value **argv)
 	strcpy(buffer, ret.c_str());
 	//trying to see what i can do to limit what i return, so i picked to only return "small strings"
 	if(ret.size() < 9)
-		sqlite3_result_text(context, buffer, strlen(buffer), NULL);
+		sqlite3_result_text(context, buffer, (int)strlen(buffer), NULL);
 
 	//it doesnt matter if this is here or not for this method
 	//else
