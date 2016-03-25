@@ -23,6 +23,8 @@ struct RemoteComputerConnection
 	int portNumber = 0;
 	string ipAddy;
 	SOCKADDR_IN remoteInfo;
+	//if needed, we can set an id for who or what this is connected to
+	int id = 0;
 };
 
 class NetworkConnection

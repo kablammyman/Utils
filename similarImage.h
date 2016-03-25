@@ -69,4 +69,5 @@ public:
 	string getImageHash(Mat imgData);
 	string getImagePHash(string imgPath);
 	string getImagePHash(Mat imgData);
+	string getAllHash(string imgPath);
 };

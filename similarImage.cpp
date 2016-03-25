@@ -334,6 +334,17 @@ string SimilarImage::getImagePHash(Mat imgData)
 
 }
 
+string SimilarImage::getAllHash(string imgPath)
+{
+	Mat img = cv::imread(imgPath, cv::IMREAD_COLOR);
+	if (img.data == NULL)
+		return "";
+
+	return HashValue(img)+","+pHashValue(img);
+
+}
+
+
 void SimilarImage::calcImageHasesForDir(string imgDir)
 {
 	vector<string> Allfiles = MyFileDirDll::getAllFileNamesInDir(imgDir);
