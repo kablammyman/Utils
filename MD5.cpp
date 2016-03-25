@@ -36,8 +36,9 @@ documentation and/or software.
  
 /* system implementation headers */
 #include <cstdio>
- 
- 
+#include <string>
+#include <fstream>
+
 // Constants for MD5Transform routine.
 #define S11 7
 #define S12 12
@@ -375,4 +376,29 @@ MD5::MD5(char * Input, long length)
   init();
   update(Input, length);
   finalize();
+}
+
+//http://stackoverflow.com/questions/1220046/how-to-get-the-md5-hash-of-a-file-in-c
+std::string createMD5Hash(std::string fileName)
+{
+	//Start opening your file
+	std::ifstream inputFile;
+	inputFile.open(fileName, std::ios::binary | std::ios::in);
+
+	//Find length of file
+	inputFile.seekg(0, std::ios::end);
+	long len = inputFile.tellg();
+	inputFile.seekg(0, std::ios::beg);
+
+	//read in the data from your file
+	char * InFileData = new char[len];
+	inputFile.read(InFileData, len);
+
+	//Calculate MD5 hash
+	std::string returnString = md5(InFileData, len);
+
+	//Clean up
+	delete[] InFileData;
+
+	return returnString;
 }

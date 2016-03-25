@@ -122,5 +122,6 @@ private:
  
 std::string md5(const std::string str);
 std::string md5(char * Input, long length);
+std::string createMD5Hash(std::string fileName);
 
 #endif

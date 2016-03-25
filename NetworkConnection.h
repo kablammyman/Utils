@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 
+#define DEFAULT_BUFLEN 512
 #define NETWORK_ERROR -1
 #define NETWORK_OK     0
 
