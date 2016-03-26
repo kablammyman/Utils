@@ -340,7 +340,7 @@ string SimilarImage::getAllHash(string imgPath)
 	if (img.data == NULL)
 		return "";
 
-	return HashValue(img)+","+pHashValue(img);
+	return HashValue(img)+"|"+pHashValue(img);
 
 }
 

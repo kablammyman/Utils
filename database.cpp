@@ -8,22 +8,22 @@
 using namespace std;
 string DataBase::returnData;
 bool DataBase::gettingData;
-
+/*
 static void testFunc(sqlite3_context *context, int argc, sqlite3_value **argv)
 {
 	// check that we have four arguments (lat1, lon1, lat2, lon2)
-/*	if (argc != 4)
-		return;*/
+	//if (argc != 4)
+	//	return;
 	// check that all four arguments are non-null
-	if (sqlite3_value_type(argv[0]) == SQLITE_NULL || sqlite3_value_type(argv[1]) == SQLITE_NULL /*|| sqlite3_value_type(argv[2]) == SQLITE_NULL || sqlite3_value_type(argv[3]) == SQLITE_NULL*/) {
+	if (sqlite3_value_type(argv[0]) == SQLITE_NULL || sqlite3_value_type(argv[1]) == SQLITE_NULL || sqlite3_value_type(argv[2]) == SQLITE_NULL || sqlite3_value_type(argv[3]) == SQLITE_NULL) {
 		sqlite3_result_null(context);
 		return;
 	}
 	// get the four argument values
-	/*double lat1 = sqlite3_value_double(argv[0]);
+	double lat1 = sqlite3_value_double(argv[0]);
 	double lon1 = sqlite3_value_double(argv[1]);
 	double lat2 = sqlite3_value_double(argv[2]);
-	double lon2 = sqlite3_value_double(argv[3]);*/
+	double lon2 = sqlite3_value_double(argv[3]);
 	char *string1 = (char *)sqlite3_value_text(argv[0]);
 	char *string2 = (char *)sqlite3_value_text(argv[1]);
 	string ret = string1;
@@ -34,6 +34,7 @@ static void testFunc(sqlite3_context *context, int argc, sqlite3_value **argv)
 	strcpy(buffer, ret.c_str());
 	sqlite3_result_text(context, buffer, (int)strlen(buffer),NULL);
 }
+
 static void testFunc2(sqlite3_context *context, int argc, sqlite3_value **argv)
 {
 	char *string1 = (char *)sqlite3_value_text(argv[0]);
@@ -64,7 +65,7 @@ static void testFunc2(sqlite3_context *context, int argc, sqlite3_value **argv)
 	//lets add in our own data instead of using query data for params
 	//dbCtrlr.executeSQL("SELECT galleryName FROM Gallery where testFunc2('yup',id) NOT NULL;", output);
 }
-
+*/
 static void hammingDistance(sqlite3_context *context, int argc, sqlite3_value **argv)
 {
 	char *string1 = (char *)sqlite3_value_text(argv[0]);

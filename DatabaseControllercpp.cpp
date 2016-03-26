@@ -70,9 +70,10 @@ bool DatabaseController::createNewDataBase(string newDBName, string createComman
 		db = NULL;
 	}
 
-	FILE * pFile;
+	//not sure if this is needed...test and remove if this is useless code
+	/*FILE * pFile;
 	pFile = fopen(newDBName.c_str(), "w");
-	fclose(pFile);
+	fclose(pFile);*/
 
 	//create the new db
 	db = new DataBase(newDBName);

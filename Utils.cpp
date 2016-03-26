@@ -31,12 +31,13 @@ string Utils::setProgramPath(string argv)
 vector<string> Utils::tokenize(string path, string delims)
 {
 	vector<string> returnVec;
-	char *p = strtok(const_cast<char *>(path.c_str()), delims.c_str());
+	char *next_token = NULL;
+	char *p = strtok_s(const_cast<char *>(path.c_str()), delims.c_str(), &next_token);
 	while (p)
 	{
 		//printf ("Token: %s\n", p);
 		returnVec.push_back(p);
-		p = strtok(NULL, delims.c_str());
+		p = strtok_s(NULL, delims.c_str(), &next_token);
 	}
 	return returnVec;
 }
