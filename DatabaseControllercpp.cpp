@@ -186,6 +186,25 @@ bool DatabaseController::insertNewDataEntry(string table, vector<dbDataPair> dat
 
 }
 
+bool DatabaseController::UpdateEntry(string table, vector<dbDataPair> data, dbDataPair WhereClause, string &output)
+{
+
+	string querey = ("UPDATE " + table + " SET ");
+	string whereClause(" WHERE " + WhereClause.first + "= \""+ WhereClause.second +"\"");
+
+	for (size_t i = 0; i < data.size(); i++)
+	{
+		querey += (data[i].first + "= \""+ data[i].second +"\"");
+		
+		if (i < data.size() - 1)
+		{
+			querey += ",";
+		}
+	}
+
+	return db->executeSQL(querey + whereClause, output);
+
+}
 void DatabaseController::parseDBOutput(string &inputData, int numFields, vector<vector<string>> &returnData)
 {
 	returnData.clear();
@@ -253,7 +272,7 @@ void DatabaseController::getDataPairFromOutput(string &inputData, string colName
 	}
 }
 //blah! the code is differnt enough that i cant reuse it woulth more loops... >=(
-/*void DatabaseController::removeTableNameFromOutput(string &inputData, int numCols, int colToUse, vector<string> &returnData)
+void DatabaseController::removeTableNameFromOutput(string &inputData, int numCols, int colToUse, vector<string> &returnData)
 {
 	if (colToUse > numCols || colToUse < 1)
 		return;
@@ -278,7 +297,13 @@ void DatabaseController::getDataPairFromOutput(string &inputData, string colName
 	}
 
 }
-*/
+void DatabaseController::removeTableNameFromOutput(string &inputData)
+{
+	size_t f = inputData.find_first_of('|');
+	if(f == string::npos)
+		return;
+	inputData.erase(0, f+1);
+}
 
 ///////////////////////////////////////////////////////////test methods
 void DatabaseController::createTable(string tableName, string fields)
