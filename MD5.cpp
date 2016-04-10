@@ -389,6 +389,9 @@ std::string createMD5Hash(std::string fileName)
 	inputFile.seekg(0, std::ios::end);
 	long len = inputFile.tellg();
 	inputFile.seekg(0, std::ios::beg);
+	
+	if(len < 1)
+		return "";
 
 	//read in the data from your file
 	char * InFileData = new char[len];

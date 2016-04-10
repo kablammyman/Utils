@@ -255,6 +255,9 @@ void NetworkConnection::shutdown()
 //------------------------------------------------------------------------------ 
 int NetworkConnection::sendData(int socketIndex, const char *msg)//for stream sockets
 {
+	if(socketIndex >= remoteConnections.size())
+		return NETWORK_ERROR;
+
 	int nret = send(remoteConnections[socketIndex].theSocket, msg, (int)strlen(msg), 0);
 
 	if (nret == SOCKET_ERROR) 
@@ -270,6 +273,9 @@ int NetworkConnection::sendData(int socketIndex, const char *msg)//for stream so
 //------------------------------------------------------------------------------
 int NetworkConnection::getData(int socketIndex, char *msg, int dataSize)//for stream sockets
 {
+	if (socketIndex >= remoteConnections.size())
+		return NETWORK_ERROR;
+
 	int nret = recv(remoteConnections[socketIndex].theSocket, msg, dataSize, 0);// 256 = Complete size of buffer	  
 
 	if (nret == SOCKET_ERROR) 
