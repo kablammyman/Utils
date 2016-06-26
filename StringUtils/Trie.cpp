@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Trie.h"
 
 Node* Node::findChild(char c)

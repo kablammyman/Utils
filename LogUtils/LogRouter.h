@@ -1,4 +1,6 @@
 #pragma once
+#include <vector>
+
 #include "LogMessage.h"
 
 #define CONSOLE_OUTPUT   1
@@ -32,7 +34,7 @@ class LogRouter
 	int logSeverityFlags;    //where are we dispaying the log message? concole? logfile? 
 	int scanLogFlags; //all teh tye of scan log results we can have. we check these since these are special
 
-	vector<LogEntity *> severityLookupTable[NUM_MESSAGE_TYPES];
+	std::vector<LogEntity *> severityLookupTable[NUM_MESSAGE_TYPES];
 	/* to help visualize what this does, think of this as a table of all the differnt severity tags.
 	each log entity goes into each slot that is specified in the seveirty string
 
@@ -83,5 +85,5 @@ public:
 	void Log(int logSeverity, string msg);
 	LogEntity * AddLogger(string type, string severityTypes, string details);
 	LogOutput * LogOutputFactory(string logType,string loggerDetails);
-	LogEntity * AddLogger(LogOutput *newLog, string severityTypes);
+	LogEntity * AddLogger(LogOutput *newLog, vector<string> severityTokens);
 };

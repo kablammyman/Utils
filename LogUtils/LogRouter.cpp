@@ -3,9 +3,7 @@ Right now, we will use slow methods to log things, but in teh future a lib can b
 */
 
 #include "LogRouter.h"
-#include "Windows.h"
-#include "Utils.h"
-#include "CFGReaderDll.h"
+
 
 LogRouter::LogRouter()
 {
@@ -29,58 +27,11 @@ void LogRouter::AddLoggerSeverityDetails(vector<string> severityVec, LogEntity *
 	}
 }
 //-------------------------------------------------------------------------------------
-void LogRouter::GetLoggingInfoFromCFG()
-{
-	ClearLogEntities();
-	
-
-	vector<string> loggerList = CFG::CFGReaderDLL::getCfgListValue("LOGGERS");
-
-	for (size_t i = 0; i < loggerList.size(); i++)
-	{
-		string listName = loggerList[i];
-		vector<string> curLogger = CFG::CFGReaderDLL::getCfgListValue(listName);
-
-		string loggingType = CFG::CFGReaderDLL::getStringValueFromList(listName, "TYPE");//consle, logfile syslog etc
-		string severityLevelString = CFG::CFGReaderDLL::getStringValueFromList(listName, "SEVERITY"); //should have all the logging level values this appender wants
-		
-		//optional, so far, only textfiles have this data
-		string loggerDetails = CFG::CFGReaderDLL::getStringValueFromList(listName, "PATH");
-
-		LogEntity * temp = AddLogger(loggingType, severityLevelString, loggerDetails);
-		if(CFG::CFGReaderDLL::getCfgBoolValue("ADD_TIMESTAMP"))
-			temp->logOut->useTimeStamp = true;
-		if (CFG::CFGReaderDLL::getCfgBoolValue("ADD_SEVERITY"))
-			temp->logOut->useSeverityString = true;
-	}
-
-}
-//-------------------------------------------------------------------------------------
 //an be used to add a logger from code outside of the cfg file
-LogEntity * LogRouter::AddLogger(string type, string severityTypes, string details)
-{
-	int id = (int)logs.size() +1;
-	vector<string> severityTokens = Utils::tokenize(severityTypes, ",");
-
-	LogEntity *newLog = new LogEntity();
-	newLog->id = id;
-	newLog->logOut = LogOutputFactory(type, details);
-	newLog->type = type;
-	newLog->logOut->useTimeStamp = false;
-	newLog->logOut->useSeverityString = false;
-	logs.push_back(newLog);
-	AddLoggerSeverityDetails(severityTokens, newLog);
-
-	return newLog;
-}
-
-//-------------------------------------------------------------------------------------
-//an be used to add a logger from code outside of the cfg file
-LogEntity * LogRouter::AddLogger(LogOutput *newLog, string severityTypes)
+LogEntity * LogRouter::AddLogger(LogOutput *newLog, vector<string> severityTokens)
 {
 	int id = (int)logs.size();
-	vector<string> severityTokens = Utils::tokenize(severityTypes, ",");
-
+	
 	LogEntity *newLogEntity = new LogEntity();
 	newLogEntity->id = id;
 	newLogEntity->logOut = newLog;

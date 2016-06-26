@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "ProgressBar.h"
 
 #include "CommCtrl.h"

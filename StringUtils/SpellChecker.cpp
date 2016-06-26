@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "SpellChecker.h"
 
 #include <numeric>

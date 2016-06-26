@@ -3,7 +3,7 @@
 #include <Windows.h>
 #include <string>
 #include <fstream>
-#include "NetworkConnection.h"
+
 using namespace std;
 
 
@@ -46,57 +46,3 @@ public:
 	virtual void WriteMessage(int severity, string message) = 0;
 };
 
-class ConsoleOutput : public LogOutput
-{
-public:
-	//ConsoleOutput();//create a new console window for output
-	//~ConsoleOutput();
-	void WriteMessage(int severity, string message);
-};
-
-class LogFileOutput : public LogOutput
-{
-	fstream fs;
-public:
-	LogFileOutput(string testFile)
-	{
-		fs.open(testFile, fstream::in | fstream::out | fstream::app);
-	}
-	
-	~LogFileOutput()
-	{
-		fs.close();
-	}
-
-	void WriteMessage(int severity, string message);
-};
-
-class WindowsEventLogOutput : public LogOutput
-{
-	WORD ConvertSeverityToWindows(int severity);
-public:
-	void WriteMessage(int severity, string message);
-};
-
-class TCPOutput : public LogOutput
-{
-	NetworkConnection *conn;
-	int socket;
-public:
-	TCPOutput()
-	{
-		conn = NULL;
-		socket = -1;
-	}
-	TCPOutput(NetworkConnection *c, int s)
-	{
-		conn = c;
-		socket = s;
-	}
-	void ChangeSocketIndex(int index)
-	{
-		if(index > -1)
-			socket = index;
-	}
-	void WriteMessage(int severity, string message);
-};

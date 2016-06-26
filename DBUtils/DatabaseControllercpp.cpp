@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "DatabaseController.h"
 #include "Utils.h"
 

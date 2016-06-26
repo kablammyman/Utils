@@ -1,4 +1,4 @@
-#include "stdafx.h"
+
 #include "database.h"
 #include <ios>
 #include <iostream>
