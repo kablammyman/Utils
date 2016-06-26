@@ -1,8 +1,8 @@
 #include "StringUtils.h"
 
-vector<string> Utils::tokenize(string path, string delims)
+std::vector<std::string> StringUtils::Tokenize(std::string path, std::string delims)
 {
-	vector<string> returnVec;
+	std::vector<std::string> returnVec;
 	char *next_token = NULL;
 	char *p = strtok_s(const_cast<char *>(path.c_str()), delims.c_str(), &next_token);
 	while (p)
@@ -15,7 +15,7 @@ vector<string> Utils::tokenize(string path, string delims)
 }
 
 //turns words or sentences into all proper nouns
-void Utils::toProperNoun(string &input)
+void StringUtils::ToProperNoun(std::string &input)
 {
 	bool caps = true;
 	for (size_t i = 0; i < input.size(); i++)

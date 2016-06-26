@@ -8,5 +8,5 @@ class ClipboardUtil
 	public:
 	
 	static std::string GetClipboardStringData();
-	
+	static HBITMAP GetClipboardImageData();
 };

@@ -24,12 +24,18 @@
     <ClInclude Include="ProgressBar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="WindowsUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ClipboardUtil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ProgressBar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowsUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

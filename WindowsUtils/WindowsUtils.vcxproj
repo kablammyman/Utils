@@ -132,10 +132,12 @@
   <ItemGroup>
     <ClInclude Include="ClipboardUtil.h" />
     <ClInclude Include="ProgressBar.h" />
+    <ClInclude Include="WindowsUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ClipboardUtil.cpp" />
     <ClCompile Include="ProgressBar.cpp" />
+    <ClCompile Include="WindowsUtils.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
