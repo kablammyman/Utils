@@ -81,9 +81,7 @@ class LogRouter
 public:
 	LogRouter();
 	~LogRouter();
-	void GetLoggingInfoFromCFG();
+	
 	void Log(int logSeverity, string msg);
-	LogEntity * AddLogger(string type, string severityTypes, string details);
-	LogOutput * LogOutputFactory(string logType,string loggerDetails);
 	LogEntity * AddLogger(LogOutput *newLog, vector<string> severityTokens);
 };

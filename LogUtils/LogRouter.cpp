@@ -43,6 +43,7 @@ LogEntity * LogRouter::AddLogger(LogOutput *newLog, vector<string> severityToken
 
 	return newLogEntity;
 }
+
 //-------------------------------------------------------------------------------------
 void LogRouter::InitLogEntities()
 {
@@ -65,25 +66,7 @@ void LogRouter::ClearLogEntities()
 		severityLookupTable[i].clear();
 }
 
-LogOutput * LogRouter::LogOutputFactory(string logType, string loggerDetails)
-{
-	if (logType.compare(CONSOLE_OUTPUT_STRING) == 0)
-		return new ConsoleOutput();
 
-	else if (logType.compare(FILE_OUTPUT_STRING) == 0)
-		return new LogFileOutput(loggerDetails);
-
-	else if (logType.compare(TCP_OUTPUT_STRING) == 0)
-		return new TCPOutput();
-
-	else if (logType.compare(EVENT_LOG_OUTPUT_STRING) == 0)
-		return new WindowsEventLogOutput();
-
-
-	//uf we get here, we got an invalid type.
-	//instad of returning null, return a console output
-	return new ConsoleOutput();
-}
 
 void LogRouter::Log(int logSeverity, string msg)
 {

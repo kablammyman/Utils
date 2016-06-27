@@ -3,20 +3,20 @@
 #include <string>
 #include <vector>
 
-using namespace std;
 
 class SpellChecker
 {
 	
 private:
-	vector<string> dictionary;  
-	size_t levenshtein_distance(string first, string second);
+	std::vector<std::string> dictionary;
+	size_t levenshtein_distance(std::string first, std::string second);
 public:
 	SpellChecker();
-	SpellChecker(vector<string> &dict);
+	SpellChecker(std::vector<std::string> &dict);
 
-	void addWordToDictionary(string word);
-	vector<string> nearest_words(const string& word);
+	void AddWordToDictionary(std::string word);
+	void AddWordsToDictionary(std::vector<std::string> words);
+	std::vector<std::string> nearest_words(const std::string& word);
 	
 
 };

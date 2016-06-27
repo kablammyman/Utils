@@ -35,3 +35,46 @@ void StringUtils::ToProperNoun(std::string &input)
 			input[i] = tolower(input[i]);
 	}
 }
+void StringUtils::CreateTrie()
+{
+	if (trie != NULL)
+		return;
+	trie = new Trie();
+}
+void StringUtils::CreateSpellCheck()
+{
+	if (spellchcek != NULL)
+		return;
+	spellchcek = new SpellChecker();
+}
+void StringUtils::AddWordToDictionary(std::string word)
+{
+	CreateSpellCheck();
+	spellchcek->AddWordToDictionary(word);
+}
+void StringUtils::AddAllWordsToDictionary(std::vector<string> words)
+{
+	CreateSpellCheck();
+	spellchcek->AddWordsToDictionary(words);
+}
+std::vector<std::string> StringUtils::GetNearestWords(const std::string& word)
+{
+	CreateSpellCheck();
+	return spellchcek->nearest_words(word);
+}
+
+void StringUtils::AddWordToTrie(std::string s)
+{
+	CreateTrie();
+	trie->addWord(s);
+}
+bool StringUtils::SearchWordInTrie(std::string s)
+{
+	CreateTrie();
+	return trie->searchWord(s);
+}
+void StringUtils::DeleteWordInTrie(std::string s)
+{
+	CreateTrie();
+	trie->deleteWord(s);
+}
