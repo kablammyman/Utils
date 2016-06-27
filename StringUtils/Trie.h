@@ -2,34 +2,36 @@
 
 #include <iostream>
 #include <vector>
-using namespace std;
 
-class Node {
-public:
-    Node() { mContent = ' '; mMarker = false; }
-    ~Node() {}
-    char content() { return mContent; }
-    void setContent(char c) { mContent = c; }
-    bool wordMarker() { return mMarker; }
-    void setWordMarker() { mMarker = true; }
-    Node* findChild(char c);
-    void appendChild(Node* child) { mChildren.push_back(child); }
-    vector<Node*> children() { return mChildren; }
+namespace StringUtils
+{
+	class Node {
+	public:
+		Node() { mContent = ' '; mMarker = false; }
+		~Node() {}
+		char content() { return mContent; }
+		void setContent(char c) { mContent = c; }
+		bool wordMarker() { return mMarker; }
+		void setWordMarker() { mMarker = true; }
+		Node* findChild(char c);
+		void appendChild(Node* child) { mChildren.push_back(child); }
+		std::vector<Node*> children() { return mChildren; }
 
-private:
-    char mContent;
-    bool mMarker;
-    vector<Node*> mChildren;
-};
+	private:
+		char mContent;
+		bool mMarker;
+		std::vector<Node*> mChildren;
+	};
 
-class Trie {
-public:
-    Trie();
-    ~Trie();
-    void addWord(string s);
-    bool searchWord(string s);
-    void deleteWord(string s);
-private:
-    Node* root;
-};
+	class Trie {
+	public:
+		Trie();
+		~Trie();
+		void AddWordToTrie(std::string s);
+		bool SearchWordInTrie(std::string s);
+
+	private:
+		Node* root;
+	};
+}
 

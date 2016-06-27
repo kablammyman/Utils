@@ -7,7 +7,7 @@
 
 
 
-string Utils::getExePath()
+string StringUtils::getExePath()
 {
 	char buffer[MAX_PATH];
 	GetModuleFileNameA(NULL, buffer, MAX_PATH);
@@ -18,7 +18,7 @@ string Utils::getExePath()
 	return string(buffer).substr(0, pos);
 }
 
-string Utils::setProgramPath(string argv)
+string StringUtils::setProgramPath(string argv)
 {
 	char full[MAX_PATH];
 	string temp = _fullpath(full, argv.c_str(), MAX_PATH);
@@ -28,7 +28,7 @@ string Utils::setProgramPath(string argv)
 
 
 
-vector<string> Utils::tokenize(string path, string delims)
+vector<string> StringUtils::tokenize(string path, string delims)
 {
 	vector<string> returnVec;
 	char *next_token = NULL;
@@ -43,7 +43,7 @@ vector<string> Utils::tokenize(string path, string delims)
 }
 
 //turns words or sentences into all proper nouns
-void Utils::toProperNoun(string &input)
+void StringUtils::toProperNoun(string &input)
 {
 	bool caps = true;
 	for (size_t i = 0; i < input.size(); i++)
@@ -64,7 +64,7 @@ void Utils::toProperNoun(string &input)
 	}
 }
 
-string Utils::getTimeStamp(double milis)
+string StringUtils::getTimeStamp(double milis)
 {
 	int seconds = milis / 1000;
 	int minutes = seconds / 60;
