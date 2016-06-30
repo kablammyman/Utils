@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HashUtils", "HashUtils\HashUtils.vcxproj", "{20E69F6A-6870-4D17-AF65-ED9AFE177B24}"
 EndProject
@@ -11,12 +11,18 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LogUtils", "LogUtils\LogUti
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WindowsUtils", "WindowsUtils\WindowsUtils.vcxproj", "{BE8A36C4-5EAC-41B9-AFA8-05EE7B1438D9}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FileUtils", "FileUtils\myFileDirDll\myFileDirDll.vcxproj", "{018B1E34-1EC9-447F-9B48-2197D1AB4F3B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
+		vis studio 2010 debug|x64 = vis studio 2010 debug|x64
+		vis studio 2010 debug|x86 = vis studio 2010 debug|x86
+		vis studio 2010 release|x64 = vis studio 2010 release|x64
+		vis studio 2010 release|x86 = vis studio 2010 release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{20E69F6A-6870-4D17-AF65-ED9AFE177B24}.Debug|x64.ActiveCfg = Debug|x64
@@ -27,6 +33,14 @@ Global
 		{20E69F6A-6870-4D17-AF65-ED9AFE177B24}.Release|x64.Build.0 = Release|x64
 		{20E69F6A-6870-4D17-AF65-ED9AFE177B24}.Release|x86.ActiveCfg = Release|Win32
 		{20E69F6A-6870-4D17-AF65-ED9AFE177B24}.Release|x86.Build.0 = Release|Win32
+		{20E69F6A-6870-4D17-AF65-ED9AFE177B24}.vis studio 2010 debug|x64.ActiveCfg = Release|x64
+		{20E69F6A-6870-4D17-AF65-ED9AFE177B24}.vis studio 2010 debug|x64.Build.0 = Release|x64
+		{20E69F6A-6870-4D17-AF65-ED9AFE177B24}.vis studio 2010 debug|x86.ActiveCfg = Release|Win32
+		{20E69F6A-6870-4D17-AF65-ED9AFE177B24}.vis studio 2010 debug|x86.Build.0 = Release|Win32
+		{20E69F6A-6870-4D17-AF65-ED9AFE177B24}.vis studio 2010 release|x64.ActiveCfg = Release|x64
+		{20E69F6A-6870-4D17-AF65-ED9AFE177B24}.vis studio 2010 release|x64.Build.0 = Release|x64
+		{20E69F6A-6870-4D17-AF65-ED9AFE177B24}.vis studio 2010 release|x86.ActiveCfg = Release|Win32
+		{20E69F6A-6870-4D17-AF65-ED9AFE177B24}.vis studio 2010 release|x86.Build.0 = Release|Win32
 		{2AC8E46C-1F62-4A6B-8FF1-C1CD5A752E7C}.Debug|x64.ActiveCfg = Debug|x64
 		{2AC8E46C-1F62-4A6B-8FF1-C1CD5A752E7C}.Debug|x64.Build.0 = Debug|x64
 		{2AC8E46C-1F62-4A6B-8FF1-C1CD5A752E7C}.Debug|x86.ActiveCfg = Debug|Win32
@@ -35,6 +49,14 @@ Global
 		{2AC8E46C-1F62-4A6B-8FF1-C1CD5A752E7C}.Release|x64.Build.0 = Release|x64
 		{2AC8E46C-1F62-4A6B-8FF1-C1CD5A752E7C}.Release|x86.ActiveCfg = Release|Win32
 		{2AC8E46C-1F62-4A6B-8FF1-C1CD5A752E7C}.Release|x86.Build.0 = Release|Win32
+		{2AC8E46C-1F62-4A6B-8FF1-C1CD5A752E7C}.vis studio 2010 debug|x64.ActiveCfg = Release|x64
+		{2AC8E46C-1F62-4A6B-8FF1-C1CD5A752E7C}.vis studio 2010 debug|x64.Build.0 = Release|x64
+		{2AC8E46C-1F62-4A6B-8FF1-C1CD5A752E7C}.vis studio 2010 debug|x86.ActiveCfg = Release|Win32
+		{2AC8E46C-1F62-4A6B-8FF1-C1CD5A752E7C}.vis studio 2010 debug|x86.Build.0 = Release|Win32
+		{2AC8E46C-1F62-4A6B-8FF1-C1CD5A752E7C}.vis studio 2010 release|x64.ActiveCfg = Release|x64
+		{2AC8E46C-1F62-4A6B-8FF1-C1CD5A752E7C}.vis studio 2010 release|x64.Build.0 = Release|x64
+		{2AC8E46C-1F62-4A6B-8FF1-C1CD5A752E7C}.vis studio 2010 release|x86.ActiveCfg = Release|Win32
+		{2AC8E46C-1F62-4A6B-8FF1-C1CD5A752E7C}.vis studio 2010 release|x86.Build.0 = Release|Win32
 		{FA0456E7-0D61-4810-BC94-FB2EB9D6E2E0}.Debug|x64.ActiveCfg = Debug|x64
 		{FA0456E7-0D61-4810-BC94-FB2EB9D6E2E0}.Debug|x64.Build.0 = Debug|x64
 		{FA0456E7-0D61-4810-BC94-FB2EB9D6E2E0}.Debug|x86.ActiveCfg = Debug|Win32
@@ -43,6 +65,14 @@ Global
 		{FA0456E7-0D61-4810-BC94-FB2EB9D6E2E0}.Release|x64.Build.0 = Release|x64
 		{FA0456E7-0D61-4810-BC94-FB2EB9D6E2E0}.Release|x86.ActiveCfg = Release|Win32
 		{FA0456E7-0D61-4810-BC94-FB2EB9D6E2E0}.Release|x86.Build.0 = Release|Win32
+		{FA0456E7-0D61-4810-BC94-FB2EB9D6E2E0}.vis studio 2010 debug|x64.ActiveCfg = Release|x64
+		{FA0456E7-0D61-4810-BC94-FB2EB9D6E2E0}.vis studio 2010 debug|x64.Build.0 = Release|x64
+		{FA0456E7-0D61-4810-BC94-FB2EB9D6E2E0}.vis studio 2010 debug|x86.ActiveCfg = Release|Win32
+		{FA0456E7-0D61-4810-BC94-FB2EB9D6E2E0}.vis studio 2010 debug|x86.Build.0 = Release|Win32
+		{FA0456E7-0D61-4810-BC94-FB2EB9D6E2E0}.vis studio 2010 release|x64.ActiveCfg = Release|x64
+		{FA0456E7-0D61-4810-BC94-FB2EB9D6E2E0}.vis studio 2010 release|x64.Build.0 = Release|x64
+		{FA0456E7-0D61-4810-BC94-FB2EB9D6E2E0}.vis studio 2010 release|x86.ActiveCfg = Release|Win32
+		{FA0456E7-0D61-4810-BC94-FB2EB9D6E2E0}.vis studio 2010 release|x86.Build.0 = Release|Win32
 		{BE8A36C4-5EAC-41B9-AFA8-05EE7B1438D9}.Debug|x64.ActiveCfg = Debug|x64
 		{BE8A36C4-5EAC-41B9-AFA8-05EE7B1438D9}.Debug|x64.Build.0 = Debug|x64
 		{BE8A36C4-5EAC-41B9-AFA8-05EE7B1438D9}.Debug|x86.ActiveCfg = Debug|Win32
@@ -51,6 +81,30 @@ Global
 		{BE8A36C4-5EAC-41B9-AFA8-05EE7B1438D9}.Release|x64.Build.0 = Release|x64
 		{BE8A36C4-5EAC-41B9-AFA8-05EE7B1438D9}.Release|x86.ActiveCfg = Release|Win32
 		{BE8A36C4-5EAC-41B9-AFA8-05EE7B1438D9}.Release|x86.Build.0 = Release|Win32
+		{BE8A36C4-5EAC-41B9-AFA8-05EE7B1438D9}.vis studio 2010 debug|x64.ActiveCfg = Release|x64
+		{BE8A36C4-5EAC-41B9-AFA8-05EE7B1438D9}.vis studio 2010 debug|x64.Build.0 = Release|x64
+		{BE8A36C4-5EAC-41B9-AFA8-05EE7B1438D9}.vis studio 2010 debug|x86.ActiveCfg = Release|Win32
+		{BE8A36C4-5EAC-41B9-AFA8-05EE7B1438D9}.vis studio 2010 debug|x86.Build.0 = Release|Win32
+		{BE8A36C4-5EAC-41B9-AFA8-05EE7B1438D9}.vis studio 2010 release|x64.ActiveCfg = Release|x64
+		{BE8A36C4-5EAC-41B9-AFA8-05EE7B1438D9}.vis studio 2010 release|x64.Build.0 = Release|x64
+		{BE8A36C4-5EAC-41B9-AFA8-05EE7B1438D9}.vis studio 2010 release|x86.ActiveCfg = Release|Win32
+		{BE8A36C4-5EAC-41B9-AFA8-05EE7B1438D9}.vis studio 2010 release|x86.Build.0 = Release|Win32
+		{018B1E34-1EC9-447F-9B48-2197D1AB4F3B}.Debug|x64.ActiveCfg = Debug|x64
+		{018B1E34-1EC9-447F-9B48-2197D1AB4F3B}.Debug|x64.Build.0 = Debug|x64
+		{018B1E34-1EC9-447F-9B48-2197D1AB4F3B}.Debug|x86.ActiveCfg = Debug|Win32
+		{018B1E34-1EC9-447F-9B48-2197D1AB4F3B}.Debug|x86.Build.0 = Debug|Win32
+		{018B1E34-1EC9-447F-9B48-2197D1AB4F3B}.Release|x64.ActiveCfg = Release|x64
+		{018B1E34-1EC9-447F-9B48-2197D1AB4F3B}.Release|x64.Build.0 = Release|x64
+		{018B1E34-1EC9-447F-9B48-2197D1AB4F3B}.Release|x86.ActiveCfg = Release|Win32
+		{018B1E34-1EC9-447F-9B48-2197D1AB4F3B}.Release|x86.Build.0 = Release|Win32
+		{018B1E34-1EC9-447F-9B48-2197D1AB4F3B}.vis studio 2010 debug|x64.ActiveCfg = vis studio 2010 debug|x64
+		{018B1E34-1EC9-447F-9B48-2197D1AB4F3B}.vis studio 2010 debug|x64.Build.0 = vis studio 2010 debug|x64
+		{018B1E34-1EC9-447F-9B48-2197D1AB4F3B}.vis studio 2010 debug|x86.ActiveCfg = vis studio 2010 debug|Win32
+		{018B1E34-1EC9-447F-9B48-2197D1AB4F3B}.vis studio 2010 debug|x86.Build.0 = vis studio 2010 debug|Win32
+		{018B1E34-1EC9-447F-9B48-2197D1AB4F3B}.vis studio 2010 release|x64.ActiveCfg = vis studio 2010 release|x64
+		{018B1E34-1EC9-447F-9B48-2197D1AB4F3B}.vis studio 2010 release|x64.Build.0 = vis studio 2010 release|x64
+		{018B1E34-1EC9-447F-9B48-2197D1AB4F3B}.vis studio 2010 release|x86.ActiveCfg = vis studio 2010 release|Win32
+		{018B1E34-1EC9-447F-9B48-2197D1AB4F3B}.vis studio 2010 release|x86.Build.0 = vis studio 2010 release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
