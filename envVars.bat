@@ -1,0 +1,6 @@
+setx MY_STRING_UTILS "D:\source\Utils\StringUtils"
+setx MY_LOG_UTILS "D:\source\Utils\LogUtils"
+setx MY_HASH_UTILS "D:\source\Utils\HashUtils"
+setx MY_WINDOWS_UTILS "D:\source\Utils\WindowsUtils"
+setx MY_CFG_UTILS "D:\source\Utils\CFGUtils"
+setx MY_FILE_UTILS "D:\source\Utils\FileUtils"
