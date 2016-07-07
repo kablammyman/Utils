@@ -1,8 +1,8 @@
 #include <windows.h>
 #include <string>
-#include "NetworkConnection.h"
+#include "TCPUtils.h"
 
-int NetworkConnection::connectToServer(string ip, int port, int socketType)
+int TCPUtils::connectToServer(string ip, int port, int socketType)
 {
 	tv.tv_sec = 1;
 	tv.tv_usec = 0;
@@ -61,14 +61,14 @@ int NetworkConnection::connectToServer(string ip, int port, int socketType)
 	return NETWORK_OK;
 }
 //------------------------------------------------------------------------------
-void NetworkConnection::ReportError(int errorCode, std::string  whichFunc)
+void TCPUtils::ReportError(int errorCode, std::string  whichFunc)
 {
 	string error = ("Call to " + whichFunc + " returned error ");
 	std::cout << error << errorCode <<endl;
 	//MessageBox(NULL, errorMsg, "socketIndication", MB_OK);
 }
 //------------------------------------------------------------------------------
-int NetworkConnection::fillTheirInfo(SOCKADDR_IN *who, SOCKET daSocket)
+int TCPUtils::fillTheirInfo(SOCKADDR_IN *who, SOCKET daSocket)
 {
 	// Fill a SOCKADDR_IN struct with address information of comp trying to conenct to
 	int length = sizeof(struct sockaddr);
@@ -87,7 +87,7 @@ int NetworkConnection::fillTheirInfo(SOCKADDR_IN *who, SOCKET daSocket)
 	who->sin_port;*/
 }
 //------------------------------------------------------------------------------
-int NetworkConnection::startServer(int numConnections, int port, int socketType)
+int TCPUtils::startServer(int numConnections, int port, int socketType)
 {
 	tv.tv_sec = 1;
 	tv.tv_usec = 0;
@@ -161,7 +161,7 @@ int NetworkConnection::startServer(int numConnections, int port, int socketType)
 	return NETWORK_OK;
 }
 //------------------------------------------------------------------------------
-int NetworkConnection::waitForFirstClientConnect()
+int TCPUtils::waitForFirstClientConnect()
 {
 	int yes = 1;
 
@@ -197,7 +197,7 @@ int NetworkConnection::waitForFirstClientConnect()
 	// MessageBox(NULL, message, "Server message", MB_OK);
 	return NETWORK_OK;
 }
-int NetworkConnection::waitForClientAsync()
+int TCPUtils::waitForClientAsync()
 {
 	// See if connection pending
 	fd_set readSet;
@@ -229,7 +229,7 @@ int NetworkConnection::waitForClientAsync()
 	return NETWORK_OK;
 }
 //------------------------------------------------------------------------------ 
-int NetworkConnection::ServerBroadcast(const char *msg)//for stream sockets
+int TCPUtils::ServerBroadcast(const char *msg)//for stream sockets
 {
 	int howManySent = 0;
 	for (size_t n = 0; n < remoteConnections.size(); n++)
@@ -242,7 +242,7 @@ int NetworkConnection::ServerBroadcast(const char *msg)//for stream sockets
 	return howManySent;
 }
 //------------------------------------------------------------------------------
-void NetworkConnection::shutdown()
+void TCPUtils::shutdown()
 {
 
 	for (size_t x = 0; x < remoteConnections.size(); x++)
@@ -253,7 +253,7 @@ void NetworkConnection::shutdown()
 	WSACleanup();
 }
 //------------------------------------------------------------------------------ 
-int NetworkConnection::sendData(int socketIndex, const char *msg)//for stream sockets
+int TCPUtils::sendData(int socketIndex, const char *msg)//for stream sockets
 {
 	if(socketIndex >= remoteConnections.size())
 		return NETWORK_ERROR;
@@ -271,7 +271,7 @@ int NetworkConnection::sendData(int socketIndex, const char *msg)//for stream so
 }
 
 //------------------------------------------------------------------------------
-int NetworkConnection::getData(int socketIndex, char *msg, int dataSize)//for stream sockets
+int TCPUtils::getData(int socketIndex, char *msg, int dataSize)//for stream sockets
 {
 	if (socketIndex >= remoteConnections.size())
 		return NETWORK_ERROR;
@@ -288,7 +288,7 @@ int NetworkConnection::getData(int socketIndex, char *msg, int dataSize)//for st
 }
 
 //------------------------------------------------------------------------------   
-int NetworkConnection::sendData(SOCKET daSocket, const char *msg, SOCKADDR_IN whomToSend)//for datagram sockets
+int TCPUtils::sendData(SOCKET daSocket, const char *msg, SOCKADDR_IN whomToSend)//for datagram sockets
 {
 	int structLength = sizeof(struct sockaddr);
 	int nret = sendto(daSocket, msg, (int)strlen(msg), 0, (LPSOCKADDR)&whomToSend, structLength);
@@ -303,7 +303,7 @@ int NetworkConnection::sendData(SOCKET daSocket, const char *msg, SOCKADDR_IN wh
 
 }
 //------------------------------------------------------------------------------
-int NetworkConnection::getData(SOCKET daSocket, char *msg, SOCKADDR_IN whosSendingMeStuff)//for datagram sockets
+int TCPUtils::getData(SOCKET daSocket, char *msg, SOCKADDR_IN whosSendingMeStuff)//for datagram sockets
 {
 	int structLength = sizeof(struct sockaddr);
 	int MAX_STRING_LENGTH = 256;
@@ -320,7 +320,7 @@ int NetworkConnection::getData(SOCKET daSocket, char *msg, SOCKADDR_IN whosSendi
 	return nret;// nret contains the number of bytes received
 }
 //------------------------------------------------------------------------------   
-int NetworkConnection::changeToNonBlocking(SOCKET daSocket)// Change the socket mode on the listening socket from blocking to non-block 
+int TCPUtils::changeToNonBlocking(SOCKET daSocket)// Change the socket mode on the listening socket from blocking to non-block 
 {
 	ULONG NonBlock = 1;
 	if (ioctlsocket(daSocket, FIONBIO, &NonBlock) == SOCKET_ERROR)
@@ -328,7 +328,7 @@ int NetworkConnection::changeToNonBlocking(SOCKET daSocket)// Change the socket 
 	return 0;
 }
 //------------------------------------------------------------------------------
-bool NetworkConnection::hasRecivedData(int index)
+bool TCPUtils::hasRecivedData(int index)
 {
 	FD_ZERO(&read_fds);
 	FD_SET(remoteConnections[index].theSocket, &read_fds,0);
@@ -343,7 +343,7 @@ bool NetworkConnection::hasRecivedData(int index)
 
 }
 //------------------------------------------------------------------------------
-void NetworkConnection::closeConnection(int index)
+void TCPUtils::closeConnection(int index)
 {
 	closesocket(remoteConnections[index].theSocket);
 	// erase the 6th element: myvector.erase(myvector.begin() + 5);

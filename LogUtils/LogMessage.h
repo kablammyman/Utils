@@ -42,7 +42,8 @@ public:
 
 	static string GetStringFromSeverity(int severity);
 	static int GetValueFromSeverityString(string severity);
-	string GetTimeStamp();
+	static string GetTimeStamp();
+	static string GetTimeStampFromMilis(double milis);
 	virtual void WriteMessage(int severity, string message) = 0;
 };
 

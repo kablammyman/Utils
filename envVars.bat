@@ -1,0 +1,13 @@
+setx MY_STRING_UTILS "D:\source\Utils\StringUtils"
+setx MY_LOG_UTILS "D:\source\Utils\LogUtils"
+setx MY_HASH_UTILS "D:\source\Utils\HashUtils"
+setx MY_WINDOWS_UTILS "D:\source\Utils\WindowsUtils"
+setx MY_CFG_UTILS "D:\source\Utils\CFGUtils"
+setx MY_FILE_UTILS "D:\source\Utils\FileUtils"
+setx MY_COMMANDLINE_UTILS "D:\source\Utils\CommandLineUtils"
+setx MY_TCP_UTILS "D:\source\Utils\TCPUtils"
+setx MY_X86_DEBUG_LIBS "D:\source\Utils\Debug"
+setx MY_X64_DEBUG_LIBS "D:\source\Utils\x64\Debug"
+setx MY_X86_RELEASE_LIBS "D:\source\Utils\Release"
+setx MY_X64_RELEASE_LIBS "D:\source\Utils\x64\Release"
+

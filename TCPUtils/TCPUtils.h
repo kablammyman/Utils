@@ -27,7 +27,7 @@ struct RemoteComputerConnection
 	int id = 0;
 };
 
-class NetworkConnection
+class TCPUtils
 {
 	enum SOCKET_TYPE
 	{
