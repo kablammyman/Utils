@@ -1,0 +1,2 @@
+//this is a cfg file
+//all options should have this format-> someOption: 20
