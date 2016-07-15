@@ -10,4 +10,3 @@ setx MY_X86_DEBUG_LIBS %CD%"\Debug"
 setx MY_X64_DEBUG_LIBS %CD%"\x64\Debug"
 setx MY_X86_RELEASE_LIBS %CD%"\Release"
 setx MY_X64_RELEASE_LIBS %CD%"\x64\Release"
-
