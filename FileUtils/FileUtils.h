@@ -1,4 +1,5 @@
 // FileUtils.h
+#pragma once
 
 #include <vector>
 #include <string>

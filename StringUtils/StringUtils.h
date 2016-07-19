@@ -5,6 +5,6 @@
 
 namespace StringUtils
 {
-	static std::vector<std::string> Tokenize(std::string path, std::string delims);
-	static void ToProperNoun(std::string &input);
+	std::vector<std::string> Tokenize(std::string path, std::string delims);
+	void ToProperNoun(std::string &input);
 }
