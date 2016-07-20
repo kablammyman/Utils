@@ -18,7 +18,7 @@ LogRouter::~LogRouter()
 void LogRouter::AddLoggerSeverityDetails(vector<string> severityVec, LogEntity *logger)
 {
 	//add a pointer to this new obj to each list that we want to notify when the proper log message is processed
-	for (int i = 0; i < severityVec.size(); i++)
+	for (size_t i = 0; i < severityVec.size(); i++)
 	{
 		int logSeverityValue = LogOutput::GetValueFromSeverityString(severityVec[i]);//take the cfg string amd get the log severity val
 		int severityIndex = getArrayIndex(logSeverityValue); //find out where in the array we need to place the newlog obj
