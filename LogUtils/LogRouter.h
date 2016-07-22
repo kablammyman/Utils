@@ -84,4 +84,5 @@ public:
 	
 	void Log(int logSeverity, string msg);
 	LogEntity * AddLogger(LogOutput *newLog, vector<string> severityTokens);
+	LogEntity * AddLogger(LogOutput *newLog, string severityToken);
 };

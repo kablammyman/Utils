@@ -8,6 +8,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StringUtils", "StringUtils\StringUtils.vcxproj", "{2AC8E46C-1F62-4A6B-8FF1-C1CD5A752E7C}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LogUtils", "LogUtils\LogUtils.vcxproj", "{FA0456E7-0D61-4810-BC94-FB2EB9D6E2E0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2AC8E46C-1F62-4A6B-8FF1-C1CD5A752E7C} = {2AC8E46C-1F62-4A6B-8FF1-C1CD5A752E7C}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WindowsUtils", "WindowsUtils\WindowsUtils.vcxproj", "{BE8A36C4-5EAC-41B9-AFA8-05EE7B1438D9}"
 EndProject

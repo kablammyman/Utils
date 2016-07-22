@@ -3,7 +3,7 @@ Right now, we will use slow methods to log things, but in teh future a lib can b
 */
 
 #include "LogRouter.h"
-
+#include "StringUtils.h"
 
 LogRouter::LogRouter()
 {
@@ -43,7 +43,22 @@ LogEntity * LogRouter::AddLogger(LogOutput *newLog, vector<string> severityToken
 
 	return newLogEntity;
 }
+LogEntity * LogRouter::AddLogger(LogOutput *newLog, string severityToken)
+{
+	int id = (int)logs.size();
 
+	LogEntity *newLogEntity = new LogEntity();
+	newLogEntity->id = id;
+	newLogEntity->logOut = newLog;
+	newLogEntity->logOut->useTimeStamp = false;
+	newLogEntity->logOut->useSeverityString = false;
+
+	logs.push_back(newLogEntity);
+	vector<string> severityTokens = StringUtils::Tokenize(severityToken,",");
+	AddLoggerSeverityDetails(severityTokens, newLogEntity);
+
+	return newLogEntity;
+}
 //-------------------------------------------------------------------------------------
 void LogRouter::InitLogEntities()
 {
