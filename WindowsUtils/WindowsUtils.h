@@ -7,5 +7,4 @@ class WindowsUtils
 {
 public:
 	static std::string GetEXEPath();
-	static std::string SetProgramPath(std::string argv);
 };
