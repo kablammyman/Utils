@@ -30,7 +30,6 @@ struct CmdArg
 class CommandLineUtils
 {
 public:
-	static std::string GetExePath();
-	static std::string SetProgramPath(std::string argv);
-	
+	static std::string GetFilePath(std::string path);
+	static std::string GetFileName(std::string path);
 };

@@ -36,3 +36,20 @@ void StringUtils::ToProperNoun(std::string &input)
 			input[i] = tolower(input[i]);
 	}
 }
+
+void StringUtils::ToUpper(std::string &input)
+{
+	for (size_t i = 0; i < input.size(); i++)
+	{
+		input[i] = toupper(input[i]);
+	}
+}
+
+void StringUtils::ToLower(std::string &input)
+{
+	for (size_t i = 0; i < input.size(); i++)
+	{
+		input[i] = tolower(input[i]);
+	}
+}
+
