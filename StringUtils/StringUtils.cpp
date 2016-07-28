@@ -53,3 +53,15 @@ void StringUtils::ToLower(std::string &input)
 	}
 }
 
+std::string StringUtils::FlattenVector(std::vector<std::string> input)
+{
+	std::string returnString;
+
+	for (size_t i = 0; i < input.size(); i++)
+		returnString += (input[i] + ",");
+
+	if(returnString.size() > 0)
+		returnString.pop_back();
+
+	return returnString;
+}
