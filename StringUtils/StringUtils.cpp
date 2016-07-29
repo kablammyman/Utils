@@ -66,7 +66,7 @@ std::string StringUtils::FlattenVector(std::vector<std::string> input)
 	return returnString;
 }
 
-void TrimWhiteSpace(std::string &input)
+void StringUtils::TrimWhiteSpace(std::string &input)
 {
 	if(input.back() == ' ')
 		input.pop_back();
