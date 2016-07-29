@@ -61,7 +61,16 @@ std::string StringUtils::FlattenVector(std::vector<std::string> input)
 		returnString += (input[i] + ",");
 
 	if(returnString.size() > 0)
-		returnString.pop_back();
+		returnString.pop_back();//c++11,for older c++, use returnString.erase(returnString.size() - 1);
 
 	return returnString;
+}
+
+void TrimWhiteSpace(std::string &input)
+{
+	if(input.back() == ' ')
+		input.pop_back();
+
+	if(input.size() > 0 && input[0] == ' ')
+		input.erase(0, 1);
 }

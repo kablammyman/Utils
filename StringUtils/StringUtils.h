@@ -11,4 +11,5 @@ public:
 	static void ToUpper(std::string &input);
 	static void ToLower(std::string &input);
 	static std::string FlattenVector(std::vector<std::string> input); 
+	static void TrimWhiteSpace(std::string &input);
 };
