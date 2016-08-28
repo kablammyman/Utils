@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HashUtils", "HashUtils\HashUtils.vcxproj", "{20E69F6A-6870-4D17-AF65-ED9AFE177B24}"
 EndProject
@@ -21,6 +21,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CommandLineUtils", "CommandLineUtils\CommandLineUtils.vcxproj", "{6DF72D4C-2773-4003-B3A9-7589BA30217C}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TCPUtils", "TCPUtils\TCPUtils.vcxproj", "{A7BE43AA-AD4D-43AA-BC11-B481AF5B187C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SQLiteUtils", "SQLiteUtils\SQLiteUtils.vcxproj", "{D2A8EBB5-CBEF-43F7-BC74-B13239142997}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -162,6 +164,22 @@ Global
 		{A7BE43AA-AD4D-43AA-BC11-B481AF5B187C}.vis studio 2010 release|x64.Build.0 = Release|x64
 		{A7BE43AA-AD4D-43AA-BC11-B481AF5B187C}.vis studio 2010 release|x86.ActiveCfg = Release|Win32
 		{A7BE43AA-AD4D-43AA-BC11-B481AF5B187C}.vis studio 2010 release|x86.Build.0 = Release|Win32
+		{D2A8EBB5-CBEF-43F7-BC74-B13239142997}.Debug|x64.ActiveCfg = Debug|x64
+		{D2A8EBB5-CBEF-43F7-BC74-B13239142997}.Debug|x64.Build.0 = Debug|x64
+		{D2A8EBB5-CBEF-43F7-BC74-B13239142997}.Debug|x86.ActiveCfg = Debug|Win32
+		{D2A8EBB5-CBEF-43F7-BC74-B13239142997}.Debug|x86.Build.0 = Debug|Win32
+		{D2A8EBB5-CBEF-43F7-BC74-B13239142997}.Release|x64.ActiveCfg = Release|x64
+		{D2A8EBB5-CBEF-43F7-BC74-B13239142997}.Release|x64.Build.0 = Release|x64
+		{D2A8EBB5-CBEF-43F7-BC74-B13239142997}.Release|x86.ActiveCfg = Release|Win32
+		{D2A8EBB5-CBEF-43F7-BC74-B13239142997}.Release|x86.Build.0 = Release|Win32
+		{D2A8EBB5-CBEF-43F7-BC74-B13239142997}.vis studio 2010 debug|x64.ActiveCfg = Release|x64
+		{D2A8EBB5-CBEF-43F7-BC74-B13239142997}.vis studio 2010 debug|x64.Build.0 = Release|x64
+		{D2A8EBB5-CBEF-43F7-BC74-B13239142997}.vis studio 2010 debug|x86.ActiveCfg = Release|Win32
+		{D2A8EBB5-CBEF-43F7-BC74-B13239142997}.vis studio 2010 debug|x86.Build.0 = Release|Win32
+		{D2A8EBB5-CBEF-43F7-BC74-B13239142997}.vis studio 2010 release|x64.ActiveCfg = Release|x64
+		{D2A8EBB5-CBEF-43F7-BC74-B13239142997}.vis studio 2010 release|x64.Build.0 = Release|x64
+		{D2A8EBB5-CBEF-43F7-BC74-B13239142997}.vis studio 2010 release|x86.ActiveCfg = Release|Win32
+		{D2A8EBB5-CBEF-43F7-BC74-B13239142997}.vis studio 2010 release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
