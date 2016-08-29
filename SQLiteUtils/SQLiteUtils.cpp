@@ -313,3 +313,34 @@ vector<vector<string>> SQLiteUtils::queryV2(char* query)
 
 	return results;  
 }
+int SQLiteUtils::GetLatestRowID()
+{
+	string output;
+	//get the id that was just created from the insert
+	executeSQL("SELECT last_insert_rowid()", output);
+	//othe ouput looks like: last_insert_rowid()|6
+
+	size_t found = output.find_last_of("|");
+	string rowID = output.substr(found + 1);
+	
+	return atoi(rowID.c_str());
+}
+
+string SQLiteUtils::GetDataFromID(int id, string table)
+{
+	string output;
+	string querey = "SELECT * FROM " + table;
+	querey += " WHERE ID = ";
+	querey += to_string(id);
+	executeSQL(querey, output);
+	return output;
+}
+
+string SQLiteUtils::GetDataFromSingleLineOutput(string colName)
+{
+	std::size_t found = colName.find_last_of("|");
+	colName = colName.substr(found + 1);
+	if(colName.back() == '\n')
+		colName.pop_back();//remove new line char
+	return colName;
+}

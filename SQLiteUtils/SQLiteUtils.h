@@ -33,5 +33,8 @@ public:
 	std::vector<std::string> getAllTables();
 	bool insertData(std::string query); 
 	void setTableName(std::string name);
+	int GetLatestRowID();
+	std::string GetDataFromID(int id, std::string table);
+	std::string GetDataFromSingleLineOutput(std::string colName);
 };
 #endif //SQLiteUtils_H
