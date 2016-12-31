@@ -29,8 +29,8 @@ float CFGUtils::GetCfgFloatValue(std::string optionName)
 std::string CFGUtils::GetCfgStringValue(std::string optionName)
 {
 	std::string returnVal = cfgr.getOptionStringValue(optionName);
-	if(returnVal == "")
-		return "could not find option: " +optionName;
+	//if(returnVal == "")
+	//	return "could not find option: " +optionName;
 	return returnVal;
 }
 std::vector<std::string> CFGUtils::GetCfgListValue(std::string optionName)
