@@ -18,9 +18,11 @@ public:
 
     static  vector<string> GetAllFolderNamesInDir(string path);
 
-	static  int GetNumFilesInDir(string path);
+	static string GetFileExt(string fullPath);
 
-    static  vector<string> GetAllFileNamesInDir(string path);
+	static  int GetNumFilesInDir(string path, string ext="");
+
+    static  vector<string> GetAllFileNamesInDir(string path,string ext ="");
 
 	static  bool Delete_File(string file, bool permanetDelete = false);
 

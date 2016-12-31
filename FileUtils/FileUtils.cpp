@@ -51,6 +51,12 @@ bool FileUtils::Move_File(string oldName, string newName)
 		return false;
 }
 //--------------------------------------------------------------------------------------------------
+string FileUtils::GetFileExt(string fullPath)
+{
+	std::size_t found = fullPath.find_last_of(".");
+	return fullPath.substr(found + 1);
+}
+//--------------------------------------------------------------------------------------------------
 int FileUtils::GetNumFoldersinDir(string path)//needs to have *.fileExt to work
 {
 	if (DoesPathExist(path) == false)
@@ -119,7 +125,7 @@ vector<string> FileUtils::GetAllFolderNamesInDir(string path)//needs to have *.f
 		return folderList;
 }
 //--------------------------------------------------------------------------------------------------
-int FileUtils::GetNumFilesInDir(string path)//needs to have *.fileExt to work
+int FileUtils::GetNumFilesInDir(string path, string ext)//needs to have *.fileExt to work
 {
 	if (DoesPathExist(path) == false)
 		return-1;
@@ -140,16 +146,21 @@ int FileUtils::GetNumFilesInDir(string path)//needs to have *.fileExt to work
 				continue;
 
 			if (!(FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
-				fileNum++;
-
+			{
+				if (ext == "")
+					fileNum++;
+				else if (GetFileExt(FindFileData.cFileName) == ext)
+					fileNum++;
+			}
 
 		} while (FindNextFile(hFind, &FindFileData));
 		FindClose(hFind);
 
 		return fileNum;
 }
+
 //--------------------------------------------------------------------------------------------------
-vector<string> FileUtils::GetAllFileNamesInDir(string path)//needs to have *.fileExt to work
+vector<string> FileUtils::GetAllFileNamesInDir(string path,string ext)//needs to have *.fileExt to work
 {
 	vector<string> fileList;
 	if (DoesPathExist(path) == false)
@@ -177,7 +188,12 @@ vector<string> FileUtils::GetAllFileNamesInDir(string path)//needs to have *.fil
 				//strcat(sTmp, FindFileData.cFileName);//cur dir + new folder name = new dir to explre
 				sTmp = curDir;
 				sTmp += FindFileData.cFileName;
-				fileList.push_back(sTmp);
+
+				if(ext == "")
+					fileList.push_back(sTmp);
+				
+				else if(GetFileExt(FindFileData.cFileName) == ext)
+					fileList.push_back(sTmp);
 			}
 
 		} while (FindNextFile(hFind, &FindFileData));
