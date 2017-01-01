@@ -57,6 +57,13 @@ string FileUtils::GetFileExt(string fullPath)
 	return fullPath.substr(found + 1);
 }
 //--------------------------------------------------------------------------------------------------
+string FileUtils::GetFileNameNoExt(string fullPath)
+{
+	string name = GetFileNameFromPathString(fullPath);
+	std::size_t found = name.find_last_of(".");
+	return name.substr(0,found);
+}
+//--------------------------------------------------------------------------------------------------
 int FileUtils::GetNumFoldersinDir(string path)//needs to have *.fileExt to work
 {
 	if (DoesPathExist(path) == false)

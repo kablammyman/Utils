@@ -20,6 +20,8 @@ public:
 
 	static string GetFileExt(string fullPath);
 
+	static string GetFileNameNoExt(string fullPath);
+
 	static  int GetNumFilesInDir(string path, string ext="");
 
     static  vector<string> GetAllFileNamesInDir(string path,string ext ="",bool includePath = false);
