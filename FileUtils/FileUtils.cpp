@@ -160,7 +160,7 @@ int FileUtils::GetNumFilesInDir(string path, string ext)//needs to have *.fileEx
 }
 
 //--------------------------------------------------------------------------------------------------
-vector<string> FileUtils::GetAllFileNamesInDir(string path,string ext)//needs to have *.fileExt to work
+vector<string> FileUtils::GetAllFileNamesInDir(string path,string ext, bool includePath)//needs to have *.fileExt to work
 {
 	vector<string> fileList;
 	if (DoesPathExist(path) == false)
@@ -170,7 +170,7 @@ vector<string> FileUtils::GetAllFileNamesInDir(string path,string ext)//needs to
 	WIN32_FIND_DATA FindFileData;
 	string curDir = PrepPathForTraversal(path);
 	//char sTmp[MAX_PATH]="\0";
-	string sTmp;
+	string sTmp = "";
 
 	hFind = FindFirstFile(curDir.c_str(), &FindFileData);
 
@@ -186,7 +186,10 @@ vector<string> FileUtils::GetAllFileNamesInDir(string path,string ext)//needs to
 			{
 				//strcpy(sTmp, curDir.c_str());
 				//strcat(sTmp, FindFileData.cFileName);//cur dir + new folder name = new dir to explre
-				sTmp = curDir;
+				if(includePath)
+					sTmp = curDir;
+				else
+					sTmp.clear();
 				sTmp += FindFileData.cFileName;
 
 				if(ext == "")

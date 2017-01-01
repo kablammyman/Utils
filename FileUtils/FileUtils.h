@@ -22,7 +22,7 @@ public:
 
 	static  int GetNumFilesInDir(string path, string ext="");
 
-    static  vector<string> GetAllFileNamesInDir(string path,string ext ="");
+    static  vector<string> GetAllFileNamesInDir(string path,string ext ="",bool includePath = false);
 
 	static  bool Delete_File(string file, bool permanetDelete = false);
 
