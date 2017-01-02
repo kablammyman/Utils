@@ -106,11 +106,9 @@ std::string StringUtils::GetDataBetweenSubStrings(std::string line, std::string 
 	std::string returnString = "";
 
 	//i like loops better thans substring for this...its easier to understand
-	for (size_t i = dataStart + 1; i < line.size(); i++)
-	{
-		if (line[i] != dataEnd)
-			returnString += line[i];
-		else break;
+	for (size_t i = dataStart; i < dataEnd; i++)
+	{		
+		returnString += line[i];
 	}
 	return returnString;
 }
