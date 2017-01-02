@@ -74,3 +74,43 @@ void StringUtils::TrimWhiteSpace(std::string &input)
 	if(input.size() > 0 && input[0] == ' ')
 		input.erase(0, 1);
 }
+
+std::string StringUtils::GetDataBetweenChars(std::string line, char char1, char char2, size_t start)
+{
+	size_t dataStart = line.find(char1,start);
+	if(dataStart == std::string::npos)
+		return "";
+	std::string returnString = "";
+
+	//i like loops better thans substring for this...its easier to understand
+	for (size_t i = dataStart+1; i < line.size(); i++)
+	{
+		if(line[i] != char2)
+			returnString+=line[i];
+		else break;
+	}
+	return returnString;
+}
+
+std::string StringUtils::GetDataBetweenSubStrings(std::string line, std::string str1, std::string str2, size_t start)
+{
+	size_t dataStart = line.find(str1, start);
+	if (dataStart == std::string::npos)
+		return "";
+	dataStart += str1.size();
+
+	size_t dataEnd = line.find(str2, dataStart);
+	if (dataStart == std::string::npos)
+		dataEnd = line.size();
+
+	std::string returnString = "";
+
+	//i like loops better thans substring for this...its easier to understand
+	for (size_t i = dataStart + 1; i < line.size(); i++)
+	{
+		if (line[i] != dataEnd)
+			returnString += line[i];
+		else break;
+	}
+	return returnString;
+}

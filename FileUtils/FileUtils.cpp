@@ -60,6 +60,8 @@ string FileUtils::GetFileExt(string fullPath)
 string FileUtils::GetFileNameNoExt(string fullPath)
 {
 	string name = GetFileNameFromPathString(fullPath);
+	if (name == "")//if we passed in a file name without path
+		name = fullPath;
 	std::size_t found = name.find_last_of(".");
 	return name.substr(0,found);
 }
