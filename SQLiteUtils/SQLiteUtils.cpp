@@ -225,7 +225,7 @@ vector<string> SQLiteUtils::getAllTables()
 //--------------------------------------------------------------------------------------------------
 vector<string> SQLiteUtils::viewData() 
 {
-	string getTables = "SELECT value FROM galleries;";
+	string getTables = "SELECT value FROM " + curTableName;
 	//SELECT name FROM my_db.sqlite_master WHERE type='table';
 	//executeSQL(getTables);
 	//so, it seems every colom in the tbale is returned as a vector
@@ -329,6 +329,8 @@ int SQLiteUtils::GetLatestRowID()
 string SQLiteUtils::GetDataFromID(int id, string table)
 {
 	string output;
+	if(table == "")
+		table = curTableName;
 	string querey = "SELECT * FROM " + table;
 	querey += " WHERE ID = ";
 	querey += to_string(id);
@@ -343,4 +345,246 @@ string SQLiteUtils::GetDataFromSingleLineOutput(string colName)
 	if(colName.back() == '\n')
 		colName.pop_back();//remove new line char
 	return colName;
+}
+
+bool SQLiteUtils::doDBQuerey(string data, string &output)
+{
+	string querey = ("SELECT " + data + " FROM " + curTableName + ";");
+	return executeSQL(querey, output);
+}
+
+bool SQLiteUtils::doDBQuerey(string data, dbDataPair fromWhere, string &output)
+{
+	string querey = ("SELECT " + data + " FROM " + curTableName + " WHERE " + fromWhere.first + " = \"" + fromWhere.second + "\";");
+	return executeSQL(querey, output);
+}
+
+bool SQLiteUtils::doDBQuerey( vector<string> data, string &output)
+{
+	string querey = "SELECT ";
+
+	for (size_t i = 0; i < data.size(); i++)
+	{
+		querey += data[i];
+		if (i < data.size() - 1)
+			querey += ",";
+	}
+	querey += (" FROM " + curTableName + ";");
+	return executeSQL(querey, output);
+}
+//used for quereies like: SELECT path,CategoryID,WebsiteID FROM Gallery WHERE CategoryID = "3" AND WebsiteID = "16";
+bool SQLiteUtils::doDBQuerey( vector<dbDataPair> data, string &output)
+{
+	string querey = "SELECT ";
+	string whereString = " WHERE ";
+	string fromString = (" FROM " + curTableName);
+
+	//count how many specific items to querey
+	//ex select * from table where name ="bla" and age = "bla"; \\2 whereArgs here
+	int numWhereArgs = 1;
+
+	for (size_t i = 0; i < data.size(); i++)
+	{
+		if (i > 0)
+			querey += ",";
+
+
+		querey += data[i].first;
+
+		if (!data[i].second.empty())
+		{
+			if (numWhereArgs > 1)
+				whereString += " AND ";
+			whereString += (data[i].first + " = \"" + data[i].second + "\"");
+			numWhereArgs++;
+		}
+
+
+	}
+	whereString += ";";
+
+	return executeSQL(querey + fromString + whereString, output);
+}
+
+//used for quereies like: SELECT path FROM Gallery WHERE CategoryID = "3" AND WebsiteID = "16";
+bool SQLiteUtils::doDBQuerey(string selectData, vector<dbDataPair> whereData, string &output)
+{
+	string querey = "SELECT ";
+	string whereString = " WHERE ";
+	string fromString = (" FROM " + curTableName);
+
+
+	querey += selectData;
+
+	for (size_t i = 0; i < whereData.size(); i++)
+	{
+		if (i > 0)
+			whereString += " AND ";
+		whereString += (whereData[i].first + " = \"" + whereData[i].second + "\"");
+	}
+	whereString += ";";
+
+	return executeSQL(querey + fromString + whereString, output);
+}
+
+//used for quereies like: SELECT ID,path FROM Gallery WHERE CategoryID = "3" AND WebsiteID = "16";
+bool SQLiteUtils::doDBQuerey(vector<string> selectData, vector<dbDataPair> whereData, string &output)
+{
+	string querey = "SELECT ";
+	string whereString = " WHERE ";
+	string fromString = (" FROM " + curTableName);
+
+	//count how many specific items to querey
+	//ex select * from table where name ="bla" and age = "bla"; \\2 whereArgs here
+
+	for (size_t i = 0; i < selectData.size(); i++)
+	{
+		if (i > 0)
+			querey += ",";
+
+
+		querey += selectData[i];
+
+	}
+
+
+	for (size_t i = 0; i < whereData.size(); i++)
+	{
+		if (i > 0)
+			whereString += " AND ";
+		whereString += (whereData[i].first + " = \"" + whereData[i].second + "\"");
+	}
+	whereString += ";";
+
+	return executeSQL(querey + fromString + whereString, output);
+}
+
+//returns true when successful
+bool SQLiteUtils::insertNewDataEntry(dbDataPair data, string &output)
+{
+	string querey = ("INSERT INTO " + curTableName + " (" + data.first + ")");
+	string values = "VALUES ( \"" + data.second + "\");";
+
+	return executeSQL(querey + values, output);
+
+}
+
+//returns true when successful
+bool SQLiteUtils::insertNewDataEntry(vector<dbDataPair> data, string &output)
+{
+	string querey = ("INSERT INTO " + curTableName + " (");
+	string values = "VALUES ( ";
+	for (size_t i = 0; i < data.size(); i++)
+	{
+		querey += data[i].first;
+		values += "\"" + data[i].second + "\"";
+
+		if (i < data.size() - 1)
+		{
+			querey += ",";
+			values += ",";
+		}
+	}
+	querey += ")";
+	values += ");";
+
+	return executeSQL(querey + values, output);
+
+}
+
+string SQLiteUtils::GetUpdateQuereyString(vector<dbDataPair> data, dbDataPair WhereClause)
+
+{
+	string querey = ("UPDATE " + curTableName + " SET ");
+	string whereClause(" WHERE " + WhereClause.first + "= \"" + WhereClause.second + "\"");
+
+	for (size_t i = 0; i < data.size(); i++)
+	{
+		querey += (data[i].first + "= \"" + data[i].second + "\"");
+
+		if (i < data.size() - 1)
+		{
+			querey += ",";
+		}
+	}
+
+	
+	return querey + whereClause;
+
+}
+
+bool SQLiteUtils::UpdateStringEntry(vector<dbDataPair> data, dbDataPair WhereClause, string &output)
+{
+	string querey = GetUpdateQuereyString( data,  WhereClause);
+	return executeSQL(querey, output);
+}
+
+bool SQLiteUtils::UpdateIntEntry(vector<dbDataPair> data, dbDataPair WhereClause, string &output)
+{
+	//remove quotes
+	string querey = GetUpdateQuereyString(data, WhereClause);
+
+	for (size_t i = 0; i < querey.size(); i++)
+		if (querey[i] == '\"')
+			querey[i] = ' ';
+	
+	return executeSQL(querey, output);
+}
+string SQLiteUtils::dataGrabber(string &word, size_t &curPos)
+{
+	string curWord;
+	curPos = word.find('|', curPos);
+	curPos++;//move past the pipe and start to collect next word
+	while (word[curPos] != '\n')
+		curWord += word[curPos++];
+
+	return curWord;
+}
+
+void SQLiteUtils::getAllValuesFromCol(string &inputData, string colName, vector<string> &returnData)
+{
+	bool done = false;
+	string curWord;
+	size_t c = 0;
+	while (!done)
+	{
+		c = inputData.find(colName, c);
+		if (c != string::npos)
+			returnData.push_back(dataGrabber(inputData, c));
+
+		else
+			done = true;
+	}
+}
+
+void SQLiteUtils::getDataPairFromOutput(string &inputData, string colName1, string colName2, vector<dbDataPair> &returnData)
+{
+	bool done = false;
+	string firstWord;
+	size_t c = 0;
+	while (!done)
+	{
+		c = inputData.find(colName1, c);
+		if (c != string::npos)
+			firstWord = dataGrabber(inputData, c);
+
+		c = inputData.find(colName2, c);
+		if (c != string::npos)
+			returnData.push_back(make_pair(firstWord, dataGrabber(inputData, c)));
+		else
+			done = true;
+
+	}
+}
+
+int SQLiteUtils::GetLatestID()
+{
+	string output;
+	//get the id that was just created from the insert
+	executeSQL("SELECT last_insert_rowid()", output);
+	//othe ouput looks like: last_insert_rowid()|6
+
+	size_t found = output.find_last_of("|");
+	string rowID = output.substr(found + 1);
+	return atoi(rowID.c_str());
 }
