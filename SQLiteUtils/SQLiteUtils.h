@@ -55,6 +55,7 @@ public:
 	void getDataPairFromOutput(std::string &inputData, std::string colName1, std::string colName2, std::vector<dbDataPair> &returnData);
 	void getAllValuesFromCol(std::string &inputData, std::string colName, std::vector<std::string> &returnData);
 	int GetLatestID();
+	void SplitDataIntoResults(std::vector<std::string> &returnData, std::string allData,std::string firstField, bool removeNewline = true);
 private:
 	std::string GetUpdateQuereyString(std::vector<dbDataPair> data, dbDataPair WhereClause);
 };

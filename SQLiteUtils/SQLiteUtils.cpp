@@ -342,6 +342,10 @@ string SQLiteUtils::GetDataFromSingleLineOutput(string colName)
 {
 	std::size_t found = colName.find_last_of("|");
 	colName = colName.substr(found + 1);
+	
+	if(colName.empty())
+		return "";
+
 	if(colName.back() == '\n')
 		colName.pop_back();//remove new line char
 	return colName;
@@ -521,7 +525,7 @@ bool SQLiteUtils::UpdateStringEntry(vector<dbDataPair> data, dbDataPair WhereCla
 
 bool SQLiteUtils::UpdateIntEntry(vector<dbDataPair> data, dbDataPair WhereClause, string &output)
 {
-	//remove quotes
+	//remove quotes, and I dont like replace method
 	string querey = GetUpdateQuereyString(data, WhereClause);
 
 	for (size_t i = 0; i < querey.size(); i++)
@@ -587,4 +591,37 @@ int SQLiteUtils::GetLatestID()
 	size_t found = output.find_last_of("|");
 	string rowID = output.substr(found + 1);
 	return atoi(rowID.c_str());
+}
+//when you have a giant blob of data that was retunred, break it up into individual results
+/*
+ID|1
+romName|005
+ID|2
+romName|10yard
+ID|3
+romName|3wondersh
+->data[0] = ID|1 romName|005
+->data[1] = ID|2 romName|10yard
+->data[2] = ID|3 romName|3wondersh
+*/
+void SQLiteUtils::SplitDataIntoResults(std::vector<std::string> &returnData, string allData, string firstField,bool removeNewline)
+{
+	size_t i = 0; 
+	firstField+='|';
+	while(i < allData.size())
+	{
+		size_t start = allData.find(firstField, i);
+		size_t end = allData.find(firstField, start+1);
+		end--;//dont include next data 
+		string curData = allData.substr(start,(end-start));
+		if (removeNewline)
+		{
+			//dont like string repalce, so i do this
+			for (size_t i = 0; i < curData.size(); i++)
+				if (curData[i] == '\n')
+					curData[i] = ' ';
+		}
+		returnData.push_back(curData);
+		i=end;
+	}
 }

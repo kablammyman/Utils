@@ -65,13 +65,16 @@ std::string StringUtils::FlattenVector(std::vector<std::string> input)
 
 	return returnString;
 }
-
+//this will only trim a single white space char from each side...should be more robust...
 void StringUtils::TrimWhiteSpace(std::string &input)
 {
+	if(input.size() == 0)
+		return;
+
 	if(input.back() == ' ')
 		input.pop_back();
 
-	if(input.size() > 0 && input[0] == ' ')
+	if(input[0] == ' ')
 		input.erase(0, 1);
 }
 
