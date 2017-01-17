@@ -24,6 +24,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TCPUtils", "TCPUtils\TCPUti
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SQLiteUtils", "SQLiteUtils\SQLiteUtils.vcxproj", "{D2A8EBB5-CBEF-43F7-BC74-B13239142997}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameUtils", "GameUtils\GameUtils.vcxproj", "{FBB8F37B-C0CF-4658-B90E-4350AE71B9BD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -180,6 +182,22 @@ Global
 		{D2A8EBB5-CBEF-43F7-BC74-B13239142997}.vis studio 2010 release|x64.Build.0 = Release|x64
 		{D2A8EBB5-CBEF-43F7-BC74-B13239142997}.vis studio 2010 release|x86.ActiveCfg = Release|Win32
 		{D2A8EBB5-CBEF-43F7-BC74-B13239142997}.vis studio 2010 release|x86.Build.0 = Release|Win32
+		{FBB8F37B-C0CF-4658-B90E-4350AE71B9BD}.Debug|x64.ActiveCfg = Debug|x64
+		{FBB8F37B-C0CF-4658-B90E-4350AE71B9BD}.Debug|x64.Build.0 = Debug|x64
+		{FBB8F37B-C0CF-4658-B90E-4350AE71B9BD}.Debug|x86.ActiveCfg = Debug|Win32
+		{FBB8F37B-C0CF-4658-B90E-4350AE71B9BD}.Debug|x86.Build.0 = Debug|Win32
+		{FBB8F37B-C0CF-4658-B90E-4350AE71B9BD}.Release|x64.ActiveCfg = Release|x64
+		{FBB8F37B-C0CF-4658-B90E-4350AE71B9BD}.Release|x64.Build.0 = Release|x64
+		{FBB8F37B-C0CF-4658-B90E-4350AE71B9BD}.Release|x86.ActiveCfg = Release|Win32
+		{FBB8F37B-C0CF-4658-B90E-4350AE71B9BD}.Release|x86.Build.0 = Release|Win32
+		{FBB8F37B-C0CF-4658-B90E-4350AE71B9BD}.vis studio 2010 debug|x64.ActiveCfg = Release|x64
+		{FBB8F37B-C0CF-4658-B90E-4350AE71B9BD}.vis studio 2010 debug|x64.Build.0 = Release|x64
+		{FBB8F37B-C0CF-4658-B90E-4350AE71B9BD}.vis studio 2010 debug|x86.ActiveCfg = Release|Win32
+		{FBB8F37B-C0CF-4658-B90E-4350AE71B9BD}.vis studio 2010 debug|x86.Build.0 = Release|Win32
+		{FBB8F37B-C0CF-4658-B90E-4350AE71B9BD}.vis studio 2010 release|x64.ActiveCfg = Release|x64
+		{FBB8F37B-C0CF-4658-B90E-4350AE71B9BD}.vis studio 2010 release|x64.Build.0 = Release|x64
+		{FBB8F37B-C0CF-4658-B90E-4350AE71B9BD}.vis studio 2010 release|x86.ActiveCfg = Release|Win32
+		{FBB8F37B-C0CF-4658-B90E-4350AE71B9BD}.vis studio 2010 release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
