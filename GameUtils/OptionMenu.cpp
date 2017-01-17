@@ -1,6 +1,21 @@
 #include "OptionMenu.h"
 
 
+void OptionsMenu::MenuItem::SetBoundries()
+{
+	if (value <= min)
+		value = min;
+	else if (value >= max)
+		value = max;
+}
+void OptionsMenu::MenuItem::SetToggleBoundries()
+{
+	if (value <= 0)
+		value = 0;
+	else value = 1;
+}
+
+
 void OptionsMenu::GetKeyboardInput(int  newkey)
 {
     char ASCII    = newkey & 0xff;
@@ -56,7 +71,31 @@ void OptionsMenu::GetKeyboardInput(int  newkey)
 
 void OptionsMenu::AddMenuOption(string add_menu_option, int value)
 {
-	menuItems.push_back(make_pair(add_menu_option,value));
+	MenuItem newItem;
+	newItem.text = add_menu_option;
+	newItem.value = value;
+	newItem.isToggle = false;
+	menuItems.push_back(newItem);
+}
+
+
+void OptionsMenu::AddMenuOption(string add_menu_option,int value, int min, int max)
+{
+	MenuItem newItem;
+	newItem.text = add_menu_option;
+	newItem.value = value;
+	newItem.isToggle = false;
+	newItem.min = min;
+	newItem.max = max;
+	menuItems.push_back(newItem);
+}
+void OptionsMenu::AddMenuToggleOption(string add_menu_option, bool value)
+{
+	MenuItem newItem;
+	newItem.text = add_menu_option;
+	newItem.value = (int)value;
+	newItem.isToggle = true;
+	menuItems.push_back(newItem);
 }
 
 
@@ -108,7 +147,7 @@ void OptionsMenu::IncrementValue(void)
 {
 	if (!wait_flag)
 	{
-		menuItems[menuItemIndex].second++;
+		menuItems[menuItemIndex].value++;
 		wait_flag = true;
 	}
 }
@@ -116,27 +155,11 @@ void OptionsMenu::DecrementValue(void)
 {
 	if (!wait_flag)
 	{
-		menuItems[menuItemIndex].second--;
+		menuItems[menuItemIndex].value--;
 		wait_flag = true;
 	}
 }
-int OptionsMenu::SetBoundries(int index, int low_num, int hi_num)
-{
-	if (menuItems[index].second <= low_num)
-		menuItems[index].second = low_num;
-	else if (menuItems[index].second >= hi_num)
-		menuItems[index].second = hi_num;
 
-	return menuItems[index].second;
-}
-int OptionsMenu::SetToggleBoundries(int index)
-{
-	if (menuItems[index].second <= 0)
-		menuItems[index].second = 0;
-	else menuItems[index].second = 1;
-
-	return menuItems[index].second;
-}
 
 
 void OptionsMenu::Update()
@@ -164,18 +187,69 @@ void OptionsMenu::Update()
 		IncrementValue();
 	}
 	
-	/*MainApp::Instance()->viewPathInfo = setToggleBoundries(0);
-	MainApp::Instance()->viewClock = setToggleBoundries(1); 
-	MainApp::Instance()->viewWorkoutTimer = setToggleBoundries(2);
-	MainApp::Instance()->useImageMemory = setToggleBoundries(3);
-	MainApp::Instance()->dirSelectionForDisplay = set_boundries(4, 1, 3);
-	MainApp::Instance()->imageDisplayTimeLength = set_boundries(5, 3, 99);
-	MainApp::Instance()->imageMemAmt = set_boundries(6, 0, 100);*/
+	for (size_t i = 0; i < menuItems.size(); i++)
+	{
+		if(menuItems[i].isToggle)
+			menuItems[i].SetToggleBoundries();
+		else
+			menuItems[i].SetBoundries();
+	}
+	
 }
 
+ScreenText OptionsMenu::GetMenuItemStringAt(size_t index)
+{
+	ScreenText returnText;
+	string out = menuItems[index].text;
+
+	if (menuItems[index].value >= 0)
+	{
+		out += "	";
+		if (menuItems[index].isToggle)
+		{
+			if(menuItems[index].value == 0)
+				out += "OFF";
+			else
+				out += "ON";
+		}
+		else
+			out += to_string(menuItems[index].value);
+	}
+	returnText.text = out.c_str(); 
+	returnText.x = x; 
+	returnText.y = y + level_y * index;
+
+	if (index == menuItemIndex)
+		returnText.color = font1_color;
+	else
+		returnText.color = font2_color;
+
+	
+	//	textprintf(bmp, font, x + (font_size + (font_size*menuItems[i].first.size())), y + level_y * i, font1_color, "%d", menuItems[i].second);
+
+	return returnText;
+}
+vector<ScreenText> OptionsMenu::GetAllMenuItemStrings()
+{
+	vector<ScreenText> ret;
+	for (size_t i = 0; i < menuItems.size(); i++)
+		ret.push_back(GetMenuItemStringAt(i));
+
+	return ret;
+}
 void OptionsMenu::Draw(unsigned char *dest)
 {
 	//show_menu(NULL, dest, 0);
+	/*for (size_t i = 0; i < options->GetNumMenuItems(); i++)
+	{
+		if (i == menuItemIndex)
+			textout(bmp, font, menuItems[i].text.c_str(), x, y + level_y * i, font1_color);
+		else
+			textout(bmp, font, menuItems[i].text.c_str(), x, y + level_y * i, font2_color);
+		if (menuItems[i].second >= 0)
+			textprintf(bmp, font, x + (font_size + (font_size*menuItems[i].first.size())), y + level_y * i, font1_color, "%d", menuItems[i].second);
+	}
+	*/
 }
 
 /*int OptionsMenu::show_menu(DATAFILE *the_datafile, PIXMAP *bmp, int da_font)

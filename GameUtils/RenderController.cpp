@@ -78,13 +78,13 @@ void RenderController::ResizeScreenBuffer(int screenW, int screenH)
 	DrawAllRenderObjectsToBuffer();
 }
 
-void RenderController::DrawText(int x, int y, int color, std::string text)
+void RenderController::DrawText(int x, int y, RGB color, std::string text)
 {
 	ScreenText temp;
 	temp.x = x;
 	temp.y = y;
 	temp.color = color;
-	temp.text = text;
+	temp.text = text.c_str();
 	textList.push_back(temp);
 }
 

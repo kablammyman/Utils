@@ -14,6 +14,15 @@ using namespace std;
 //since this menu is only for the option screen, ill leave the class in here
 //class menu_class : public RenderObject {
 class OptionsMenu : public RenderObject {
+	struct MenuItem
+	{
+		string text;
+		int value;
+		bool isToggle;
+		int min,max;
+		void SetBoundries();
+		void SetToggleBoundries();
+	};
 
 	int x, y;
 	int text_mode_type;
@@ -27,8 +36,7 @@ class OptionsMenu : public RenderObject {
 	bool wait_flag;
 	short int delay;
 	
-	typedef pair<string, int> menuItem;
-	vector<menuItem> menuItems;
+	vector<MenuItem> menuItems;
 
 	int menuItemIndex;
 	
@@ -53,18 +61,29 @@ public:
 		font_size = 10;
 		text_mode_type = 0;//its an allegro4 thing
 	};
+	void SetInput(Input *input) { menuInput = input; }
+
 	void SetInputDelay(int time);
+	
 	void PrevSelection(void);
 	void NextSelection(void);
+	
 	void IncrementValue(void);
 	void DecrementValue(void);
-	int SetToggleBoundries(int index);
-	int SetBoundries(int index, int low_num, int hi_num);
+	
 	void AddMenuOption(string add_menu_option, int value = -1);
+	void AddMenuOption(string add_menu_option,int value, int min, int max);
+	void AddMenuToggleOption(string add_menu_option, bool value = true);
+
 	void SetMenuPositions(int _x, int _y, int _level_y, RGB text_color1, RGB text_color2);
 	void GetKeyboardInput(int  newkey);//newkey = next key in keyboard buffer
 
-	//int ShowMenu(DATAFILE *the_datafile, PIXMAP *bmp, int da_font);
+	size_t GetNumMenuItems() { return menuItems.size(); }
+	string GetMenuItemStringAt(int index) { return menuItems[index].text; }
+	int GetMenuItemValueAt(int index) { return menuItems[index].value; }
+	
+	ScreenText GetMenuItemStringAt(size_t index);
+	vector<ScreenText> OptionsMenu::GetAllMenuItemStrings();
 
 	virtual void Update();
 	virtual void Draw(unsigned char *dest);

@@ -52,3 +52,11 @@ struct PIXMAP
 	}
 };
 
+struct ScreenText
+{
+	int x, y; 
+	RGB color;
+	int size;
+	const char * text;
+};
+

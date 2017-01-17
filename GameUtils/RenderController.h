@@ -5,17 +5,11 @@
 #include <vector>
 
 #include "RenderObject.h"
-
+#include "GraphicsPrimitives.h"
 
 
 class RenderController
 {
-	struct ScreenText
-	{
-		int x, y, color;
-		std::string text;
-	};
-
 	PIXMAP*screenBuffer;
 	int bufferWidth;
 	int bufferHeight;
@@ -33,7 +27,7 @@ public:
 	RenderObject * GetRenderObject(size_t index);
 	void UpdateAllRenderObjects();
 	void ResizeScreenBuffer(int screenW, int screenH);
-	void DrawText(int x, int y, int color, std::string text);
+	void DrawText(int x, int y, RGB color, std::string text);
 };
 
 #endif //RENDERER_H
