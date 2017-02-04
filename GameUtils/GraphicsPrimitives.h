@@ -58,5 +58,19 @@ struct ScreenText
 	RGB color;
 	int size;
 	const char * text;
+
+	/*void SetText(const char * t, size_t size)
+	{
+		text = new char[size+1];
+		for(size_t i = 0; i < size; i++)
+			text[i] = t[i];
+		text[size] = '\0';
+	}
+
+	~ScreenText()
+	{
+		if(text)
+			delete[] text;
+	}*/
 };
 

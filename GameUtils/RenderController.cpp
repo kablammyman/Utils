@@ -84,7 +84,7 @@ void RenderController::DrawText(int x, int y, RGB color, std::string text)
 	temp.x = x;
 	temp.y = y;
 	temp.color = color;
-	temp.text = text.c_str();
+	temp.text = text.c_str();//SetText(text.c_str(),text.size());
 	textList.push_back(temp);
 }
 

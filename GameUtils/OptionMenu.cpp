@@ -15,6 +15,23 @@ void OptionsMenu::MenuItem::SetToggleBoundries()
 	else value = 1;
 }
 
+string OptionsMenu::MenuItem::GetItemValueString()
+{
+
+	if (value >= 0)
+	{
+		if (isToggle)
+		{
+			if (value == 0)
+				return "OFF";
+			else
+				return "ON";
+		}
+		else
+			return to_string(value);
+	}
+	return "";
+}
 
 void OptionsMenu::GetKeyboardInput(int  newkey)
 {
@@ -68,13 +85,20 @@ void OptionsMenu::GetKeyboardInput(int  newkey)
         break;
     }
 }
-
+void OptionsMenu::SetCurMenuOptionPos(MenuItem &newItem)
+{
+	newItem.option.x = x;
+	newItem.option.y = y + level_y * menuItems.size();
+}
 void OptionsMenu::AddMenuOption(string add_menu_option, int value)
 {
 	MenuItem newItem;
 	newItem.text = add_menu_option;
 	newItem.value = value;
 	newItem.isToggle = false;
+	
+	SetCurMenuOptionPos(newItem);
+
 	menuItems.push_back(newItem);
 }
 
@@ -87,7 +111,18 @@ void OptionsMenu::AddMenuOption(string add_menu_option,int value, int min, int m
 	newItem.isToggle = false;
 	newItem.min = min;
 	newItem.max = max;
+	
+	SetCurMenuOptionPos(newItem);
+
 	menuItems.push_back(newItem);
+}
+void OptionsMenu::ResetMenuPositions()
+{
+	for (size_t i = 0; i < menuItems.size(); i++)
+	{
+		menuItems[i].option.x = x;
+		menuItems[i].option.y = y + level_y * i;
+	}
 }
 void OptionsMenu::AddMenuToggleOption(string add_menu_option, bool value)
 {
@@ -95,29 +130,27 @@ void OptionsMenu::AddMenuToggleOption(string add_menu_option, bool value)
 	newItem.text = add_menu_option;
 	newItem.value = (int)value;
 	newItem.isToggle = true;
+
+	SetCurMenuOptionPos(newItem);
+
 	menuItems.push_back(newItem);
 }
 
 
-void OptionsMenu::SetMenuPositions(int _x, int _y, int _level_y, RGB text_color1, RGB text_color2)
+void OptionsMenu::SetMenuPositions(int _x, int _y, int _level_y, int fontSize, RGB text_color1, RGB text_color2)
 {
 	x = _x;
 	y = _y;
 	level_y = _level_y;
+	if(level_y < fontSize)
+		level_y += ( fontSize + 5);
 	font1_color = text_color1;
 	font2_color = text_color2;
 }
 
 void OptionsMenu::SetInputDelay(int time)
 {
-	if (wait_flag == true)
-		delay--;
-
-	if (delay <= 0)
-	{
-		wait_flag = false;
-		delay = time;
-	}
+	delayTimer = time;
 }
 
 void OptionsMenu::PrevSelection(void)
@@ -164,8 +197,16 @@ void OptionsMenu::DecrementValue(void)
 
 void OptionsMenu::Update()
 {
-	SetInputDelay(5);
 	
+	if (wait_flag == true)
+		delay--;
+
+	if (delay <= 0)
+	{
+		wait_flag = false;
+		delay = delayTimer;
+	}
+
 	//i need to use the key proxy...i gotta improve it first tho
 	if (menuInput->CheckJoystickFlag(Input::JOYSTICK_DIR::UP))
 	{
@@ -197,46 +238,22 @@ void OptionsMenu::Update()
 	
 }
 
-ScreenText OptionsMenu::GetMenuItemStringAt(size_t index)
+
+RGB OptionsMenu::GetMenuItemColorAt(size_t menuPos)
 {
-	ScreenText returnText;
-	string out = menuItems[index].text;
-
-	if (menuItems[index].value >= 0)
-	{
-		out += "	";
-		if (menuItems[index].isToggle)
-		{
-			if(menuItems[index].value == 0)
-				out += "OFF";
-			else
-				out += "ON";
-		}
-		else
-			out += to_string(menuItems[index].value);
-	}
-	returnText.text = out.c_str(); 
-	returnText.x = x; 
-	returnText.y = y + level_y * index;
-
-	if (index == menuItemIndex)
-		returnText.color = font1_color;
+	if (menuPos == menuItemIndex)
+		menuItems[menuPos].option.color = font1_color;
 	else
-		returnText.color = font2_color;
+		menuItems[menuPos].option.color = font2_color;
 
-	
-	//	textprintf(bmp, font, x + (font_size + (font_size*menuItems[i].first.size())), y + level_y * i, font1_color, "%d", menuItems[i].second);
-
-	return returnText;
+	return menuItems[menuPos].option.color;
 }
-vector<ScreenText> OptionsMenu::GetAllMenuItemStrings()
+
+ScreenText * OptionsMenu::GetMemuOptionAt(size_t menuPos)
 {
-	vector<ScreenText> ret;
-	for (size_t i = 0; i < menuItems.size(); i++)
-		ret.push_back(GetMenuItemStringAt(i));
-
-	return ret;
+	return &menuItems[menuPos].option;
 }
+
 void OptionsMenu::Draw(unsigned char *dest)
 {
 	//show_menu(NULL, dest, 0);

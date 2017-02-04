@@ -28,11 +28,11 @@ public:
 	}
 	inline bool CheckJoystickFlag(JOYSTICK_DIR flag)
 	{
-		return (bool)(joystick & flag);
+		return(joystick & flag) !=0; //!=0 removes warning c4800
 	}
 	inline bool CheckButtonFlag(unsigned int flag)
 	{
-		return (bool)(buttons & flag);
+		return (buttons & flag) != 0; //!=0 removes warning c4800
 	}
 	
 	inline bool CheckButtonReleaseFlag(unsigned int flag)

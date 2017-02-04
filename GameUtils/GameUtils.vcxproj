@@ -131,12 +131,16 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Observee.cpp" />
+    <ClCompile Include="Observer.cpp" />
     <ClCompile Include="OptionMenu.cpp" />
     <ClCompile Include="RenderController.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GraphicsPrimitives.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="Observee.h" />
+    <ClInclude Include="Observer.h" />
     <ClInclude Include="OptionMenu.h" />
     <ClInclude Include="RenderController.h" />
     <ClInclude Include="RenderObject.h" />
