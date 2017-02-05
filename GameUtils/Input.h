@@ -16,28 +16,31 @@ public:
 	};
 
 	
-	inline void AddToJoystickFlag(JOYSTICK_DIR flag)
+	inline void AddToJoystickState(JOYSTICK_DIR flag)
 	{
 		joystick = joystick | flag;
 		lastJoyState = joystick;
 	}
-	inline void AddToButtonFlag(unsigned int flag)
+	inline void AddToButtonPresses(int button)
 	{
-		buttons = buttons | flag;
+		buttons = buttons | ConvertButtonNumberToFlag(button);
 		lastButtonState = buttons;
 	}
-	inline bool CheckJoystickFlag(JOYSTICK_DIR flag)
+	inline bool CheckJoystick(JOYSTICK_DIR flag)
 	{
 		return(joystick & flag) !=0; //!=0 removes warning c4800
 	}
-	inline bool CheckButtonFlag(unsigned int flag)
+	inline bool CheckButton(int button)
 	{
+		button--;//get back to array index value
+		unsigned int flag = ConvertButtonNumberToFlag(button);
 		return (buttons & flag) != 0; //!=0 removes warning c4800
 	}
 	
-	inline bool CheckButtonReleaseFlag(unsigned int flag)
+	inline bool CheckButtonReleaseFlag(int button)
 	{
-
+		button--;//get back to array index value
+		unsigned int flag = ConvertButtonNumberToFlag(button);
 		if (lastButtonState & flag)
 		{
 			if (!(buttons & flag))
@@ -72,6 +75,15 @@ public:
 	inline bool CheckForAllInputFlags()
 	{
 		return (bool)(joystick > 0) || (buttons > 0);
+	}
+	inline int ConvertFlagToButtonNumber(unsigned int flag)
+	{
+		return (flag >> 1);
+	}
+	inline unsigned int ConvertButtonNumberToFlag(int button)
+	{
+		//button++;//so we dont have a button 0
+		return 1 << button;
 	}
 };
 

@@ -208,22 +208,22 @@ void OptionsMenu::Update()
 	}
 
 	//i need to use the key proxy...i gotta improve it first tho
-	if (menuInput->CheckJoystickFlag(Input::JOYSTICK_DIR::UP))
+	if (menuInput->CheckJoystick(Input::JOYSTICK_DIR::UP))
 	{
 		PrevSelection();
 	}
 
-	else if (menuInput->CheckJoystickFlag(Input::JOYSTICK_DIR::DOWN))
+	else if (menuInput->CheckJoystick(Input::JOYSTICK_DIR::DOWN))
 	{
 		NextSelection();
 	}
 
-	if (menuInput->CheckJoystickFlag(Input::JOYSTICK_DIR::LEFT))
+	if (menuInput->CheckJoystick(Input::JOYSTICK_DIR::LEFT))
 	{
 		DecrementValue();
 	}
 
-	else if (menuInput->CheckJoystickFlag(Input::JOYSTICK_DIR::RIGHT))
+	else if (menuInput->CheckJoystick(Input::JOYSTICK_DIR::RIGHT))
 	{
 		IncrementValue();
 	}
