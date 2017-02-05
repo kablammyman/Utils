@@ -23,6 +23,7 @@ public:
 	bool RemoveObserver(Observer* observer);
 	bool NotifyObservers();
 	const char *className;
+	int id;
 protected:
 	//constructor is protected
 	Observee();

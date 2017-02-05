@@ -85,6 +85,7 @@ public:
 	string GetMenuItemValueStringAt(size_t index) { return menuItems[index].GetItemValueString(); }
 	RGB GetMenuItemColorAt(size_t menuPos);
 	ScreenText *GetMemuOptionAt(size_t menuPos);
+	int GetCurrentSelectionItemIndex() { return menuItemIndex; }
 
 	virtual void Update();
 	virtual void Draw(unsigned char *dest);
