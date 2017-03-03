@@ -72,6 +72,13 @@ public:
 		joystick = 0;
 		buttons = 0;
 	}
+	inline void ClearAllFlags()
+	{
+		joystick = 0;
+		buttons = 0;
+		lastButtonState = 0;
+		lastJoyState = 0;
+	}
 	inline bool CheckForAllInputFlags()
 	{
 		return (bool)(joystick > 0) || (buttons > 0);

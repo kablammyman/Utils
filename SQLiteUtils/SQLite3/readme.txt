@@ -2,6 +2,16 @@ I changewd the names of the folders to src and bin for easy use.
 
 
 1) use the vis studio cmd prompt to get to it, type in "dev" in the search
+if you dont have it
+
+From VS2013 Menu Select "Tools", then Select "External Tools". Enter as below:
+Title: "VS2013 Native Tools-Command Prompt" would be good
+Command: C:\Windows\System32\cmd.exe
+Arguments: /k "C:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\Tools\VsDevCmd.bat"
+Initial Directory: Select as suits your needs. 
+Click OK. Now you have command prompt access under the Tools Menu.
+
+
 
 ////////////////////////Building A Windows DLL/////////////////////////////////////
 
