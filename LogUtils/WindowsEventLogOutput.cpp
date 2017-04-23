@@ -20,7 +20,7 @@ void WindowsEventLogOutput::WriteMessage(int severity, string message)
 
 	// Get a handle to use with ReportEvent().
 	//hEventSource = RegisterEventSource(NULL, sSourceName.c_str());
-	hEventSource = RegisterEventSource(NULL, L"SmartCatalogue");
+	hEventSource = RegisterEventSource(NULL, "SmartCatalogue");
 	if (hEventSource != NULL)
 	{
 		// Write to event log.
