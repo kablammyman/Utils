@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstring>
+
 struct RGB
 {
 	unsigned char r,g,b;

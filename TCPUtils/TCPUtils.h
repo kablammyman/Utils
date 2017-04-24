@@ -1,8 +1,18 @@
 #ifndef INC_NETWORKCONNECTION_H
 #define INC_NETWORKCONNECTION_H
 
-#include <windows.h>
+#if _WIN32
+#include <Windows.h>
 #include <winsock.h>
+#else
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h> 
+#endif
+
+
 #include <iostream>
 #include <vector>
 #include <string>
