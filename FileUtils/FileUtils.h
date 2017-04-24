@@ -30,7 +30,7 @@ public:
 
 	static  string DeleteAllFilesInDir(string path);
 
-	static  string GetRandomDirQuick(string path, bool useIgnoreList = true);
+	static  string GetRandomDirQuick(string path);
 
 	static  string GetRandomFileQuick(string path);
 		
@@ -65,7 +65,7 @@ public:
 
 	static  int GetNumDirsInTree(string path);
 
-	static  void DumpTreeToVector(string path, vector<string> &ret, bool writeDirOnly);
+	static  void DumpTreeToVector(string path, vector<string> &ret);
 
 	static  int Test();
 		

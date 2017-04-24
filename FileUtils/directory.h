@@ -29,9 +29,8 @@ struct fileStruct
 
 class DirectoryTree
 {
-	string PrepPathForTraversal(string path);
-	void processSingleDir(DirNode *curNode, vector<string> &childrenDirs);
-	vector<string> tokenize(string path, string delims);
+	
+
 	int totalFilesInTree;
 	int totalDirsInTree;
 	DirNode * dirRoot;
@@ -46,6 +45,10 @@ class DirectoryTree
 	//moved out of process fn()s so i can have the options to process 1 dir at at time
 	//this way i can do work as the tree builds
 	stack<DirNode *> dirStack;
+
+	
+	void ProcessSingleDir(DirNode *curNode, vector<string> &childrenDirs);
+
 	public:
 		static char SLASH;
 		DirectoryTree()
@@ -62,11 +65,11 @@ SLASH = '/';
 		}
 		~DirectoryTree()
 		{
-			clearAll();
+			ClearAll();
 		}
 		//should only really matter when we have an unfishied stack, but we need to clear it to start over
 		//the other objects will be in the actual dir tree once they are processed and not in the stack
-		void clearStack()
+		void ClearStack()
 		{
 			while (!dirStack.empty())
 			{
@@ -77,33 +80,33 @@ SLASH = '/';
 			}
 		}
 		
-		void processFilesFromDir(string path);
-		void processFilesFromDirMT(string path, int maxThreads =10);
+		void ProcessFilesFromDir(string path);
+		void ProcessFilesFromDirMT(string path, int maxThreads =10);
 		
-		void startProcessFilesFromDirStep(string path);
-		DirNode*  nextProcessFilesFromDirStep();
+		void StartProcessFilesFromDirStep(string path);
+		DirNode*  NextProcessFilesFromDirStep();
 		
 		//this change so it works with sub trees too
-		DirNode *getDirTreeRoot() { return dirRoot; }
-		int getNumFilesInTree() {return totalFilesInTree;}
-		int getNumDirsInTree() { return totalDirsInTree; }
+		DirNode *GetDirTreeRoot() { return dirRoot; }
+		int GetNumFilesInTree() {return totalFilesInTree;}
+		int GetNumDirsInTree() { return totalDirsInTree; }
 		//only valid when processing one step at a time
-		bool isFinihsedProcessing() { return endOfProcessing; }
-		void dumpTreeToFile(string path);
-		void dumpTreeToVector(vector<string> &returnVec);
+		bool IsFinihsedProcessing() { return endOfProcessing; }
+		void DumpTreeToFile(string path);
+		void DumpTreeToVector(vector<string> &returnVec);
 		
-		DirNode * getDirNode(string path);
-		DirNode * getcurNodeInStep() { return curNodeInStep; }
+		DirNode * GetDirNode(string path);
+		DirNode * GetcurNodeInStep() { return curNodeInStep; }
 
-		void addToIgnoreList(string badFile);
-		bool isInIgnoreList(string badFile);
-		string getRandomFile();
+		void AddToIgnoreList(string badFile);
+		bool IsInIgnoreList(string badFile);
+		string GetRandomFile();
 		
-		long long getDirSize(string path);
+		static long long GetDirSize(string path);
 
-		static string getFileNameFromPathString(string path);
-		static string getPathFromFullyQualifiedPathString(string path);
-
-		void clearAll();
+		static string GetFileNameFromPathString(string path);
+		static string GetPathFromFullyQualifiedPathString(string path);
+		static string PrepPathForTraversal(string path);
+		void ClearAll();
 };
 #endif

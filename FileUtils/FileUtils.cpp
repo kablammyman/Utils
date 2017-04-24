@@ -1,8 +1,10 @@
 #include "FileUtils.h"
 #include "directory.h"
 
-#if _WIN32
+#ifdef _WIN32
 #include <windows.h>
+#else
+#include <dirent.h>
 #endif
 
 #include <fstream>
@@ -19,25 +21,25 @@ int GetRandomNum(int min, int max)
 	int diff = ((max - min) + 1);
 	return ((diff * rand()) / RAND_MAX) + min;
 }
-//-----------------------------------------
-//use only with path to folders, not files!
-string PrepPathForTraversal(string path)
-{
-	char lastChar = *path.rbegin();
-	string newPath = path;
-	if (lastChar == '\\')
-		newPath.append("*");//add asterisk to look for all "files" in cur dir
-	else
-		newPath.append("\\*");//if we forgot to add the last back slash, add it, so we dont crash
-	return  newPath;
-}
+
 //--------------------------------------------------------------------------------------------------	
 bool FileUtils::DoesPathExist(string path)
 {
+#ifdef _WIN32	
 	DWORD ftyp = GetFileAttributesA(path.c_str());
 	if (ftyp == INVALID_FILE_ATTRIBUTES)
 		return false;  //something is wrong with your path!
 	return true;
+#else
+	DIR *pDir = opendir(pzPath);
+	if (pDir != NULL)
+	{
+		(void)closedir(pDir);
+		return true
+	}
+
+	return false
+#endif
 }
 /* rename example */
 
@@ -73,14 +75,12 @@ int FileUtils::GetNumFoldersinDir(string path)//needs to have *.fileExt to work
 {
 	if (DoesPathExist(path) == false)
 		return -1;
-
+	int folderNum = 0;
+	string curDir = DirectoryTree::PrepPathForTraversal(path);
+#if _WIN32
 	HANDLE hFind;
 	WIN32_FIND_DATA FindFileData;
-	string curDir = PrepPathForTraversal(path);
 
-	int folderNum = 0;
-
-	//	curDir +="*";//add asterisk to look for all "files" in cur dir
 	hFind = FindFirstFile(curDir.c_str(), &FindFileData);
 
 	if (hFind != INVALID_HANDLE_VALUE)
@@ -94,7 +94,32 @@ int FileUtils::GetNumFoldersinDir(string path)//needs to have *.fileExt to work
 
 		} while (FindNextFile(hFind, &FindFileData));
 		FindClose(hFind);
+#else
+	DIR *dir;
+	struct dirent *ent;
+	if ((dir = opendir(curDir.c_str())) != NULL)
+	{
+		/* print all the files and directories within directory */
+		while ((ent = readdir(dir)) != NULL)
+		{
+			if (strcmp(FindFileData.cFileName, ".") == 0 || strcmp(FindFileData.cFileName, "..") == 0)//ignore anything we put in this list
+				continue;
 
+			//if we find a directory, add its name to the stack, so we can parse it later
+			if (ent->d_type == DT_DIR)
+			{
+				folderNum++;
+			}
+			//else this is a file, so add it to the list of files for this dir
+		}
+		closedir(dir);
+	}
+	else {
+		/* could not open directory */
+		perror("");
+		//return EXIT_FAILURE;
+	}
+#endif
 		return folderNum;
 }
 //--------------------------------------------------------------------------------------------------
@@ -103,13 +128,13 @@ vector<string> FileUtils::GetAllFolderNamesInDir(string path)//needs to have *.f
 	vector<string> folderList;
 	if (DoesPathExist(path) == false)
 		return folderList;
-
-	HANDLE hFind;
-	WIN32_FIND_DATA FindFileData;
-	string curDir = PrepPathForTraversal(path);
-	//char sTmp[MAX_PATH]="\0";
+	string curDir = DirectoryTree::PrepPathForTraversal(path);
 	string sTmp;
 
+#if _WIN32
+	HANDLE hFind;
+	WIN32_FIND_DATA FindFileData;
+	
 	hFind = FindFirstFile(curDir.c_str(), &FindFileData);
 
 	size_t removeAst = curDir.length() - 1;
@@ -133,7 +158,35 @@ vector<string> FileUtils::GetAllFolderNamesInDir(string path)//needs to have *.f
 
 		} while (FindNextFile(hFind, &FindFileData));
 		FindClose(hFind);
+#else
+	DIR *dir;
+	struct dirent *ent;
+	if ((dir = opendir(curDir.c_str())) != NULL)
+	{
+		/* print all the files and directories within directory */
+		while ((ent = readdir(dir)) != NULL)
+		{
+			if (strcmp(FindFileData.cFileName, ".") == 0 || strcmp(FindFileData.cFileName, "..") == 0)//ignore anything we put in this list
+				continue;
 
+			//if we find a directory, add its name to the stack, so we can parse it later
+			if (ent->d_type == DT_DIR)
+			{
+				sTmp = curDir;
+				sTmp += ent->d_name;
+				sTmp += DirectoryTree::SLASH;
+				folderList.push_back(sTmp);
+			}
+			//else this is a file, so add it to the list of files for this dir
+		}
+		closedir(dir);
+	}
+	else {
+		/* could not open directory */
+		perror("");
+		//return EXIT_FAILURE;
+	}
+#endif
 		return folderList;
 }
 //--------------------------------------------------------------------------------------------------
@@ -141,12 +194,13 @@ int FileUtils::GetNumFilesInDir(string path, string ext)//needs to have *.fileEx
 {
 	if (DoesPathExist(path) == false)
 		return-1;
-
-	HANDLE hFind;
-	WIN32_FIND_DATA FindFileData;
-	string curDir = PrepPathForTraversal(path);
+	string curDir = DirectoryTree::PrepPathForTraversal(path);
 	int fileNum = 0;
 
+#if _WIN32
+	HANDLE hFind;
+	WIN32_FIND_DATA FindFileData;
+	
 	hFind = FindFirstFile(curDir.c_str(), &FindFileData);
 
 	size_t removeAst = curDir.length() - 1;
@@ -167,23 +221,48 @@ int FileUtils::GetNumFilesInDir(string path, string ext)//needs to have *.fileEx
 
 		} while (FindNextFile(hFind, &FindFileData));
 		FindClose(hFind);
+#else
+	DIR *dir;
+	struct dirent *ent;
+	if ((dir = opendir(curDir.c_str())) != NULL)
+	{
+		/* print all the files and directories within directory */
+		while ((ent = readdir(dir)) != NULL)
+		{
+			if (strcmp(FindFileData.cFileName, ".") == 0 || strcmp(FindFileData.cFileName, "..") == 0)//ignore anything we put in this list
+				continue;
 
+			//if we find a directory, add its name to the stack, so we can parse it later
+			if (ent->d_type == DT_REG)
+			{
+				fileNum++;
+			}
+			//else this is a file, so add it to the list of files for this dir
+		}
+		closedir(dir);
+	}
+	else {
+		/* could not open directory */
+		perror("");
+		//return EXIT_FAILURE;
+	}
+#endif
 		return fileNum;
 }
 
 //--------------------------------------------------------------------------------------------------
-vector<string> FileUtils::GetAllFileNamesInDir(string path,string ext, bool includePath)//needs to have *.fileExt to work
+vector<string> FileUtils::GetAllFileNamesInDir(string path,string ext, bool includePath)
 {
 	vector<string> fileList;
 	if (DoesPathExist(path) == false)
 		return fileList;
-
-	HANDLE hFind;
-	WIN32_FIND_DATA FindFileData;
-	string curDir = PrepPathForTraversal(path);
-	//char sTmp[MAX_PATH]="\0";
+	string curDir = DirectoryTree::PrepPathForTraversal(path);
 	string sTmp = "";
 
+#if _WIN32
+	HANDLE hFind;
+	WIN32_FIND_DATA FindFileData;
+	
 	hFind = FindFirstFile(curDir.c_str(), &FindFileData);
 
 	size_t removeAst = curDir.length() - 1;
@@ -213,12 +292,40 @@ vector<string> FileUtils::GetAllFileNamesInDir(string path,string ext, bool incl
 
 		} while (FindNextFile(hFind, &FindFileData));
 		FindClose(hFind);
+#else
+	DIR *dir;
+	struct dirent *ent;
+	if ((dir = opendir(curDir.c_str())) != NULL)
+	{
+		/* print all the files and directories within directory */
+		while ((ent = readdir(dir)) != NULL)
+		{
+			if (strcmp(FindFileData.cFileName, ".") == 0 || strcmp(FindFileData.cFileName, "..") == 0)//ignore anything we put in this list
+				continue;
 
+			//if we find a directory, add its name to the stack, so we can parse it later
+			if (ent->d_type == DT_REG)
+			{
+				sTmp = curDir;
+				sTmp += ent->d_name;
+				fileList.push_back(sTmp);
+			}
+			//else this is a file, so add it to the list of files for this dir
+		}
+		closedir(dir);
+	}
+	else {
+		/* could not open directory */
+		perror("");
+		//return EXIT_FAILURE;
+	}
+#endif
 		return fileList;
 }
 //--------------------------------------------------------------------------------------------------
 bool FileUtils::Delete_File(string file, bool permanetDelete)
 {
+#if _WIN32
 	if (DoesPathExist(file) == false)
 		return false;
 
@@ -240,54 +347,40 @@ bool FileUtils::Delete_File(string file, bool permanetDelete)
 	if (SHFileOperation(&operation) == 0)
 		return true;
 	return false;
+#else
+	if (remove(file.c_str()) != 0)
+		return false
+	return true;
+#endif
 }
 //--------------------------------------------------------------------------------------------------
 string FileUtils::DeleteAllFilesInDir(string path)
 {
-	if (DoesPathExist(path) == false)
-		return "file path does not exist";
-
-	HANDLE hFind;
-	WIN32_FIND_DATA FindFileData;
-	string curDir = PrepPathForTraversal(path);
 
 	string returnString = "";
 
-	hFind = FindFirstFile(curDir.c_str(), &FindFileData);
+	vector<string> allFiles = GetAllFileNamesInDir(path, "", true);
 
-	size_t removeAst = curDir.length() - 1;
-	curDir.resize(removeAst); //curDir[removeAst]='\0';//remove the asterisk
-
-	if (hFind != INVALID_HANDLE_VALUE)
-		do {
-			if (strcmp(FindFileData.cFileName, ".") == 0 || strcmp(FindFileData.cFileName, "..") == 0)//ignore anything we put in this list
-				continue;
-
-			if (FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-				continue;
-			else
-			{
-				string file = curDir + FindFileData.cFileName;
-				if (Delete_File(file) == false)
-				{
-					returnString += "Error deleting file: ";
-					returnString += file;
-					returnString += "\n";
-				}
-			}
-
-		} while (FindNextFile(hFind, &FindFileData));
-		FindClose(hFind);
-		return returnString;
+	for (int i = 0; i < allFiles.size(); i++)
+	{
+		if (Delete_File(allFiles[i]) == false)
+		{
+			returnString += "Error deleting file: ";
+			returnString += allFiles[i];
+			returnString += "\n";
+		}
+	}
+	
+	return returnString;
 }
 //--------------------------------------------------------------------------------------------------------
 //pics a dir from the master list, then "digs" down to get soething new
-string FileUtils::GetRandomDirQuick(string path, bool useIgnoreList)
+string FileUtils::GetRandomDirQuick(string path)
 {
 	if (DoesPathExist(path) == false)
 		return "";
 
-	int curDepth = 0;
+	//int curDepth = 0;
 	string curDir = path;
 	bool done = false;
 	int loopCount = 0;
@@ -322,51 +415,25 @@ string FileUtils::GetRandomDirQuick(string path, bool useIgnoreList)
 //enumerates all files, and pics a random one
 string FileUtils::GetRandomFileQuick(string path)
 {
-	if (DoesPathExist(path) == false)
-		return "";
+	vector<string> allFiles = GetAllFileNamesInDir(path, "", true);
 
-	HANDLE hFind;
-	WIN32_FIND_DATA FindFileData;
-	string curDir = PrepPathForTraversal(path);
-
-	vector<string> files;
-
-	hFind = FindFirstFile(curDir.c_str(), &FindFileData);
-
-	size_t removeAst = curDir.length() - 1;
-	curDir.resize(removeAst); //curDir[removeAst]='\0';//remove the asterisk
-
-	if (hFind != INVALID_HANDLE_VALUE)
-		do {
-			if (strcmp(FindFileData.cFileName, ".") == 0 || strcmp(FindFileData.cFileName, "..") == 0)//ignore anything we put in this list
-				continue;
-
-			if (FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-				continue;
-			else
-			{
-				files.push_back(curDir + FindFileData.cFileName);
-			}
-
-		} while (FindNextFile(hFind, &FindFileData));
-		FindClose(hFind);
-		if (files.size() > 0)
-		{
-			//used to crash here
-			int num = GetRandomNum(0, (int)files.size() - 1);
-			return files[num];
-		}
-		return ""; //this dir was empty, return empty string
+	if (allFiles.size() > 0)
+	{
+		//used to crash here
+		int num = GetRandomNum(0, (int)allFiles.size() - 1);
+		return allFiles[num];
+	}
+	return ""; //this dir was empty, return empty string
 }
 //--------------------------------------------------------------------------------------------------------
 string FileUtils::GetFileNameFromPathString(string path)
 {
-	return DirectoryTree::getFileNameFromPathString(path);
+	return DirectoryTree::GetFileNameFromPathString(path);
 }
 //--------------------------------------------------------------------------------------------------------
 string FileUtils::GetPathFromFullyQualifiedPathString(string path)
 {
-	return DirectoryTree::getPathFromFullyQualifiedPathString(path);
+	return DirectoryTree::GetPathFromFullyQualifiedPathString(path);
 }
 //--------------------------------------------------------------------------------------------------
 void FileUtils::AddDirTree(string path, int numThreads)
@@ -374,9 +441,9 @@ void FileUtils::AddDirTree(string path, int numThreads)
 	if (DoesPathExist(path) == false)
 		return;
 	if(numThreads == 0)
-		dirTree.processFilesFromDir(path);
+		dirTree.ProcessFilesFromDir(path);
 	else
-		dirTree.processFilesFromDirMT(path, numThreads);
+		dirTree.ProcessFilesFromDirMT(path, numThreads);
 }
 //--------------------------------------------------------------------------------------------------
 /*DirNode* FileUtils::getDirTreeRoot()
@@ -396,12 +463,12 @@ DirNode* FileUtils::getDirTree(string path)
 //--------------------------------------------------------------------------------------------------
 int FileUtils::GetNumFilesInTree(string path)
 {
-	return  dirTree.getNumFilesInTree();
+	return  dirTree.GetNumFilesInTree();
 }
 //--------------------------------------------------------------------------------------------------
 void FileUtils::StartDirTreeStep(string path)
 {
-	dirTree.startProcessFilesFromDirStep(path);
+	dirTree.StartProcessFilesFromDirStep(path);
 }
 //--------------------------------------------------------------------------------------------------
 /*DirNode* FileUtils::nextDirTreeStep()
@@ -411,29 +478,29 @@ void FileUtils::StartDirTreeStep(string path)
 //--------------------------------------------------------------------------------------------------
 string FileUtils::NextDirTreeStep()
 {
-	DirNode* temp = dirTree.nextProcessFilesFromDirStep();
+	DirNode* temp = dirTree.NextProcessFilesFromDirStep();
 	return temp->ToString();
 }
 //--------------------------------------------------------------------------------------------------
 size_t FileUtils::GetCurNodeNumFiles()
 {
-	DirNode* temp = dirTree.getcurNodeInStep();
+	DirNode* temp = dirTree.GetcurNodeInStep();
 	if (temp != NULL)
 		return temp->GetNumFiles();
-	return -1;
+	return 0;
 }
 //--------------------------------------------------------------------------------------------------
 size_t FileUtils::GetCurNodeNumFolders()
 {
-	DirNode* temp = dirTree.getcurNodeInStep();
+	DirNode* temp = dirTree.GetcurNodeInStep();
 	if(temp != NULL)
 		return temp->GetNumFolders();
-	return -1;
+	return 0;
 }
 //--------------------------------------------------------------------------------------------------
 list<string> FileUtils::GetCurNodeFileList()
 {
-	DirNode* temp = dirTree.getcurNodeInStep();
+	DirNode* temp = dirTree.GetcurNodeInStep();
 	if (temp != NULL)
 		return temp->fileList;
 	list<string> empty;
@@ -442,23 +509,23 @@ list<string> FileUtils::GetCurNodeFileList()
 //--------------------------------------------------------------------------------------------------
 bool FileUtils::IsFinished()
 {
-	return dirTree.isFinihsedProcessing();
+	return dirTree.IsFinihsedProcessing();
 }
 //--------------------------------------------------------------------------------------------------
 void FileUtils::ClearDirTree()
 {
-	dirTree.clearAll();
+	dirTree.ClearAll();
 }
 //--------------------------------------------------------------------------------------------------
 int FileUtils::GetNumDirsInTree(string path)
 {
-	return dirTree.getNumDirsInTree();
+	return dirTree.GetNumDirsInTree();
 }
 
 //--------------------------------------------------------------------------------------------------
-void FileUtils::DumpTreeToVector(string path, vector<string> &ret, bool writeDirOnly)
+void FileUtils::DumpTreeToVector(string path, vector<string> &ret)
 {
-	dirTree.dumpTreeToVector(ret);
+	dirTree.DumpTreeToVector(ret);
 }
 //--------------------------------------------------------------------------------------------------
 /*string FileUtils::FileNodeHandleToString(FileNodeHandle dirNode)
@@ -466,62 +533,9 @@ void FileUtils::DumpTreeToVector(string path, vector<string> &ret, bool writeDir
 	return dirNode->ToString();
 }*/
 //--------------------------------------------------------------------------------------------------
-__int64 FileUtils::GetDirSize(string path)
+long long FileUtils::GetDirSize(string path)
 {
-	if (DoesPathExist(path) == false)
-		return -1;
-
-	HANDLE hFind;
-	WIN32_FIND_DATA FindFileData;
-
-	//char sTmp[MAX_PATH]="\0";
-	string sTmp;
-	__int64 size = 0;
-
-	stack<string> dirStack;
-	dirStack.push(path);
-
-	do {
-		string curDir = PrepPathForTraversal(dirStack.top()); //get the next dir to process
-		dirStack.pop(); //take it off of stack
-
-		hFind = FindFirstFile(curDir.c_str(), &FindFileData);
-
-		size_t removeAst = curDir.length() - 1;
-		curDir.resize(removeAst); //curDir[removeAst]='\0';//remove the asterisk
-
-		if (hFind != INVALID_HANDLE_VALUE)
-			do {
-
-				if (strcmp(FindFileData.cFileName, ".") == 0 || strcmp(FindFileData.cFileName, "..") == 0)//ignore anything we put in this list
-					continue;
-
-				//if we find a directory, add its name to the stack, so we can parse it later
-				if (FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-				{
-					sTmp = curDir;
-					sTmp += FindFileData.cFileName;
-					sTmp += DirectoryTree::SLASH;
-					dirStack.push(sTmp);
-				}
-				//else this is a file, so get file size and add to total
-				else
-				{
-					LARGE_INTEGER sz;
-					// All we want here is the file size.  Since file sizes can be larger
-					// than 2 gig, the size is reported as two DWORD objects.  Below we
-					// combine them to make one 64-bit integer.
-					sz.LowPart = FindFileData.nFileSizeLow;
-					sz.HighPart = FindFileData.nFileSizeHigh;
-					size += sz.QuadPart;
-				}
-
-			} while (FindNextFile(hFind, &FindFileData));
-
-	} while (!dirStack.empty());
-
-	FindClose(hFind);
-	return size;
+	return DirectoryTree::GetDirSize(path);
 }
 
 int FileUtils::Test()
@@ -530,10 +544,10 @@ int FileUtils::Test()
 
 	string badPath = "\\\\SERVER\\music\\2pac";
 	string goodPath = "\\\\SERVER\\music\\muzik\\2pac";
-	DirNode *dontExist = dirTree.getDirNode(badPath);
+	DirNode *dontExist = dirTree.GetDirNode(badPath);
 	if (dontExist != NULL)
 		return 0;
-	DirNode *iExist = dirTree.getDirNode(goodPath);
+	DirNode *iExist = dirTree.GetDirNode(goodPath);
 	if (iExist == NULL)
 		return 1;
 	goodPath += DirectoryTree::SLASH;
