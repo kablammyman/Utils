@@ -1,7 +1,10 @@
 #include "FileUtils.h"
 #include "directory.h"
 
+#if _WIN32
 #include <windows.h>
+#endif
+
 #include <fstream>
 #include <vector>
 #include <string>

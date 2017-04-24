@@ -1,10 +1,13 @@
 //last update 10-22-11
+#include "StringUtils.h"
 #include "directory.h"
 #include "FileStruct.h"
 
 #ifdef _WIN32
 #include <windows.h>
 #else
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <dirent.h>
 #endif
 
@@ -85,17 +88,17 @@ void DirectoryTree::processSingleDir(DirNode *curNode, vector<string> &childrenD
 				continue;
 
 			//if we find a directory, add its name to the stack, so we can parse it later
-			if (dir->d_type == DT_DIR)
+			if (ent->d_type == DT_DIR)
 			{
 				string newPath = curDir + ent->d_name + SLASH;
 				childrenDirs.push_back(newPath);
 				totalDirsInTree++;
 			}
 			//else this is a file, so add it to the list of files for this dir
-			else if (dir->d_type == DT_REG)
+			else if (ent->d_type == DT_REG)
 			{
 				totalFilesInTree++;
-				curNode->fileList.push_back(FindFileData.cFileName);
+				curNode->fileList.push_back(ent->d_name);
 			}
 		}
 		closedir(dir);
@@ -182,6 +185,7 @@ DirNode* DirectoryTree::nextProcessFilesFromDirStep()//needs to have *.fileExt t
 void DirectoryTree::processFilesFromDirMT(string path, int maxThreads)
 {
 //since some projects that i build for doesnt support c++11 stuff, i need to makre sure i disable it when building for them
+#if _WIN32	
 #if __cplusplus <= 199711L
 	processFilesFromDir(path);
 #elif
@@ -277,20 +281,9 @@ void DirectoryTree::processFilesFromDirMT(string path, int maxThreads)
 		delete[] t;
 	} while (!dirStack.empty() );
 #endif
+#endif
 }
 
-vector<string> DirectoryTree::tokenize(string path, string delims)
-{
-	vector<string> returnVec;
-	char *p = strtok(const_cast<char *>(path.c_str()), delims.c_str());
-	while (p)
-	{
-		//printf ("Token: %s\n", p);
-		returnVec.push_back(p);
-		p = strtok(NULL, delims.c_str());
-	}
-	return returnVec;
-}
 
 DirNode * DirectoryTree::getDirNode(string path)
 {
@@ -307,7 +300,7 @@ DirNode * DirectoryTree::getDirNode(string path)
 	string shortPath = path.substr(curPath.size());
 	string delims;
 	delims += SLASH;
-	vector<string> tokens = tokenize(shortPath,delims);
+	vector<string> tokens = StringUtils::Tokenize(shortPath,delims);
 
 	size_t i = 0;
 	
@@ -398,9 +391,9 @@ string DirectoryTree::getRandomFile()
 
 
 //moved out of here, but i will need to use some of this code to make it work for the tree, so i left a copy
-__int64 DirectoryTree::getDirSize(string path)//needs to have *.fileExt to work
+long long DirectoryTree::getDirSize(string path)//needs to have *.fileExt to work
 {
-	__int64 size = 0;
+	long long size = 0;
 	stack<string> dirStack;
 	dirStack.push(path);
 
@@ -448,26 +441,32 @@ __int64 DirectoryTree::getDirSize(string path)//needs to have *.fileExt to work
 	FindClose(hFind);
 
 #else
-	DIR *dir;
-	struct dirent *ent;
-	if ((dir = opendir(curDir.c_str())) != NULL)
-	{
-		/* print all the files and directories within directory */
-		while ((ent = readdir(dir)) != NULL)
+	DIR *dir = NULL;
+	struct dirent *ent = NULL;
+	struct stat buf;
+	do{
+		string curDir = dirStack.top(); //get the next dr to process
+		dirStack.pop(); //take it off of stack
+
+		if (dir != NULL)
 		{
-			if (stat(de->d_name, &buf))
+			/* print all the files and directories within directory */
+			while ((ent = readdir(dir)) != NULL)
 			{
-				if (dir->d_type == DT_REG)
-					size += buf.st_size;
+				if (stat(ent->d_name, &buf))
+				{
+					if (ent->d_type == DT_REG)
+						size += buf.st_size;
+				}
 			}
+			closedir(dir);
 		}
-		closedir(dir);
-	}
-	else {
-		/* could not open directory */
-		perror("");
-		//return EXIT_FAILURE;
-	}
+		else {
+			/* could not open directory */
+			perror("");
+			//return EXIT_FAILURE;
+		}
+	}while(!dirStack.empty());
 #endif
 	return size;
 }

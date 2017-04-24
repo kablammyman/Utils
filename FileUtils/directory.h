@@ -99,10 +99,10 @@ SLASH = '/';
 		bool isInIgnoreList(string badFile);
 		string getRandomFile();
 		
-		__int64 getDirSize(string path);
+		long long getDirSize(string path);
 
-		static string DirectoryTree::getFileNameFromPathString(string path);
-		static string DirectoryTree::getPathFromFullyQualifiedPathString(string path);
+		static string getFileNameFromPathString(string path);
+		static string getPathFromFullyQualifiedPathString(string path);
 
 		void clearAll();
 };
