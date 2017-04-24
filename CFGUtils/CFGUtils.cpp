@@ -1,7 +1,6 @@
 // This is the main DLL file.
 
 #include "CFGUtils.h"
-#include <windows.h>
 #include <iostream>
 #include <fstream>
 
