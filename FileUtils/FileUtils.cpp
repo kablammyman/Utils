@@ -9,7 +9,7 @@
 
 
 
-static directoryTree dirTree;//can't use it as a member variable due to the static conflict
+static DirectoryTree dirTree;//can't use it as a member variable due to the static conflict
 
 int GetRandomNum(int min, int max)
 {
@@ -121,10 +121,10 @@ vector<string> FileUtils::GetAllFolderNamesInDir(string path)//needs to have *.f
 			{
 				/*strcpy(sTmp, curDir.c_str());
 				strcat(sTmp, FindFileData.cFileName);//cur dir + new folder name = new dir to explre
-				strcat(sTmp, "\\");*/
+				strcat(sTmp, SLASH);*/
 				sTmp = curDir;
 				sTmp += FindFileData.cFileName;
-				sTmp += "\\";
+				sTmp += DirectoryTree::SLASH;
 				folderList.push_back(sTmp);
 			}
 
@@ -358,12 +358,12 @@ string FileUtils::GetRandomFileQuick(string path)
 //--------------------------------------------------------------------------------------------------------
 string FileUtils::GetFileNameFromPathString(string path)
 {
-	return directoryTree::getFileNameFromPathString(path);
+	return DirectoryTree::getFileNameFromPathString(path);
 }
 //--------------------------------------------------------------------------------------------------------
 string FileUtils::GetPathFromFullyQualifiedPathString(string path)
 {
-	return directoryTree::getPathFromFullyQualifiedPathString(path);
+	return DirectoryTree::getPathFromFullyQualifiedPathString(path);
 }
 //--------------------------------------------------------------------------------------------------
 void FileUtils::AddDirTree(string path, int numThreads)
@@ -498,7 +498,7 @@ __int64 FileUtils::GetDirSize(string path)
 				{
 					sTmp = curDir;
 					sTmp += FindFileData.cFileName;
-					sTmp += "\\";
+					sTmp += DirectoryTree::SLASH;
 					dirStack.push(sTmp);
 				}
 				//else this is a file, so get file size and add to total
@@ -533,7 +533,7 @@ int FileUtils::Test()
 	DirNode *iExist = dirTree.getDirNode(goodPath);
 	if (iExist == NULL)
 		return 1;
-	goodPath += '\\';
+	goodPath += DirectoryTree::SLASH;
 
 	if (iExist->ToString() == goodPath)
 		return 3;

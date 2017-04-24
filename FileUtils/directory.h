@@ -2,7 +2,7 @@
 #ifndef INC_DIR_TREE_H
 #define INC_DIR_TREE_H
 
-#include <windows.h>
+
 
 #include <string>
 #include <vector>
@@ -27,7 +27,7 @@ struct fileStruct
 
 
 
-class directoryTree
+class DirectoryTree
 {
 	string PrepPathForTraversal(string path);
 	void processSingleDir(DirNode *curNode, vector<string> &childrenDirs);
@@ -36,7 +36,7 @@ class directoryTree
 	int totalDirsInTree;
 	DirNode * dirRoot;
 	list<string> ignoreList;
-
+	
 	//points the the latest node we just created, we use this when we need to do things in stemps
 	//we have this instead of making an opaque pointer. this technique is temporary until i can
 	//figure out how to make my opaque pointer without including many other private header files
@@ -47,14 +47,20 @@ class directoryTree
 	//this way i can do work as the tree builds
 	stack<DirNode *> dirStack;
 	public:
-		directoryTree()
+		static char SLASH;
+		DirectoryTree()
 		{
 			dirRoot = NULL;
 			curNodeInStep = NULL;
 			totalFilesInTree = 0;
 			totalDirsInTree = 0;
+#ifdef _WIN32
+SLASH = '\\';
+#else
+SLASH = '/';
+#endif
 		}
-		~directoryTree()
+		~DirectoryTree()
 		{
 			clearAll();
 		}
@@ -95,8 +101,8 @@ class directoryTree
 		
 		__int64 getDirSize(string path);
 
-		static string directoryTree::getFileNameFromPathString(string path);
-		static string directoryTree::getPathFromFullyQualifiedPathString(string path);
+		static string DirectoryTree::getFileNameFromPathString(string path);
+		static string DirectoryTree::getPathFromFullyQualifiedPathString(string path);
 
 		void clearAll();
 };

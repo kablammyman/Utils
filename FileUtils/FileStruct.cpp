@@ -1,5 +1,6 @@
 #include <string>
 #include "FileStruct.h"
+#include "directory.h"
 
 using namespace std;
 
@@ -8,7 +9,7 @@ and format the strings for later use and printing*/
 
 string DirNode::GetParentDir()
 {
-	size_t firstSlash = path.rfind('\\');
+	size_t firstSlash = path.rfind(DirectoryTree::SLASH);
 	size_t secondSlash = 0;
 
 	//if we dont find anything, we prob have an error
@@ -16,7 +17,7 @@ string DirNode::GetParentDir()
 		return "";
 	else
 	{
-		secondSlash = path.rfind(firstSlash,'\\');
+		secondSlash = path.rfind(firstSlash, DirectoryTree::SLASH);
 		if (secondSlash == string::npos)
 		{
 			//prob at drive letter, ex: 'C:\'
@@ -35,7 +36,7 @@ string DirNode::GetFileExt()
 			dot--;
 
 		//if we get to a backslash before a dot, then we are prob looking at at dir
-		else if(path[dot] == '\\')
+		else if(path[dot] == DirectoryTree::SLASH)
 		{
 			return "";
 		}
@@ -54,7 +55,7 @@ string DirNode::GetFileExt()
 string DirNode::GetFileName() //seprates the name from the file ext
 {
 	//start away from end. so we dont "find" the trainling '\\'
-	size_t firstSlash = path.rfind(path.size()-2,'\\');
+	size_t firstSlash = path.rfind(path.size()-2, DirectoryTree::SLASH);
 	size_t dot = path.rfind('.');
 
 	//a file without a fileExt...like a vis studio file
@@ -88,13 +89,13 @@ string DirNode::FormatPathForPrinting()
 		
 	for(size_t i = 0; i < path.size(); i++)//get rid of the colon and other things
 	{
-		if(returnString[i] == '\\')
+		if(returnString[i] == DirectoryTree::SLASH)
 			returnString[i] = '-';
 		if(returnString[i] == ':')
 			returnString[i] = ' ';
 	}
 		
-	//returnString += "\\"
+	//returnString += SLASH
 	/*
 	returnString.append(name); 
 	if(!isDir)
