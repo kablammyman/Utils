@@ -38,7 +38,7 @@ public:
 		
 	static  string GetPathFromFullyQualifiedPathString(string path);
 
-	static  __int64 GetDirSize(string path);
+	static  long long GetDirSize(string path);
 
 	static  bool DoesPathExist(string path);
 

@@ -6,6 +6,7 @@
 #ifdef _WIN32
 #include <windows.h>
 #else
+#include <sys/stat.h>
 #include <dirent.h>
 #endif
 
@@ -82,7 +83,7 @@ void DirectoryTree::ProcessSingleDir(DirNode *curNode, vector<string> &childrenD
 		/* print all the files and directories within directory */
 		while ((ent = readdir(dir)) != 0) 
 		{
-			if (isInIgnoreList(ent->d_name))//ignore anything we put in this list
+			if (IsInIgnoreList(ent->d_name))//ignore anything we put in this list
 				continue;
 
 			//if we find a directory, add its name to the stack, so we can parse it later
@@ -475,7 +476,7 @@ string DirectoryTree::PrepPathForTraversal(string path)
 #if _WIN32
 	ast = '*';
 #else
-		ast = '';
+		ast = ' ';
 #endif
 
 	char lastChar = *path.rbegin();

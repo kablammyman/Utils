@@ -7,6 +7,7 @@
 #include <dirent.h>
 #endif
 
+#include <cstring>
 #include <fstream>
 #include <vector>
 #include <string>
@@ -31,14 +32,14 @@ bool FileUtils::DoesPathExist(string path)
 		return false;  //something is wrong with your path!
 	return true;
 #else
-	DIR *pDir = opendir(pzPath);
-	if (pDir != 0)
+	DIR *pDir = opendir(path.c_str());
+	if (pDir != NULL)
 	{
 		(void)closedir(pDir);
-		return true
+		return true;
 	}
 
-	return false
+	return false;
 #endif
 }
 /* rename example */
@@ -102,7 +103,7 @@ int FileUtils::GetNumFoldersinDir(string path)//needs to have *.fileExt to work
 		/* print all the files and directories within directory */
 		while ((ent = readdir(dir)) != 0)
 		{
-			if (strcmp(FindFileData.cFileName, ".") == 0 || strcmp(FindFileData.cFileName, "..") == 0)//ignore anything we put in this list
+			if (strcmp(ent->d_name, ".") == 0 || strcmp(ent->d_name, "..") == 0)//ignore anything we put in this list
 				continue;
 
 			//if we find a directory, add its name to the stack, so we can parse it later
@@ -166,7 +167,7 @@ vector<string> FileUtils::GetAllFolderNamesInDir(string path)//needs to have *.f
 		/* print all the files and directories within directory */
 		while ((ent = readdir(dir)) != 0)
 		{
-			if (strcmp(FindFileData.cFileName, ".") == 0 || strcmp(FindFileData.cFileName, "..") == 0)//ignore anything we put in this list
+			if (strcmp(ent->d_name, ".") == 0 || strcmp(ent->d_name, "..") == 0)//ignore anything we put in this list
 				continue;
 
 			//if we find a directory, add its name to the stack, so we can parse it later
@@ -229,7 +230,7 @@ int FileUtils::GetNumFilesInDir(string path, string ext)//needs to have *.fileEx
 		/* print all the files and directories within directory */
 		while ((ent = readdir(dir)) != 0)
 		{
-			if (strcmp(FindFileData.cFileName, ".") == 0 || strcmp(FindFileData.cFileName, "..") == 0)//ignore anything we put in this list
+			if (strcmp(ent->d_name, ".") == 0 || strcmp(ent->d_name, "..") == 0)//ignore anything we put in this list
 				continue;
 
 			//if we find a directory, add its name to the stack, so we can parse it later
@@ -300,7 +301,7 @@ vector<string> FileUtils::GetAllFileNamesInDir(string path,string ext, bool incl
 		/* print all the files and directories within directory */
 		while ((ent = readdir(dir)) != 0)
 		{
-			if (strcmp(FindFileData.cFileName, ".") == 0 || strcmp(FindFileData.cFileName, "..") == 0)//ignore anything we put in this list
+			if (strcmp(ent->d_name, ".") == 0 || strcmp(ent->d_name, "..") == 0)//ignore anything we put in this list
 				continue;
 
 			//if we find a directory, add its name to the stack, so we can parse it later
@@ -349,7 +350,7 @@ bool FileUtils::Delete_File(string file, bool permanetDelete)
 	return false;
 #else
 	if (remove(file.c_str()) != 0)
-		return false
+		return false;
 	return true;
 #endif
 }
