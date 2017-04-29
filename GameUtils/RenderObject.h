@@ -85,7 +85,7 @@ public:
 	{
 		//blit(bmp, dest, 0, 0, x, y, w, h);
 		//stretch_blit(bmp, dest, 0, 0, bmp->w, bmp->h,dest->w-200,30, 300, 40);
-		bmp->Blit(dest);
+		bmp->Blit(dest,0,0);
 	}
 	void SetX(int _x)
 	{

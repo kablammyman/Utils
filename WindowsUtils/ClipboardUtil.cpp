@@ -22,7 +22,7 @@ HBITMAP  ClipboardUtil::GetClipboardImageData()
 		printf("Can't open clipboard");
 		return 0;
 	}
-	HBITMAP hbmp;
+	HBITMAP hbmp = NULL;
 	if (IsClipboardFormatAvailable(CF_BITMAP) || IsClipboardFormatAvailable(CF_DIB) || IsClipboardFormatAvailable(CF_DIBV5))
 	{
 		hbmp = (HBITMAP)GetClipboardData(CF_BITMAP);

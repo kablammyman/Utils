@@ -36,7 +36,7 @@ string OptionsMenu::MenuItem::GetItemValueString()
 void OptionsMenu::GetKeyboardInput(int  newkey)
 {
     char ASCII    = newkey & 0xff;
-    char scancode = newkey >> 8;
+    int scancode = newkey >> 8;
  
     // a character key was pressed; add it to the string
     if(ASCII >= 32 && ASCII <= 126)
@@ -88,7 +88,7 @@ void OptionsMenu::GetKeyboardInput(int  newkey)
 void OptionsMenu::SetCurMenuOptionPos(MenuItem &newItem)
 {
 	newItem.option.x = x;
-	newItem.option.y = y + level_y * menuItems.size();
+	newItem.option.y = y + level_y *(int)menuItems.size();
 }
 void OptionsMenu::AddMenuOption(string add_menu_option, int value)
 {
@@ -121,7 +121,7 @@ void OptionsMenu::ResetMenuPositions()
 	for (size_t i = 0; i < menuItems.size(); i++)
 	{
 		menuItems[i].option.x = x;
-		menuItems[i].option.y = y + level_y * i;
+		menuItems[i].option.y = y + level_y * (int)i;
 	}
 }
 void OptionsMenu::AddMenuToggleOption(string add_menu_option, bool value)
@@ -150,7 +150,7 @@ void OptionsMenu::SetMenuPositions(int _x, int _y, int _level_y, int fontSize, R
 
 void OptionsMenu::SetInputDelay(int time)
 {
-	delayTimer = time;
+	delayTimer = (short)time;
 }
 
 void OptionsMenu::PrevSelection(void)
@@ -254,10 +254,10 @@ ScreenText * OptionsMenu::GetMemuOptionAt(size_t menuPos)
 	return &menuItems[menuPos].option;
 }
 
-void OptionsMenu::Draw(unsigned char *dest)
+/*void OptionsMenu::Draw(unsigned char *dest)
 {
 	//show_menu(0, dest, 0);
-	/*for (size_t i = 0; i < options->GetNumMenuItems(); i++)
+	for (size_t i = 0; i < options->GetNumMenuItems(); i++)
 	{
 		if (i == menuItemIndex)
 			textout(bmp, font, menuItems[i].text.c_str(), x, y + level_y * i, font1_color);
@@ -266,8 +266,8 @@ void OptionsMenu::Draw(unsigned char *dest)
 		if (menuItems[i].second >= 0)
 			textprintf(bmp, font, x + (font_size + (font_size*menuItems[i].first.size())), y + level_y * i, font1_color, "%d", menuItems[i].second);
 	}
-	*/
-}
+	
+}*/
 
 /*int OptionsMenu::show_menu(DATAFILE *the_datafile, PIXMAP *bmp, int da_font)
 {

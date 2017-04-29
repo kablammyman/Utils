@@ -30,14 +30,14 @@ std::vector<std::string> CFGReader::getStringTokens(std::string origString, std:
 				found=origString.find(delims,found+1);
 				if (found!= std::string::npos)//we have more delims!
 				{
-					 std::string newToken = origString.substr (curPos,found);   // get from "live" to the end
+					 newToken = origString.substr (curPos,found);   // get from "live" to the end
 					 newToken = trim(newToken);
 					 returnVec.push_back(newToken);
 					 curPos = found;
 				}
 				else//didnt find any more delemiters, so treat rest of std::string as 1 big token
 				{
-					std::string newToken = origString.substr (curPos);   // get from "live" to the end
+					newToken = origString.substr (curPos);   // get from "live" to the end
 					newToken = trim(newToken);
 					returnVec.push_back(newToken);
 					done = true;
@@ -261,7 +261,7 @@ size_t CFGReader::findInStringArray(std::vector<std::string> data, std::string s
 	for(size_t i = 0; i < data.size(); i++)
 		if(data[i] == searchItem)
 			return i;
-	return -1;
+	return std::string::npos;
 }
 //--------------------------------------------------------------------------------------------------------------------		
 bool CFGReader::getOptionBooleanValue(std::string optionName)

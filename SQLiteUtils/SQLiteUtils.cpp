@@ -66,7 +66,7 @@ static void testFunc2(sqlite3_context *context, int argc, sqlite3_value **argv)
 	//dbCtrlr.executeSQL("SELECT galleryName FROM Gallery where testFunc2('yup',id) NOT 0;", output);
 }
 */
-static void hammingDistance(sqlite3_context *context, int argc, sqlite3_value **argv)
+static void hammingDistance(sqlite3_context *context,sqlite3_value **argv)
 {
 	char *string1 = (char *)sqlite3_value_text(argv[0]);
 	char *string2 = (char *)sqlite3_value_text(argv[1]);
@@ -110,7 +110,6 @@ SQLiteUtils::~SQLiteUtils()
 //--------------------------------------------------------------------------------------------------
  bool SQLiteUtils::openSQLiteDB(string name, string &output)
  {
-	 // Open SQLiteUtils
 	DBName = name;
 	
 	if(name[name.size() -3] != '.' || name[name.size() -2] != 'd' || name[name.size() -1] != 'b')
@@ -118,11 +117,12 @@ SQLiteUtils::~SQLiteUtils()
 
 	returnCode = sqlite3_open(name.c_str(), &db);
 	//a custom sqlite method test..needs to go right after i open the db
-	int numParams = 2;//this var is more for remnding me what things are for
+	//int numParams = 2;//this var is more for remnding me what things are for
 	//sqlite3_create_function(db, "testFunc", numParams, SQLITE_UTF8, 0, &testFunc, 0, 0);
-	//sqlite3_create_function(db, "testFunc2", numParams, SQLITE_UTF8, 0, &testFunc2, 0, 0);
-	sqlite3_create_function(db, "hammingDistance", 2, SQLITE_UTF8, 0, &hammingDistance, 0, 0);
-   //returnCode = sqlite3_open("MyDb.db", &db);
+
+//i get linker errors with this now...hmm...
+//	sqlite3_create_function(db, "hammingDistance", 2, SQLITE_UTF8, 0, &hammingDistance, 0, 0);
+
    if (returnCode)
    {
       string  errMsg = sqlite3_errmsg(db);
@@ -545,7 +545,7 @@ string SQLiteUtils::dataGrabber(string &word, size_t &curPos)
 	return curWord;
 }
 
-void SQLiteUtils::getAllValuesFromCol(string &inputData, string colName, vector<string> &returnData)
+void SQLiteUtils::getAllValuesFromCol(string &inputData, string colName, vector<string> &retData)
 {
 	bool done = false;
 	string curWord;
@@ -554,14 +554,14 @@ void SQLiteUtils::getAllValuesFromCol(string &inputData, string colName, vector<
 	{
 		c = inputData.find(colName, c);
 		if (c != string::npos)
-			returnData.push_back(dataGrabber(inputData, c));
+			retData.push_back(dataGrabber(inputData, c));
 
 		else
 			done = true;
 	}
 }
 
-void SQLiteUtils::getDataPairFromOutput(string &inputData, string colName1, string colName2, vector<dbDataPair> &returnData)
+void SQLiteUtils::getDataPairFromOutput(string &inputData, string colName1, string colName2, vector<dbDataPair> &retData)
 {
 	bool done = false;
 	string firstWord;
@@ -574,7 +574,7 @@ void SQLiteUtils::getDataPairFromOutput(string &inputData, string colName1, stri
 
 		c = inputData.find(colName2, c);
 		if (c != string::npos)
-			returnData.push_back(make_pair(firstWord, dataGrabber(inputData, c)));
+			retData.push_back(make_pair(firstWord, dataGrabber(inputData, c)));
 		else
 			done = true;
 
@@ -604,7 +604,7 @@ romName|3wondersh
 ->data[1] = ID|2 romName|10yard
 ->data[2] = ID|3 romName|3wondersh
 */
-void SQLiteUtils::SplitDataIntoResults(std::vector<std::string> &returnData, string allData, string firstField,bool removeNewline)
+void SQLiteUtils::SplitDataIntoResults(std::vector<std::string> &retData, string allData, string firstField,bool removeNewline)
 {
 	size_t i = 0; 
 	firstField+='|';
@@ -617,11 +617,11 @@ void SQLiteUtils::SplitDataIntoResults(std::vector<std::string> &returnData, str
 		if (removeNewline)
 		{
 			//dont like string repalce, so i do this
-			for (size_t i = 0; i < curData.size(); i++)
-				if (curData[i] == '\n')
-					curData[i] = ' ';
+			for (size_t j = 0; j < curData.size(); j++)
+				if (curData[j] == '\n')
+					curData[j] = ' ';
 		}
-		returnData.push_back(curData);
+		retData.push_back(curData);
 		i=end;
 	}
 }

@@ -186,6 +186,7 @@ void DirectoryTree::ProcessFilesFromDirMT(string path, int maxThreads)
 //since some projects that i build for doesnt support c++11 stuff, i need to makre sure i disable it when building for them
 #if _WIN32	
 #if __cplusplus <= 199711L
+	maxThreads = 1;
 	ProcessFilesFromDir(path);
 #elif
 
@@ -352,13 +353,13 @@ void DirectoryTree::DumpTreeToFile(string path)
 
 void DirectoryTree::DumpTreeToVector(vector<string> &returnVec)
 {
-	stack<DirNode *> dirStack;
+	stack<DirNode *> dStack;
 
-	dirStack.push(dirRoot);
-	while(!dirStack.empty())
+	dStack.push(dirRoot);
+	while(!dStack.empty())
 	{
-		DirNode *curNode = dirStack.top(); //get the next dr to process
-		dirStack.pop(); //take it off of stack
+		DirNode *curNode = dStack.top(); //get the next dr to process
+		dStack.pop(); //take it off of stack
 		
 		if (curNode == 0)
 			continue;
@@ -367,7 +368,7 @@ void DirectoryTree::DumpTreeToVector(vector<string> &returnVec)
 			continue;
 		list<DirNode *>::iterator it;
 		for (it = curNode->childDir.begin(); it != curNode->childDir.end(); it++)
-			dirStack.push((*it));
+			dStack.push((*it));
 	} 
 }
 
@@ -516,13 +517,13 @@ void DirectoryTree::ClearAll()
 	if (dirRoot == 0)
 		return;
 	
-	stack<DirNode *> dirStack;
-	dirStack.push(dirRoot);
+	stack<DirNode *> dStack;
+	dStack.push(dirRoot);
 	
-	while (!dirStack.empty())
+	while (!dStack.empty())
 	{
-		DirNode *curNode = dirStack.top(); //get the next dr to process
-		dirStack.pop(); //take it off of stack
+		DirNode *curNode = dStack.top(); //get the next dr to process
+		dStack.pop(); //take it off of stack
 
 		if (curNode == 0)
 			continue;
@@ -531,7 +532,7 @@ void DirectoryTree::ClearAll()
 		{
 			list<DirNode *>::iterator it;
 			for (it = curNode->childDir.begin(); it != curNode->childDir.end(); it++)
-				dirStack.push((*it));
+				dStack.push((*it));
 		}
 
 		delete curNode;

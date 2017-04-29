@@ -12,6 +12,7 @@ ProgressBar::ProgressBar()
 
 ProgressBar::ProgressBar(HWND hwndParent, int _x, int _y, int s, unsigned int r, bool m)
 {
+	m = false;
 	init(hwndParent, _x, _y, s, r, isMarquee);
 }
 

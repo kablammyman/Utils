@@ -74,7 +74,7 @@ string LogOutput::GetTimeStamp()
 
 string LogOutput::GetTimeStampFromMilis(double milis)
 {
-	int seconds = milis / 1000;
+	int seconds = (int)(milis / 1000);
 	int minutes = seconds / 60;
 	seconds %= 60;
 	int hours = minutes / 60;
