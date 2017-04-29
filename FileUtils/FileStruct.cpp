@@ -116,5 +116,5 @@ DirNode *DirNode::GetChildDir(string dir)
 			return *it;
 		it++;
 	}
-	return NULL;
+	return 0;
 }

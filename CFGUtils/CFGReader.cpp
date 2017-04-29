@@ -13,7 +13,7 @@ std::vector<std::string> CFGReader::getStringTokens(std::string origString, std:
 			std::string newString = p;
 			//printf ("Token: %s\n", newString.c_str());
 			returnVec.push_back(newString);
-			p = strtok(NULL, delims.c_str());
+			p = strtok(0, delims.c_str());
 		}*/
 		size_t found=origString.find(delims);
 		if (found== std::string::npos)
@@ -167,12 +167,12 @@ cfgOption* CFGReader::getCfgOption(std::string optionName)
 		if(cfgFile[i].optionName == optionName)
 			return &cfgFile[i];
 	}
-	return NULL;
+	return 0;
 }
 //--------------------------------------------------------------------------------------------------------------------		
 std::string CFGReader::getListData(std::string listName,std::string optionName)
 {
-	if (getCfgOption(listName) == NULL)
+	if (getCfgOption(listName) == 0)
 		return "";
 	cfgOption* listOption = getCfgOption(listName);
 	if(!listOption->isList)
@@ -267,7 +267,7 @@ size_t CFGReader::findInStringArray(std::vector<std::string> data, std::string s
 bool CFGReader::getOptionBooleanValue(std::string optionName)
 {
 	cfgOption* option = getCfgOption(optionName);
-	if(option != NULL)
+	if(option != 0)
 		return getBooleanData(option->optionValue);
 	return false;
 }
@@ -275,7 +275,7 @@ bool CFGReader::getOptionBooleanValue(std::string optionName)
 int CFGReader::getOptionIntValue(std::string optionName)
 {
 	cfgOption* option = getCfgOption(optionName);
-	if(option != NULL)
+	if(option != 0)
 		return getIntData(option->optionValue);
 	return 0;
 }
@@ -283,7 +283,7 @@ int CFGReader::getOptionIntValue(std::string optionName)
 float CFGReader::getOptionFloatValue(std::string optionName)
 {
 	cfgOption* option = getCfgOption(optionName);
-	if(option != NULL)
+	if(option != 0)
 		return getFloatData(option->optionValue);
 	return 0;
 }
@@ -291,7 +291,7 @@ float CFGReader::getOptionFloatValue(std::string optionName)
 std::string CFGReader::getOptionStringValue(std::string optionName)
 {
 	cfgOption* option = getCfgOption(optionName);
-	if(option != NULL)
+	if(option != 0)
 		return option->optionValue;
 	return "";
 }
@@ -299,7 +299,7 @@ std::string CFGReader::getOptionStringValue(std::string optionName)
 std::vector<std::string> CFGReader::getOptionListValue(std::string optionName)
 {
 	cfgOption* option = getCfgOption(optionName);
-	if(option == NULL)
+	if(option == 0)
 	{
 		std::cout << optionName<<" is not in the list!";
 		std::vector<std::string> empty;

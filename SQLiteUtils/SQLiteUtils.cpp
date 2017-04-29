@@ -32,7 +32,7 @@ static void testFunc(sqlite3_context *context, int argc, sqlite3_value **argv)
 	//cout <<"mine: " << ret << endl;
 	char *buffer = new char[ret.size()];
 	strcpy(buffer, ret.c_str());
-	sqlite3_result_text(context, buffer, (int)strlen(buffer),NULL);
+	sqlite3_result_text(context, buffer, (int)strlen(buffer),0);
 }
 
 static void testFunc2(sqlite3_context *context, int argc, sqlite3_value **argv)
@@ -47,7 +47,7 @@ static void testFunc2(sqlite3_context *context, int argc, sqlite3_value **argv)
 	strcpy(buffer, ret.c_str());
 	//trying to see what i can do to limit what i return, so i picked to only return "small strings"
 	if(ret.size() < 9)
-		sqlite3_result_text(context, buffer, (int)strlen(buffer), NULL);
+		sqlite3_result_text(context, buffer, (int)strlen(buffer), 0);
 
 	//it doesnt matter if this is here or not for this method
 	//else
@@ -56,14 +56,14 @@ static void testFunc2(sqlite3_context *context, int argc, sqlite3_value **argv)
 	//success!!
 	//dbCtrlr.executeSQL("SELECT testFunc(id,name) FROM BodyPart where id = 1;", output);
 	//success!! it will only return the data that has less than 9 chars...looks like: testFunc2(id,name) | 1~~~Head
-	//dbCtrlr.executeSQL("SELECT testFunc2(id,name) FROM BodyPart where testFunc2(id,name) NOT NULL;", output);
+	//dbCtrlr.executeSQL("SELECT testFunc2(id,name) FROM BodyPart where testFunc2(id,name) NOT 0;", output);
 	//can i only reutnr special cols now? YES
-	//dbCtrlr.executeSQL("SELECT name FROM Gallery where testFunc2(id,name) NOT NULL;", output);
+	//dbCtrlr.executeSQL("SELECT name FROM Gallery where testFunc2(id,name) NOT 0;", output);
 	//what happens with a large table? seems super fast!
-	//dbCtrlr.executeSQL("SELECT galleryName FROM Gallery where testFunc2(id,galleryName) NOT NULL;", output);
+	//dbCtrlr.executeSQL("SELECT galleryName FROM Gallery where testFunc2(id,galleryName) NOT 0;", output);
 
 	//lets add in our own data instead of using query data for params
-	//dbCtrlr.executeSQL("SELECT galleryName FROM Gallery where testFunc2('yup',id) NOT NULL;", output);
+	//dbCtrlr.executeSQL("SELECT galleryName FROM Gallery where testFunc2('yup',id) NOT 0;", output);
 }
 */
 static void hammingDistance(sqlite3_context *context, int argc, sqlite3_value **argv)
@@ -84,7 +84,7 @@ static void hammingDistance(sqlite3_context *context, int argc, sqlite3_value **
 SQLiteUtils::SQLiteUtils()
 {
 	returnCode = 0;
-	db = NULL;
+	db = 0;
 	lastError ="";
 	DBName="";
 	curTableName="";
@@ -119,9 +119,9 @@ SQLiteUtils::~SQLiteUtils()
 	returnCode = sqlite3_open(name.c_str(), &db);
 	//a custom sqlite method test..needs to go right after i open the db
 	int numParams = 2;//this var is more for remnding me what things are for
-	//sqlite3_create_function(db, "testFunc", numParams, SQLITE_UTF8, NULL, &testFunc, NULL, NULL);
-	//sqlite3_create_function(db, "testFunc2", numParams, SQLITE_UTF8, NULL, &testFunc2, NULL, NULL);
-	sqlite3_create_function(db, "hammingDistance", 2, SQLITE_UTF8, NULL, &hammingDistance, NULL, NULL);
+	//sqlite3_create_function(db, "testFunc", numParams, SQLITE_UTF8, 0, &testFunc, 0, 0);
+	//sqlite3_create_function(db, "testFunc2", numParams, SQLITE_UTF8, 0, &testFunc2, 0, 0);
+	sqlite3_create_function(db, "hammingDistance", 2, SQLITE_UTF8, 0, &hammingDistance, 0, 0);
    //returnCode = sqlite3_open("MyDb.db", &db);
    if (returnCode)
    {
@@ -139,7 +139,7 @@ SQLiteUtils::~SQLiteUtils()
  void SQLiteUtils::closeSQLiteDB(string &output)
  {
 	  // Close SQLiteUtils if its open
-	if (db == NULL)
+	if (db == 0)
 		 return;
    output = ("Attepmting to Close " + DBName + "...");
    sqlite3_close(db);
@@ -164,11 +164,11 @@ int SQLiteUtils::callback(void *data, int argc, char **argv, char **azColName)
 	gettingData = true;
 	for(int i=0; i<argc; i++)
 	{
-		//printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+		//printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "0");
 		string col = azColName[i];
 		string val = "";
 
-		if(argv[i] != NULL)
+		if(argv[i] != 0)
 			val = argv[i];
 			
 		returnData += (col+ "|" + val+"\n");
@@ -181,7 +181,7 @@ bool SQLiteUtils::executeSQL(string command, string &output)
 {
 	char *error;
 	returnData = "";
-	returnCode = sqlite3_exec(db, command.c_str(), callback, NULL, &error);
+	returnCode = sqlite3_exec(db, command.c_str(), callback, 0, &error);
 	if (returnCode)
 	{
 		//output = "Error executing SQLite3 statement: " + sqlite3_errmsg(db);
@@ -209,7 +209,7 @@ bool SQLiteUtils::insertData(string query)
 {
 	string sqlInsert = "INSERT INTO " + curTableName +" VALUES(" + query + ");";
 	string output;
-	//string sqlInsert = "INSERT INTO MyTable VALUES(NULL, 'A Value');";
+	//string sqlInsert = "INSERT INTO MyTable VALUES(0, 'A Value');";
 	return executeSQL(sqlInsert,output);
 }
 //--------------------------------------------------------------------------------------------------

@@ -32,7 +32,7 @@ bool FileUtils::DoesPathExist(string path)
 	return true;
 #else
 	DIR *pDir = opendir(pzPath);
-	if (pDir != NULL)
+	if (pDir != 0)
 	{
 		(void)closedir(pDir);
 		return true
@@ -97,10 +97,10 @@ int FileUtils::GetNumFoldersinDir(string path)//needs to have *.fileExt to work
 #else
 	DIR *dir;
 	struct dirent *ent;
-	if ((dir = opendir(curDir.c_str())) != NULL)
+	if ((dir = opendir(curDir.c_str())) != 0)
 	{
 		/* print all the files and directories within directory */
-		while ((ent = readdir(dir)) != NULL)
+		while ((ent = readdir(dir)) != 0)
 		{
 			if (strcmp(FindFileData.cFileName, ".") == 0 || strcmp(FindFileData.cFileName, "..") == 0)//ignore anything we put in this list
 				continue;
@@ -161,10 +161,10 @@ vector<string> FileUtils::GetAllFolderNamesInDir(string path)//needs to have *.f
 #else
 	DIR *dir;
 	struct dirent *ent;
-	if ((dir = opendir(curDir.c_str())) != NULL)
+	if ((dir = opendir(curDir.c_str())) != 0)
 	{
 		/* print all the files and directories within directory */
-		while ((ent = readdir(dir)) != NULL)
+		while ((ent = readdir(dir)) != 0)
 		{
 			if (strcmp(FindFileData.cFileName, ".") == 0 || strcmp(FindFileData.cFileName, "..") == 0)//ignore anything we put in this list
 				continue;
@@ -224,10 +224,10 @@ int FileUtils::GetNumFilesInDir(string path, string ext)//needs to have *.fileEx
 #else
 	DIR *dir;
 	struct dirent *ent;
-	if ((dir = opendir(curDir.c_str())) != NULL)
+	if ((dir = opendir(curDir.c_str())) != 0)
 	{
 		/* print all the files and directories within directory */
-		while ((ent = readdir(dir)) != NULL)
+		while ((ent = readdir(dir)) != 0)
 		{
 			if (strcmp(FindFileData.cFileName, ".") == 0 || strcmp(FindFileData.cFileName, "..") == 0)//ignore anything we put in this list
 				continue;
@@ -295,10 +295,10 @@ vector<string> FileUtils::GetAllFileNamesInDir(string path,string ext, bool incl
 #else
 	DIR *dir;
 	struct dirent *ent;
-	if ((dir = opendir(curDir.c_str())) != NULL)
+	if ((dir = opendir(curDir.c_str())) != 0)
 	{
 		/* print all the files and directories within directory */
-		while ((ent = readdir(dir)) != NULL)
+		while ((ent = readdir(dir)) != 0)
 		{
 			if (strcmp(FindFileData.cFileName, ".") == 0 || strcmp(FindFileData.cFileName, "..") == 0)//ignore anything we put in this list
 				continue;
@@ -485,7 +485,7 @@ string FileUtils::NextDirTreeStep()
 size_t FileUtils::GetCurNodeNumFiles()
 {
 	DirNode* temp = dirTree.GetcurNodeInStep();
-	if (temp != NULL)
+	if (temp != 0)
 		return temp->GetNumFiles();
 	return 0;
 }
@@ -493,7 +493,7 @@ size_t FileUtils::GetCurNodeNumFiles()
 size_t FileUtils::GetCurNodeNumFolders()
 {
 	DirNode* temp = dirTree.GetcurNodeInStep();
-	if(temp != NULL)
+	if(temp != 0)
 		return temp->GetNumFolders();
 	return 0;
 }
@@ -501,7 +501,7 @@ size_t FileUtils::GetCurNodeNumFolders()
 list<string> FileUtils::GetCurNodeFileList()
 {
 	DirNode* temp = dirTree.GetcurNodeInStep();
-	if (temp != NULL)
+	if (temp != 0)
 		return temp->fileList;
 	list<string> empty;
 	return empty;
@@ -545,10 +545,10 @@ int FileUtils::Test()
 	string badPath = "\\\\SERVER\\music\\2pac";
 	string goodPath = "\\\\SERVER\\music\\muzik\\2pac";
 	DirNode *dontExist = dirTree.GetDirNode(badPath);
-	if (dontExist != NULL)
+	if (dontExist != 0)
 		return 0;
 	DirNode *iExist = dirTree.GetDirNode(goodPath);
-	if (iExist == NULL)
+	if (iExist == 0)
 		return 1;
 	goodPath += DirectoryTree::SLASH;
 

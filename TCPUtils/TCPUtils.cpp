@@ -65,7 +65,7 @@ void TCPUtils::ReportError(int errorCode, std::string  whichFunc)
 {
 	string error = ("Call to " + whichFunc + " returned error ");
 	std::cout << error << errorCode <<endl;
-	//MessageBox(NULL, errorMsg, "socketIndication", MB_OK);
+	//MessageBox(0, errorMsg, "socketIndication", MB_OK);
 }
 //------------------------------------------------------------------------------
 int TCPUtils::fillTheirInfo(SOCKADDR_IN *who, SOCKET daSocket)
@@ -166,7 +166,7 @@ int TCPUtils::waitForFirstClientConnect()
 	int yes = 1;
 
 	RemoteComputerConnection remoteConn;
-	remoteConn.theSocket = accept(listeningSocket, NULL, NULL);
+	remoteConn.theSocket = accept(listeningSocket, 0, 0);
 
 	setsockopt(remoteConn.theSocket, SOL_SOCKET, SO_REUSEADDR, (char*)&yes,sizeof(int)); // lose the pesky "address already in use" error message
 
@@ -184,7 +184,7 @@ int TCPUtils::waitForFirstClientConnect()
 	clientConnection = INVALID_SOCKET;
 	while (clientConnection == INVALID_SOCKET)
 	{
-	clientConnection = accept(listeningSocket, NULL, NULL);
+	clientConnection = accept(listeningSocket, 0, 0);
 	//clientConnection = accept(listeningSocket,  (struct sockaddr *)&theirInfo ,&sin_size);
 	}
 	clientConnection = listeningSocket; 
@@ -194,7 +194,7 @@ int TCPUtils::waitForFirstClientConnect()
 	clientConnection = accept(listeningSocket,  (struct sockaddr *)&theirInfo ,&sin_size);
 	*/
 	//sprintf(message,"we started a server listening on port %d",portNumber);
-	// MessageBox(NULL, message, "Server message", MB_OK);
+	// MessageBox(0, message, "Server message", MB_OK);
 	return NETWORK_OK;
 }
 int TCPUtils::waitForClientAsync()
@@ -208,11 +208,11 @@ int TCPUtils::waitForClientAsync()
 	timeout.tv_usec = 0;
 	
 
-	if (select(listeningSocket, &readSet, NULL, NULL, &timeout) == 1)
+	if (select(listeningSocket, &readSet, 0, 0, &timeout) == 1)
 	{
 		RemoteComputerConnection remoteConn;
 		int yes = 1;
-		remoteConn.theSocket = accept(listeningSocket, NULL, NULL);
+		remoteConn.theSocket = accept(listeningSocket, 0, 0);
 		setsockopt(remoteConn.theSocket, SOL_SOCKET, SO_REUSEADDR, (char*)&yes, sizeof(int)); // lose the pesky "address already in use" error message
 
 		if (remoteConn.theSocket == INVALID_SOCKET)
@@ -333,7 +333,7 @@ bool TCPUtils::hasRecivedData(int index)
 	FD_ZERO(&read_fds);
 	FD_SET(remoteConnections[index].theSocket, &read_fds,0);
 
-	int result = select(0, &read_fds, NULL, NULL, &tv);
+	int result = select(0, &read_fds, 0, 0, &tv);
 	if (result > 0)
 		if (FD_ISSET(remoteConnections[index].theSocket, &read_fds))
 			return true;

@@ -47,7 +47,7 @@ public:
 	//the rest deals with dirTree
 	static  void ClearDirTree();
 
-	static  void AddDirTree(string path, int numThreads = 0/*, DirNode* parent = NULL*/);
+	static  void AddDirTree(string path, int numThreads = 0/*, DirNode* parent = 0*/);
 
 	//static  FileNodeHandle getDirTreeRoot();
 	//static  FileNodeHandle getDirTree(string path);

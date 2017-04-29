@@ -25,7 +25,7 @@ void RenderController::KillScreenBuffer()
 	if (screenBuffer)
 	{
 		screenBuffer->Destroy();
-		screenBuffer = NULL;
+		screenBuffer = 0;
 	}
 }
 //---------------------------------------------------------------------------------------
@@ -94,7 +94,7 @@ void clearScreen()
 	if(bmp)
 	{
 		destroy_PIXMAP(bmp);
-		bmp = NULL;
+		bmp = 0;
 	}
 	clear(screen);
 }

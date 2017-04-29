@@ -256,7 +256,7 @@ ScreenText * OptionsMenu::GetMemuOptionAt(size_t menuPos)
 
 void OptionsMenu::Draw(unsigned char *dest)
 {
-	//show_menu(NULL, dest, 0);
+	//show_menu(0, dest, 0);
 	/*for (size_t i = 0; i < options->GetNumMenuItems(); i++)
 	{
 		if (i == menuItemIndex)
@@ -272,7 +272,7 @@ void OptionsMenu::Draw(unsigned char *dest)
 /*int OptionsMenu::show_menu(DATAFILE *the_datafile, PIXMAP *bmp, int da_font)
 {
 text_mode(text_mode_type);
-if (the_datafile != NULL && da_font != -1)
+if (the_datafile != 0 && da_font != -1)
 {
 for (int i = 0; i < (int)menuItems.size(); i++)
 {

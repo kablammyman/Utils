@@ -2,7 +2,7 @@
 
 std::string ClipboardUtil::GetClipboardStringData()
 {
-	if (!OpenClipboard(NULL))
+	if (!OpenClipboard(0))
 	{
 		printf("Can't open clipboard");
 		return "";
@@ -17,17 +17,17 @@ std::string ClipboardUtil::GetClipboardStringData()
 
 HBITMAP  ClipboardUtil::GetClipboardImageData()
 {
-	if (!OpenClipboard(NULL))
+	if (!OpenClipboard(0))
 	{
 		printf("Can't open clipboard");
-		return NULL;
+		return 0;
 	}
 	HBITMAP hbmp;
 	if (IsClipboardFormatAvailable(CF_BITMAP) || IsClipboardFormatAvailable(CF_DIB) || IsClipboardFormatAvailable(CF_DIBV5))
 	{
 		hbmp = (HBITMAP)GetClipboardData(CF_BITMAP);
 
-		if (hbmp != NULL && hbmp != INVALID_HANDLE_VALUE)
+		if (hbmp != 0 && hbmp != INVALID_HANDLE_VALUE)
 		{
 			printf("Not valid image data");
 		}

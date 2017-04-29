@@ -53,8 +53,8 @@ class DirectoryTree
 		static char SLASH;
 		DirectoryTree()
 		{
-			dirRoot = NULL;
-			curNodeInStep = NULL;
+			dirRoot = 0;
+			curNodeInStep = 0;
 			totalFilesInTree = 0;
 			totalDirsInTree = 0;
 #ifdef _WIN32
@@ -74,7 +74,7 @@ SLASH = '/';
 			while (!dirStack.empty())
 			{
 				DirNode *temp = dirStack.top();
-				if(temp != NULL)
+				if(temp != 0)
 					delete temp;
 				dirStack.pop();
 			}

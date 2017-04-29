@@ -1,4 +1,5 @@
 #pragma once
+#include <string> // memcpy
 
 struct RGB
 {
@@ -28,7 +29,7 @@ struct PIXMAP
 	void Destroy()
 	{
 		delete[] pixels;
-		pixels = NULL;
+		pixels = 0;
 		w = 0;
 		h = 0;
 	}

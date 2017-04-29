@@ -7,7 +7,7 @@ ProgressBar::ProgressBar()
 	y = 0;
 	range = 100;
 	size = 100;
-	parent = NULL;
+	parent = 0;
 }
 
 ProgressBar::ProgressBar(HWND hwndParent, int _x, int _y, int s, unsigned int r, bool m)
@@ -41,18 +41,18 @@ void ProgressBar::init(HWND hwndParent, int _x, int _y, int s, unsigned int r, b
 
 	//PBS_SMOOTH without this, thw bar is a bunch of blocks
 
-	//GetModuleHandle(NULL); gets the hinstance...that way i wont need a global var in here
+	//GetModuleHandle(0); gets the hinstance...that way i wont need a global var in here
 	if (!isMarquee)
 	{
-		hwndPB = CreateWindowEx(0, PROGRESS_CLASS, (LPTSTR)NULL, WS_CHILD | WS_VISIBLE | PBS_SMOOTH, x, y, size, cyVScroll, hwndParent, (HMENU)0, GetModuleHandle(NULL), NULL);
+		hwndPB = CreateWindowEx(0, PROGRESS_CLASS, (LPTSTR)0, WS_CHILD | WS_VISIBLE | PBS_SMOOTH, x, y, size, cyVScroll, hwndParent, (HMENU)0, GetModuleHandle(0), 0);
 		SendMessage(hwndPB, PBM_SETRANGE, 0, MAKELPARAM(0, size));
 		SendMessage(hwndPB, PBM_SETSTEP, (WPARAM)1, 0);
 		//SendMessage(hwndPB, PBM_SETSTEP, (WPARAM)(size / 100), 0);
 	}
 	else
 	{
-		hwndPB = CreateWindowEx(0, PROGRESS_CLASS, (LPTSTR)NULL, WS_CHILD | WS_VISIBLE | PBS_SMOOTH | PBS_MARQUEE, x, y, size, cyVScroll, hwndParent, (HMENU)0, GetModuleHandle(NULL), NULL);
-		SendMessage(hwndPB, PBM_SETMARQUEE, (WPARAM)1, (LPARAM)NULL);
+		hwndPB = CreateWindowEx(0, PROGRESS_CLASS, (LPTSTR)0, WS_CHILD | WS_VISIBLE | PBS_SMOOTH | PBS_MARQUEE, x, y, size, cyVScroll, hwndParent, (HMENU)0, GetModuleHandle(0), 0);
+		SendMessage(hwndPB, PBM_SETMARQUEE, (WPARAM)1, (LPARAM)0);
 	}
 
 	
@@ -78,6 +78,6 @@ void ProgressBar::updateProgressBar(int curAmt)
 	}
 	else
 	{
-		SendMessage(hwndPB, PBM_SETMARQUEE, (WPARAM)1, (LPARAM)NULL);
+		SendMessage(hwndPB, PBM_SETMARQUEE, (WPARAM)1, (LPARAM)0);
 	}
 }

@@ -10,7 +10,7 @@ class TCPOutput : public LogOutput
 public:
 	TCPOutput()
 	{
-		conn = NULL;
+		conn = 0;
 		socket = -1;
 	}
 	TCPOutput(TCPUtils *c, int s)

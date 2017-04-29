@@ -19,9 +19,9 @@ void WindowsEventLogOutput::WriteMessage(int severity, string message)
 	lpszStrings[0] = temp;
 
 	// Get a handle to use with ReportEvent().
-	//hEventSource = RegisterEventSource(NULL, sSourceName.c_str());
-	hEventSource = RegisterEventSource(NULL, "SmartCatalogue");
-	if (hEventSource != NULL)
+	//hEventSource = RegisterEventSource(0, sSourceName.c_str());
+	hEventSource = RegisterEventSource(0, "SmartCatalogue");
+	if (hEventSource != 0)
 	{
 		// Write to event log.
 		ReportEvent(
@@ -29,11 +29,11 @@ void WindowsEventLogOutput::WriteMessage(int severity, string message)
 			wType,								//event type
 			0,									//category - none
 			0x00000001L,						//event id
-			NULL,								//used Sid
+			0,								//used Sid
 			1,									//num strings
 			0,									//data size
 			(LPCTSTR*)&lpszStrings[0],			//strings
-			NULL);								//raw data
+			0);								//raw data
 		DeregisterEventSource(hEventSource);
 	}
 

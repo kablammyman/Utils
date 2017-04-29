@@ -11,7 +11,7 @@ Node* Node::findChild(char c)
 		}
 	}
 
-	return NULL;
+	return 0;
 }
 
 Trie::Trie()
@@ -40,7 +40,7 @@ void Trie::AddWordToTrie(std::string s)
 	for (size_t i = 0; i < s.length(); i++)
 	{
 		Node* child = current->findChild(s[i]);
-		if (child != NULL)
+		if (child != 0)
 		{
 			current = child;
 		}
@@ -61,12 +61,12 @@ bool Trie::SearchWordInTrie(std::string s)
 {
 	Node* current = root;
 
-	while (current != NULL)
+	while (current != 0)
 	{
 		for (size_t i = 0; i < s.length(); i++)
 		{
 			Node* tmp = current->findChild(s[i]);
-			if (tmp == NULL)
+			if (tmp == 0)
 				return false;
 			current = tmp;
 		}

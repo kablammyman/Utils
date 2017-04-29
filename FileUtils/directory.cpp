@@ -77,10 +77,10 @@ void DirectoryTree::ProcessSingleDir(DirNode *curNode, vector<string> &childrenD
 #else
 	DIR *dir;
 	struct dirent *ent;
-	if ((dir = opendir(curDir.c_str())) != NULL) 
+	if ((dir = opendir(curDir.c_str())) != 0) 
 	{
 		/* print all the files and directories within directory */
-		while ((ent = readdir(dir)) != NULL) 
+		while ((ent = readdir(dir)) != 0) 
 		{
 			if (isInIgnoreList(ent->d_name))//ignore anything we put in this list
 				continue;
@@ -153,7 +153,7 @@ void DirectoryTree::StartProcessFilesFromDirStep(string path)//needs to have *.f
 
 	endOfProcessing = false;
 	totalFilesInTree = 0;
-	curNodeInStep = NULL;
+	curNodeInStep = 0;
 }
 
 DirNode* DirectoryTree::NextProcessFilesFromDirStep()//needs to have *.fileExt to work
@@ -205,7 +205,7 @@ void DirectoryTree::ProcessFilesFromDirMT(string path, int maxThreads)
 	//if we want to clear the data firs, we must explicitly call it now
 	
 	vector<vector<string>> childDirs(maxThreads, vector<string>(0));
-	vector<DirNode *> curNode(maxThreads,NULL);
+	vector<DirNode *> curNode(maxThreads,0);
 	
 	//okay, now we need to make all of our threads
 	
@@ -293,7 +293,7 @@ DirNode * DirectoryTree::GetDirNode(string path)
 	
 	//make sure the path we are lookging for is within our tree
 	if (find == string::npos)
-		return NULL;
+		return 0;
 
 	string shortPath = path.substr(curPath.size());
 	string delims;
@@ -306,15 +306,15 @@ DirNode * DirectoryTree::GetDirNode(string path)
 	
 	//make sure the path we want matches the tree root 
 	if (!runner->IsPathName(curPath))
-		return NULL;
+		return 0;
 	//if so, then start the actual search
 	curPath += (SLASH + tokens[i]+ SLASH);
 
-	while (runner != NULL)
+	while (runner != 0)
 	{
 		runner = runner->GetChildDir(curPath);
-		if (runner == NULL)
-			return NULL;
+		if (runner == 0)
+			return 0;
 
 		if (i < tokens.size() - 1)
 			i++;
@@ -322,11 +322,11 @@ DirNode * DirectoryTree::GetDirNode(string path)
 		{
 			if (path == runner->ToString())
 				return runner;
-			return NULL;
+			return 0;
 		}
 		curPath += (tokens[i]+ SLASH);
 	}
-	return NULL;
+	return 0;
 }
 void DirectoryTree::DumpTreeToFile(string path)
 {
@@ -337,7 +337,7 @@ void DirectoryTree::DumpTreeToFile(string path)
 	
 	pFile = fopen (fileName.c_str(),"w");
 
-	if (pFile==NULL)
+	if (pFile==0)
 		return;
 	vector<string> pathList;
 
@@ -359,7 +359,7 @@ void DirectoryTree::DumpTreeToVector(vector<string> &returnVec)
 		DirNode *curNode = dirStack.top(); //get the next dr to process
 		dirStack.pop(); //take it off of stack
 		
-		if (curNode == NULL)
+		if (curNode == 0)
 			continue;
 		returnVec.push_back(curNode->ToString());
 		if (curNode->childDir.empty())
@@ -439,17 +439,17 @@ long long DirectoryTree::GetDirSize(string path)//needs to have *.fileExt to wor
 	FindClose(hFind);
 
 #else
-	DIR *dir = NULL;
-	struct dirent *ent = NULL;
+	DIR *dir = 0;
+	struct dirent *ent = 0;
 	struct stat buf;
 	do{
 		string curDir = dirStack.top(); //get the next dr to process
 		dirStack.pop(); //take it off of stack
 
-		if (dir != NULL)
+		if (dir != 0)
 		{
 			/* print all the files and directories within directory */
-			while ((ent = readdir(dir)) != NULL)
+			while ((ent = readdir(dir)) != 0)
 			{
 				if (stat(ent->d_name, &buf))
 				{
@@ -512,7 +512,7 @@ void DirectoryTree::ClearAll()
 	totalFilesInTree = 0;
 	totalDirsInTree = 0;
 
-	if (dirRoot == NULL)
+	if (dirRoot == 0)
 		return;
 	
 	stack<DirNode *> dirStack;
@@ -523,7 +523,7 @@ void DirectoryTree::ClearAll()
 		DirNode *curNode = dirStack.top(); //get the next dr to process
 		dirStack.pop(); //take it off of stack
 
-		if (curNode == NULL)
+		if (curNode == 0)
 			continue;
 
 		if (!curNode->childDir.empty())
@@ -534,9 +534,9 @@ void DirectoryTree::ClearAll()
 		}
 
 		delete curNode;
-		curNode = NULL;
+		curNode = 0;
 	}
 
-	//now that everything is deleted, make sure we point the root to NULL
-	dirRoot = NULL;
+	//now that everything is deleted, make sure we point the root to 0
+	dirRoot = 0;
 }
