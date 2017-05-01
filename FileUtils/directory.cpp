@@ -17,6 +17,7 @@
 //#include <future>         // std::async, std::future
 #endif
 
+
 void DirectoryTree::AddToIgnoreList(string badFile)
 {
 	list<string>::iterator it;

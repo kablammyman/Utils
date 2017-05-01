@@ -25,7 +25,11 @@ struct fileStruct
 }
 */
 
-
+#ifdef _WIN32
+#define SLASH  '\\'
+#else
+#define SLASH = '/'
+#endif
 
 class DirectoryTree
 {
@@ -50,18 +54,13 @@ class DirectoryTree
 	void ProcessSingleDir(DirNode *curNode, vector<string> &childrenDirs);
 
 	public:
-		static char SLASH;
+		
 		DirectoryTree()
 		{
 			dirRoot = 0;
 			curNodeInStep = 0;
 			totalFilesInTree = 0;
 			totalDirsInTree = 0;
-#ifdef _WIN32
-SLASH = '\\';
-#else
-SLASH = '/';
-#endif
 		}
 		~DirectoryTree()
 		{

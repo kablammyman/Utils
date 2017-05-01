@@ -153,7 +153,7 @@ vector<string> FileUtils::GetAllFolderNamesInDir(string path)//needs to have *.f
 				strcat(sTmp, SLASH);*/
 				sTmp = curDir;
 				sTmp += FindFileData.cFileName;
-				sTmp += DirectoryTree::SLASH;
+				sTmp += SLASH;
 				folderList.push_back(sTmp);
 			}
 
@@ -175,7 +175,7 @@ vector<string> FileUtils::GetAllFolderNamesInDir(string path)//needs to have *.f
 			{
 				sTmp = curDir;
 				sTmp += ent->d_name;
-				sTmp += DirectoryTree::SLASH;
+				sTmp += SLASH;
 				folderList.push_back(sTmp);
 			}
 			//else this is a file, so add it to the list of files for this dir
@@ -551,7 +551,7 @@ int FileUtils::Test()
 	DirNode *iExist = dirTree.GetDirNode(goodPath);
 	if (iExist == 0)
 		return 1;
-	goodPath += DirectoryTree::SLASH;
+	goodPath += SLASH;
 
 	if (iExist->ToString() == goodPath)
 		return 3;

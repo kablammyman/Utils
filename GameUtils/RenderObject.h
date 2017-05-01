@@ -85,7 +85,7 @@ public:
 	{
 		//blit(bmp, dest, 0, 0, x, y, w, h);
 		//stretch_blit(bmp, dest, 0, 0, bmp->w, bmp->h,dest->w-200,30, 300, 40);
-		bmp->Blit(dest,0,0);
+		bmp->Blit(dest,x,y);
 	}
 	void SetX(int _x)
 	{
@@ -95,5 +95,11 @@ public:
 	{
 		y = _y;
 	}
+	void SetPos(int _x, int _y)
+	{
+		x = _x;
+		y = _y;
+	}
+
 	virtual void Update() {}
 };
