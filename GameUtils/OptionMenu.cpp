@@ -1,5 +1,5 @@
 #include "OptionMenu.h"
-
+#include "ScreenText.h"
 
 void OptionsMenu::MenuItem::SetBoundries()
 {
@@ -85,17 +85,17 @@ void OptionsMenu::GetKeyboardInput(int  newkey)
         break;
     }
 }
-void OptionsMenu::SetCurMenuOptionPos(MenuItem &newItem)
+void OptionsMenu::SetCurMenuOptionPos(MenuItem *newItem)
 {
-	newItem.option.x = x;
-	newItem.option.y = y + level_y *(int)menuItems.size();
+	newItem->option->SetPos(x,y + level_y *(int)menuItems.size());
 }
+
 void OptionsMenu::AddMenuOption(string add_menu_option, int value)
 {
-	MenuItem newItem;
-	newItem.text = add_menu_option;
-	newItem.value = value;
-	newItem.isToggle = false;
+	MenuItem *newItem = new MenuItem();
+	newItem->text = add_menu_option;
+	newItem->value = value;
+	newItem->isToggle = false;
 	
 	SetCurMenuOptionPos(newItem);
 
@@ -105,12 +105,12 @@ void OptionsMenu::AddMenuOption(string add_menu_option, int value)
 
 void OptionsMenu::AddMenuOption(string add_menu_option,int value, int min, int max)
 {
-	MenuItem newItem;
-	newItem.text = add_menu_option;
-	newItem.value = value;
-	newItem.isToggle = false;
-	newItem.min = min;
-	newItem.max = max;
+	MenuItem *newItem = new MenuItem();
+	newItem->text = add_menu_option;
+	newItem->value = value;
+	newItem->isToggle = false;
+	newItem->min = min;
+	newItem->max = max;
 	
 	SetCurMenuOptionPos(newItem);
 
@@ -120,16 +120,15 @@ void OptionsMenu::ResetMenuPositions()
 {
 	for (size_t i = 0; i < menuItems.size(); i++)
 	{
-		menuItems[i].option.x = x;
-		menuItems[i].option.y = y + level_y * (int)i;
+		menuItems[i]->option->SetPos(x, y + level_y * (int)i);
 	}
 }
 void OptionsMenu::AddMenuToggleOption(string add_menu_option, bool value)
 {
-	MenuItem newItem;
-	newItem.text = add_menu_option;
-	newItem.value = (int)value;
-	newItem.isToggle = true;
+	MenuItem* newItem = new MenuItem();
+	newItem->text = add_menu_option;
+	newItem->value = (int)value;
+	newItem->isToggle = true;
 
 	SetCurMenuOptionPos(newItem);
 
@@ -180,7 +179,7 @@ void OptionsMenu::IncrementValue(void)
 {
 	if (!wait_flag)
 	{
-		menuItems[menuItemIndex].value++;
+		menuItems[menuItemIndex]->value++;
 		wait_flag = true;
 	}
 }
@@ -188,7 +187,7 @@ void OptionsMenu::DecrementValue(void)
 {
 	if (!wait_flag)
 	{
-		menuItems[menuItemIndex].value--;
+		menuItems[menuItemIndex]->value--;
 		wait_flag = true;
 	}
 }
@@ -230,10 +229,10 @@ void OptionsMenu::Update()
 	
 	for (size_t i = 0; i < menuItems.size(); i++)
 	{
-		if(menuItems[i].isToggle)
-			menuItems[i].SetToggleBoundries();
+		if(menuItems[i]->isToggle)
+			menuItems[i]->SetToggleBoundries();
 		else
-			menuItems[i].SetBoundries();
+			menuItems[i]->SetBoundries();
 	}
 	
 }
@@ -242,16 +241,16 @@ void OptionsMenu::Update()
 RGB OptionsMenu::GetMenuItemColorAt(size_t menuPos)
 {
 	if (menuPos == menuItemIndex)
-		menuItems[menuPos].option.color = font1_color;
+		menuItems[menuPos]->option->SetColor(font1_color);
 	else
-		menuItems[menuPos].option.color = font2_color;
+		menuItems[menuPos]->option->SetColor(font2_color);
 
-	return menuItems[menuPos].option.color;
+	return menuItems[menuPos]->option->GetColor();
 }
 
 ScreenText * OptionsMenu::GetMemuOptionAt(size_t menuPos)
 {
-	return &menuItems[menuPos].option;
+	return menuItems[menuPos]->option;
 }
 
 /*void OptionsMenu::Draw(unsigned char *dest)

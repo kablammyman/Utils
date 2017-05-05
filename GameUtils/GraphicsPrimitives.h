@@ -25,6 +25,7 @@ struct RGB
 		b = (n >> 8) & 0xFF;
 	}
 };
+
 struct RGBA : RGB
 {
 	unsigned char a;
@@ -83,26 +84,4 @@ struct PIXMAP
 	void Fill(RGBA color);
 	void Blit(PIXMAP * dest, int x, int y);
 	void Clear();
-};
-
-struct ScreenText
-{
-	int x, y; 
-	RGB color;
-	int size;
-	const char * text;
-
-	/*void SetText(const char * t, size_t size)
-	{
-		text = new char[size+1];
-		for(size_t i = 0; i < size; i++)
-			text[i] = t[i];
-		text[size] = '\0';
-	}
-
-	~ScreenText()
-	{
-		if(text)
-			delete[] text;
-	}*/
 };

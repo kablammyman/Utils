@@ -4,7 +4,7 @@
 #include <string>
 #include "Scene.h"
 #include "Input.h"
-
+#include "ScreenText.h"
 using namespace std;
 
 //this class is from my ooooooold game coding days. I  made a few updates and improvements since
@@ -16,7 +16,7 @@ using namespace std;
 class OptionsMenu : public RenderObject {
 	struct MenuItem
 	{
-		ScreenText option;
+		ScreenText *option;
 		string text;
 		int value;
 		bool isToggle;
@@ -36,7 +36,7 @@ class OptionsMenu : public RenderObject {
 	short int delay;
 	short int delayTimer;
 
-	vector<MenuItem> menuItems;
+	vector<MenuItem*> menuItems;
 
 	int menuItemIndex;
 	
@@ -62,7 +62,7 @@ public:
 		SetMenuPositions( _x,  _y,  _level_y, fontSize, text_color1,  text_color2);
 	};
 	void SetInput(Input *input) { menuInput = input; }
-	void SetCurMenuOptionPos(MenuItem &newItem);
+	void SetCurMenuOptionPos(MenuItem *newItem);
 	void SetInputDelay(int time);
 	
 	void PrevSelection(void);
@@ -80,9 +80,9 @@ public:
 	void GetKeyboardInput(int  newkey);//newkey = next key in keyboard buffer
 
 	size_t GetNumMenuItems() { return menuItems.size(); }
-	string GetMenuItemStringAt(size_t index) { return menuItems[index].text; }
-	int GetMenuItemValueAt(size_t index) { return menuItems[index].value; }
-	string GetMenuItemValueStringAt(size_t index) { return menuItems[index].GetItemValueString(); }
+	string GetMenuItemStringAt(size_t index) { return menuItems[index]->text; }
+	int GetMenuItemValueAt(size_t index) { return menuItems[index]->value; }
+	string GetMenuItemValueStringAt(size_t index) { return menuItems[index]->GetItemValueString(); }
 	RGB GetMenuItemColorAt(size_t menuPos);
 	ScreenText *GetMemuOptionAt(size_t menuPos);
 	int GetCurrentSelectionItemIndex() { return menuItemIndex; }

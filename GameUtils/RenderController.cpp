@@ -78,14 +78,9 @@ void RenderController::ResizeScreenBuffer(int screenW, int screenH)
 	DrawAllRenderObjectsToBuffer();
 }
 
-void RenderController::DrawText(int x, int y, RGB color, std::string text)
+void RenderController::DrawText(ScreenText text)
 {
-	ScreenText temp;
-	temp.x = x;
-	temp.y = y;
-	temp.color = color;
-	temp.text = text.c_str();//SetText(text.c_str(),text.size());
-	textList.push_back(temp);
+	textList.push_back(text);
 }
 
 /*

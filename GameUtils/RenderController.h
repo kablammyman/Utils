@@ -6,7 +6,7 @@
 
 #include "RenderObject.h"
 #include "GraphicsPrimitives.h"
-
+#include "ScreenText.h"
 
 class RenderController
 {
@@ -27,7 +27,7 @@ public:
 	RenderObject * GetRenderObject(size_t index);
 	void UpdateAllRenderObjects();
 	void ResizeScreenBuffer(int screenW, int screenH);
-	void DrawText(int x, int y, RGB color, std::string text);
+	void DrawText(ScreenText text);
 };
 
 #endif //RENDERER_H
