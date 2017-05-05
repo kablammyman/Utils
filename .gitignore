@@ -9,3 +9,4 @@ ipch/
 *debug*/
 *release*/
 *.db
+build_vs2015/
