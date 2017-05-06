@@ -238,7 +238,7 @@ void OptionsMenu::Update()
 }
 
 
-RGB OptionsMenu::GetMenuItemColorAt(size_t menuPos)
+RGBA OptionsMenu::GetMenuItemColorAt(size_t menuPos)
 {
 	if (menuPos == menuItemIndex)
 		menuItems[menuPos]->option->SetColor(font1_color);

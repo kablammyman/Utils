@@ -46,3 +46,8 @@ RGBA ScreenText::GetColor()
 {
 	return color;
 }
+
+void ScreenText::Draw(PIXMAP*dest)
+{
+
+}

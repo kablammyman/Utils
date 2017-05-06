@@ -1,5 +1,57 @@
 #include "TileImage.h"
 
+TileImage::TileImage(RGBA * data, int imgW, int imgH, int tileW, int tileH)
+{
+	iWidth = imgW;
+	iHeight = imgH;
+	BLOCK_WIDTH = tileW;
+	BLOCK_HEIGHT = tileH;
+	NUM_PIXELS_BLOCK = BLOCK_WIDTH * BLOCK_HEIGHT;
+	int numPixels = iWidth *iHeight;
+
+	pixelData = new RGBA[numPixels];
+	//memcpy(pixelData, data, iWidth *iHeight*sizeof(RGBA));
+
+	for(int i = 0; i < numPixels; i++)
+		pixelData[i] = RGBA(data[i].r, data[i].g, data[i].b, data[i].a);
+
+	//put the pixels in blocks
+	int numBlocksX = iWidth / BLOCK_WIDTH;
+	int numBlocksY = iHeight / BLOCK_HEIGHT;
+	int numBlocks = numBlocksX*numBlocksY;
+
+	for (int i = 0; i < numBlocks; i++)
+	{
+		Tile temp (BLOCK_WIDTH, BLOCK_HEIGHT);
+		imgBlocks.push_back(temp);
+	}
+
+	ConvertPixelArrayIntoBlocks();
+}
+
+TileImage::TileImage(PIXMAP * data, int imgW, int imgH, int tileW, int tileH)
+{
+	TileImage(data->pixels, imgW, imgH, tileW, tileH);
+}
+
+TileImage::TileImage()
+{
+	pixelData = NULL;
+	imgBlocks.clear();
+	iWidth = 0;
+	iHeight = 0;
+	BLOCK_WIDTH = 4;
+	BLOCK_HEIGHT = 4;
+	NUM_PIXELS_BLOCK = BLOCK_WIDTH * BLOCK_HEIGHT;
+}
+
+TileImage::~TileImage()
+{
+	if (pixelData != NULL)
+		delete[] pixelData;
+
+	pixelData = NULL;
+}
 
 //---------------------------------------------------------------------------------------------------
 void TileImage::GetBlockCords(unsigned int a_iPixelX, unsigned int a_iPixelY, int & blockX, int & blockY)
@@ -133,6 +185,48 @@ unsigned char*  TileImage::GetPNGDataFromBlockImage()
 		}
 	}
 	//lodepng_encode32_file(filename.c_str(), rawData, iWidth, iHeight);
+	//delete[] rawData;
+	return rawData;
+}
+
+//---------------------------------------------------------------------------------------------------
+unsigned char* TileImage::SaveBlockAsPNG(int index)
+{
+	unsigned char *rawData = new unsigned char[(BLOCK_WIDTH * BLOCK_HEIGHT) * 4];
+	unsigned char *runner = rawData;
+	
+	Tile curBlock = imgBlocks[index];
+	for (int i = 0; i < NUM_PIXELS_BLOCK; i++)
+	{
+		RGBA *curPixel = curBlock.pixels[i];
+		*runner++ = curPixel->r;
+		*runner++ = curPixel->g;
+		*runner++ = curPixel->b;
+		*runner++ = curPixel->a;
+	}
+	//lodepng_encode32_file(filename.c_str(), rawData, BLOCK_WIDTH, BLOCK_HEIGHT);
+	//delete[] rawData;
+	return rawData;
+}
+//---------------------------------------------------------------------------------------------------
+unsigned char* TileImage::SaveBlockAsPNG(int x, int y)
+{
+	unsigned char *rawData = new unsigned char[(BLOCK_WIDTH * BLOCK_HEIGHT) * 4];
+	unsigned char *runner = rawData;
+
+	int numBlocksX = iWidth / BLOCK_WIDTH;
+
+
+	Tile curBlock = imgBlocks[y * numBlocksX + x];
+	for (int i = 0; i < NUM_PIXELS_BLOCK; i++)
+	{
+		RGBA *curPixel = curBlock.pixels[i];
+		*runner++ = curPixel->r;
+		*runner++ = curPixel->g;
+		*runner++ = curPixel->b;
+		*runner++ = curPixel->a;
+	}
+	//lodepng_encode32_file(filename.c_str(), rawData, BLOCK_WIDTH, BLOCK_HEIGHT);
 	//delete[] rawData;
 	return rawData;
 }

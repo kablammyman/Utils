@@ -26,8 +26,9 @@ struct RGB
 	}
 };
 
-struct RGBA : RGB
+struct RGBA 
 {
+	unsigned char r, g, b;
 	unsigned char a;
 	RGBA(unsigned char _r, unsigned char _g, unsigned char _b, unsigned char _a)
 	{

@@ -83,7 +83,7 @@ public:
 	string GetMenuItemStringAt(size_t index) { return menuItems[index]->text; }
 	int GetMenuItemValueAt(size_t index) { return menuItems[index]->value; }
 	string GetMenuItemValueStringAt(size_t index) { return menuItems[index]->GetItemValueString(); }
-	RGB GetMenuItemColorAt(size_t menuPos);
+	RGBA GetMenuItemColorAt(size_t menuPos);
 	ScreenText *GetMemuOptionAt(size_t menuPos);
 	int GetCurrentSelectionItemIndex() { return menuItemIndex; }
 
