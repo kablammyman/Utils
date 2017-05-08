@@ -2,26 +2,25 @@
 
 using namespace std;
 
-ScreenText::ScreenText()
+ScreenText::ScreenText(string t)
 {
+	ScreenText::SetText(t);
 	SetPos(0,0);
 	color = { 255,255,255,255 };
-	text = "";
 }
 
 
-ScreenText::ScreenText(int _x, int _y, RGBA _color)
+ScreenText::ScreenText(string t, int _x, int _y)
 {
-	ScreenText();
-	SetColor(_color);
+	//ScreenText( t );
 	x = _x;
 	y = _y;
 }
 
-ScreenText::ScreenText(int _x, int _y, RGBA _color, std::string t)
+ScreenText::ScreenText(std::string t, int _x, int _y, RGBA _color)
 {
-	ScreenText(_x, _y, _color);
-	SetText(t);
+	ScreenText(t, _x,  _y);
+	SetColor(_color);
 }
 void ScreenText::SetPos(int _x, int _y)
 {

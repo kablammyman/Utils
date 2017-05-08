@@ -73,7 +73,7 @@ struct PIXMAP
 	RGBA *pixels;
 	//convert some random data to PIXMAP
 	PIXMAP(unsigned int *data, unsigned int _w, unsigned int _h);
-	PIXMAP(unsigned char *data, unsigned int _w, unsigned int _h);
+	PIXMAP(unsigned char *data, unsigned int _w, unsigned int _h, bool rgbaData = true);
 	PIXMAP(unsigned int _w, unsigned int _h);
 	~PIXMAP();
 	void Destroy();
@@ -85,4 +85,6 @@ struct PIXMAP
 	void Fill(RGBA color);
 	void Blit(PIXMAP * dest, int x, int y);
 	void Clear();
+	//takes unsigned char data (pixels) and adds them to the pixmap
+	void CopyPixels(unsigned char *src, int srcW, int srcH, int x, int y);
 };
