@@ -10,3 +10,4 @@ ipch/
 *release*/
 *.db
 build_vs2015/
+build_linux/
