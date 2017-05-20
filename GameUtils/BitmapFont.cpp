@@ -5,7 +5,7 @@
 the bin is 1 bit per pixel. I then put that bin file into bin2c.exe to get stockFont_data
 */
 
-BitmapFont StockFont::stockFont((RGBA*)stockFont_bin,256,128,8,8);
+//BitmapFont StockFont::stockFont((RGBA*)stockFont_bin,256,128,8,8);
 //---------------------------------------------------------------------------------------
 BitmapFont::BitmapFont(RGBA *data, int w, int h, int cW, int cH)
 {
@@ -27,7 +27,7 @@ TileImage *BitmapFont::GetFont()
 	return font;
 }
 //---------------------------------------------------------------------------------------
-void StockFont::Draw(PIXMAP *dest, ScreenText *st)
+/*void StockFont::Draw(PIXMAP *dest, ScreenText *st)
 {
 	unsigned int x = st->GetPosX();
 	unsigned int y = st->GetPosY();
@@ -50,7 +50,7 @@ void StockFont::Draw(PIXMAP *dest, ScreenText *st)
 		unsigned char* letter = stockFont.GetFont()->SaveBlockAsPNG((int)text[i]);
 		dest->CopyPixels(letter, 8, 8,x+(i*9), y);
 	}
-}
+}*/
 //---------------------------------------------------------------------------------------
 StockBitmapFont::StockBitmapFont()
 {

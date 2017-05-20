@@ -27,10 +27,10 @@ public:
 	RGBA *Read1bbpBin();
 };
 
-class StockFont
+/*class StockFont
 {
 public:
 	static BitmapFont stockFont;
 	static void Draw(PIXMAP *dest, ScreenText *st);
 	static void Draw(PIXMAP *dest, std::string st, int x, int y);
-};
+};*/
