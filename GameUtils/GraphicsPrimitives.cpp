@@ -1,6 +1,7 @@
 #include "GraphicsPrimitives.h"
 
-
+#include <cstdio>
+#include <cstdlib>
 
 PIXMAP::PIXMAP(unsigned int _w, unsigned int _h)
 {
@@ -104,7 +105,7 @@ void PIXMAP::Blit(PIXMAP * dest, int x, int y)
 
 	if ((x + w) > dest->w)
 	{
-		width = abs((int)((x + w) - dest->w));
+		width = std::abs((int)((x + w) - dest->w));
 		hclip = true;
 	}
 
@@ -116,7 +117,7 @@ void PIXMAP::Blit(PIXMAP * dest, int x, int y)
 		if (hclip && uiV > 0)
 			srcX = uiV * w;
 
-		memcpy(startPixel, &pixels[srcX], w * sizeof(RGBA));
+		std::memcpy(startPixel, &pixels[srcX], w * sizeof(RGBA));
 		srcX += w;
 	}
 }
@@ -140,7 +141,7 @@ void PIXMAP::CopyPixels(unsigned char *src, int srcW, int srcH, int x, int y)
 //---------------------------------------------------------------------------------------
 void PIXMAP::Clear()
 {
-	memset(pixels, 0, GetSize());
+	std::memset(pixels, 0, GetSize());
 }
 //---------------------------------------------------------------------------------------
 void WriteToTextFile(PIXMAP *screen)

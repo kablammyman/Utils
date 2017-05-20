@@ -28,7 +28,7 @@ struct fileStruct
 #ifdef _WIN32
 #define SLASH  '\\'
 #else
-#define SLASH = '/'
+#define SLASH '/'
 #endif
 
 class DirectoryTree

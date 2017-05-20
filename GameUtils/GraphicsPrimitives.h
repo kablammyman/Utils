@@ -1,5 +1,5 @@
 #pragma once
-#include <string> // memcpy
+#include <cstring> // memcpy
 
 
 #ifdef RGB

@@ -1,5 +1,6 @@
 #include "BitmapFont.h"
 #include "StockFontData.h"
+#include <climits> // CHAR_BIT
 
 /* i made the bin file froma 2 color bmp code after loading a png file with the allegro stock font
 the bin is 1 bit per pixel. I then put that bin file into bin2c.exe to get stockFont_data
