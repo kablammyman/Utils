@@ -18,6 +18,10 @@ public:
 	{
 		renderer.ResizeScreenBuffer(screenW, screenH);
 	}
+	virtual PIXMAP *GetSceneScreenBuffer()
+	{
+		return renderer.GetScreenBuffer();
+	}
 };
 
 #endif //SCENE_H
