@@ -69,7 +69,7 @@ public:
 		bmp = other.bmp;
 		return *this;
 	}
-	PIXMAP* getPIXMAP()
+	PIXMAP* GetPIXMAP()
 	{
 		return bmp;
 	}

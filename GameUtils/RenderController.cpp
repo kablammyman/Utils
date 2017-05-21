@@ -25,7 +25,7 @@ void RenderController::KillScreenBuffer()
 	if (screenBuffer)
 	{
 		screenBuffer->Destroy();
-		screenBuffer = 0;
+		screenBuffer = nullptr;
 	}
 }
 //---------------------------------------------------------------------------------------
@@ -42,7 +42,7 @@ void RenderController::DrawAllRenderObjectsToBuffer()
 	//for (size_t i = 0; i < textList.size(); i++)
 	//	textprintf_ex(screenBuffer, font, textList[i].x, textList[i].y, textList[i].color, 0, "%s", textList[i].text.c_str());
 
-	textList.clear();
+	//textList.clear();
 }
 //---------------------------------------------------------------------------------------
 PIXMAP *RenderController::GetScreenBuffer()
@@ -78,9 +78,9 @@ void RenderController::ResizeScreenBuffer(int screenW, int screenH)
 	DrawAllRenderObjectsToBuffer();
 }
 
-void RenderController::DrawText(ScreenText text)
+void RenderController::DrawTextToBuffer(ScreenText text)
 {
-	textList.push_back(text);
+	font.Draw(GetScreenBuffer(), text.GetText(), text.GetPosX(), text.GetPosY());
 }
 
 /*

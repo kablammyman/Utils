@@ -7,20 +7,47 @@
 class Scene : public Observee
 {
 protected:
-	RenderController renderer;
+	RenderController renderController;
 	
 public:
-	virtual void Update() {}
-	virtual void Draw() {}
-	virtual int ChangeSceneToIndex() {return 0;}//return scene index
-	virtual Scene* ChangeScene() {return 0;}//return scene pointer
-	virtual void ChangeScreenSize(int screenW, int screenH)
+	virtual void UpdateScene()
 	{
-		renderer.ResizeScreenBuffer(screenW, screenH);
+		renderController.UpdateAllRenderObjects();
 	}
-	virtual PIXMAP *GetSceneScreenBuffer()
+	virtual void DrawScene()
 	{
-		return renderer.GetScreenBuffer();
+		renderController.DrawAllRenderObjectsToBuffer();
+	}
+
+	//why do these exists?
+	//virtual int ChangeSceneToIndex() =0;//return scene index
+	//virtual Scene* ChangeScene() =0;//return scene pointer
+
+	void ChangeScreenSize(int screenW, int screenH)
+	{
+		renderController.ResizeScreenBuffer(screenW, screenH);
+	}
+	PIXMAP *GetSceneScreenBuffer()
+	{
+		return renderController.GetScreenBuffer();
+	}
+	void AddToRenderList(RenderObject *r)
+	{
+		renderController.AddToRenderList(r);
+	}
+	void InitRenderController(int sw, int sh)
+	{
+		renderController.Init(sw,sh);
+	}
+
+	void DrawTextOnScene(ScreenText text)
+	{
+		renderController.DrawTextToBuffer(text);
+	}
+	void DrawTextOnScene(std::string text, int x, int y)
+	{
+		ScreenText st(text,x,y);
+		renderController.DrawTextToBuffer(st);
 	}
 };
 

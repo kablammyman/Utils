@@ -76,7 +76,7 @@ PIXMAP::~PIXMAP()
 void PIXMAP::Destroy()
 {
 	delete[] pixels;
-	pixels = 0;
+	pixels = nullptr;
 	w = 0;
 	h = 0;
 }
@@ -94,30 +94,34 @@ void PIXMAP::Fill(RGBA color)
 void PIXMAP::Blit(PIXMAP * dest, int x, int y)
 {
 	int srcX = 0;//,srcY = 0;
-	int width = x + w;
+	
+	int totalPixH = (y + h);
+	int totalPixW = (x + w);
+	
+	int vertSPanOfPix = totalPixH;
+
+	int numHorizPixelsToDraw = w;
+	//int numVertPixelsToDraw = h;
 	bool hclip = false;
-	unsigned int height = y + h;
+	
 
-	if ((y + h) > dest->h)
+	if (totalPixH > dest->h)
 	{
-		height = dest->h - (y + h);
+		//numVertPixelsToDraw = totalPixH - dest->h;
+		vertSPanOfPix = dest->h;
+	}
+	
+	if (totalPixW > dest->w)
+	{
+		numHorizPixelsToDraw = totalPixW - dest->w;
 	}
 
-	if ((x + w) > dest->w)
-	{
-		width = std::abs((int)((x + w) - dest->w));
-		hclip = true;
-	}
-
-	for (unsigned int uiV = y; uiV < height; ++uiV)
+	for (unsigned int uiV = y; uiV < vertSPanOfPix; ++uiV)
 	{
 		// reset coordinate for each row
 		RGBA *startPixel = &dest->pixels[uiV * dest->w + x];
 
-		if (hclip && uiV > 0)
-			srcX = uiV * w;
-
-		std::memcpy(startPixel, &pixels[srcX], w * sizeof(RGBA));
+		std::memcpy(startPixel, &pixels[srcX], numHorizPixelsToDraw * sizeof(RGBA));
 		srcX += w;
 	}
 }

@@ -7,6 +7,7 @@
 #include "RenderObject.h"
 #include "GraphicsPrimitives.h"
 #include "ScreenText.h"
+#include "BitmapFont.h"
 
 class RenderController
 {
@@ -15,8 +16,12 @@ class RenderController
 	int bufferHeight;
 	//to avoid object slicing, the vector is full of pointers to RenderObject and dervied objs
 	std::vector<RenderObject *> renderList;
-	std::vector<ScreenText> textList;
-	void DrawAllRenderObjectsToBuffer();
+	
+	//the textlist was supposed to work like the renderlist. have all thes string you wanted on screen
+	//drawn in order, after we are done drawing everything else, so the text wont be drawn over
+	//std::vector<ScreenText> textList;
+
+	StockBitmapFont font;
 	void KillScreenBuffer();
 public:
 	void Init(int sw, int sh);
@@ -26,8 +31,9 @@ public:
 	PIXMAP* GetScreenBuffer();
 	RenderObject * GetRenderObject(size_t index);
 	void UpdateAllRenderObjects();
+	void DrawAllRenderObjectsToBuffer();
 	void ResizeScreenBuffer(int screenW, int screenH);
-	void DrawText(ScreenText text);
+	void DrawTextToBuffer(ScreenText text);
 };
 
 #endif //RENDERER_H

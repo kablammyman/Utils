@@ -417,6 +417,8 @@ long long DirectoryTree::GetDirSize(string path)//needs to have *.fileExt to wor
 		if(hFind != INVALID_HANDLE_VALUE)
 		do{
  
+			if(strcmp(FindFileData.cFileName, ".") == 0 || strcmp(FindFileData.cFileName, "..")==0)
+				continue;
 		//if we find a directory, add its name to the stack, so we can parse it later
 			if(FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
 			{
