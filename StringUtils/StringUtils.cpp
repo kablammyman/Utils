@@ -1,16 +1,27 @@
 #include "StringUtils.h"
 
+#ifndef _WIN32
+#include <cstring> //strtok_r
+#endif
 
 std::vector<std::string> StringUtils::Tokenize(std::string path, std::string delims)
 {
 	std::vector<std::string> returnVec;
 	char *next_token = 0;
+#ifdef _WIN32
 	char *p = strtok_s(const_cast<char *>(path.c_str()), delims.c_str(), &next_token);
+#else
+	char *p = strtok_r(const_cast<char *>(path.c_str()), delims.c_str(), &next_token);
+#endif
 	while (p)
 	{
 		//printf ("Token: %s\n", p);
 		returnVec.push_back(p);
+#ifdef _WIN32
 		p = strtok_s(0, delims.c_str(), &next_token);
+#else
+		p = strtok_r(0, delims.c_str(), &next_token);
+#endif
 	}
 	return returnVec;
 }

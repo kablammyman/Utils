@@ -362,7 +362,7 @@ string FileUtils::DeleteAllFilesInDir(string path)
 
 	vector<string> allFiles = GetAllFileNamesInDir(path, "", true);
 
-	for (int i = 0; i < allFiles.size(); i++)
+	for (size_t i = 0; i < allFiles.size(); i++)
 	{
 		if (Delete_File(allFiles[i]) == false)
 		{
