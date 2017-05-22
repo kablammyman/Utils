@@ -32,6 +32,8 @@ bool FileUtils::DoesPathExist(string path)
 		return false;  //something is wrong with your path!
 	return true;
 #else
+	if(path.back() == '\r')
+		path.pop_back();
 	DIR *pDir = opendir(path.c_str());
 	if (pDir != NULL)
 	{
