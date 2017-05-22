@@ -480,7 +480,7 @@ string DirectoryTree::PrepPathForTraversal(string path)
 #if _WIN32
 	ast = '*';
 #else
-		ast = ' ';
+	ast = ' ';
 #endif
 
 	char lastChar = *path.rbegin();

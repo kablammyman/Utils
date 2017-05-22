@@ -5,6 +5,8 @@
 #include <windows.h>
 #else
 #include <dirent.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #endif
 
 #include <cstring>
@@ -34,13 +36,23 @@ bool FileUtils::DoesPathExist(string path)
 #else
 	if(path.back() == '\r')
 		path.pop_back();
-	DIR *pDir = opendir(path.c_str());
-	if (pDir != NULL)
+
+	DIR* dir = opendir(path.c_str());
+	if (dir)
 	{
-		(void)closedir(pDir);
+	    /* Directory exists. */
+	    closedir(dir);
 		return true;
 	}
-
+	/*else if (ENOENT == errno)
+	{
+	    // Directory does not exist. 
+		return false;
+	}
+	else
+	{
+	    // opendir() failed for some other reason. 
+	}*/
 	return false;
 #endif
 }
@@ -98,32 +110,22 @@ int FileUtils::GetNumFoldersinDir(string path)//needs to have *.fileExt to work
 		} while (FindNextFile(hFind, &FindFileData));
 		FindClose(hFind);
 #else
-	DIR *dir;
-	struct dirent *ent;
-	if ((dir = opendir(curDir.c_str())) != 0)
-	{
-		/* print all the files and directories within directory */
-		while ((ent = readdir(dir)) != 0)
-		{
-			if (strcmp(ent->d_name, ".") == 0 || strcmp(ent->d_name, "..") == 0)//ignore anything we put in this list
-				continue;
+	if(path.back() == '\r')
+		path.pop_back();
 
-			//if we find a directory, add its name to the stack, so we can parse it later
-			if (ent->d_type == DT_DIR)
-			{
-				folderNum++;
-			}
-			//else this is a file, so add it to the list of files for this dir
-		}
-		closedir(dir);
+	DIR * dirp;
+	struct dirent * entry;
+
+	dirp = opendir(path.c_str()); /* There should be error handling after this */
+	while ((entry = readdir(dirp)) != NULL) {
+	    if (entry->d_type == DT_DIR) { /* If the entry is a regular file */
+		 folderNum++;
+	    }
 	}
-	else {
-		/* could not open directory */
-		perror("");
-		//return EXIT_FAILURE;
-	}
+	closedir(dirp);
+
 #endif
-		return folderNum;
+	return folderNum;
 }
 //--------------------------------------------------------------------------------------------------
 vector<string> FileUtils::GetAllFolderNamesInDir(string path)//needs to have *.fileExt to work
@@ -162,35 +164,29 @@ vector<string> FileUtils::GetAllFolderNamesInDir(string path)//needs to have *.f
 		} while (FindNextFile(hFind, &FindFileData));
 		FindClose(hFind);
 #else
-	DIR *dir;
-	struct dirent *ent;
-	if ((dir = opendir(curDir.c_str())) != 0)
-	{
-		/* print all the files and directories within directory */
-		while ((ent = readdir(dir)) != 0)
-		{
-			if (strcmp(ent->d_name, ".") == 0 || strcmp(ent->d_name, "..") == 0)//ignore anything we put in this list
-				continue;
+	if(path.back() == '\r')
+		path.pop_back();
 
-			//if we find a directory, add its name to the stack, so we can parse it later
-			if (ent->d_type == DT_DIR)
-			{
-				sTmp = curDir;
-				sTmp += ent->d_name;
-				sTmp += SLASH;
-				folderList.push_back(sTmp);
-			}
-			//else this is a file, so add it to the list of files for this dir
+	DIR * dirp;
+	struct dirent * entry;
+
+	dirp = opendir(path.c_str());
+	while ((entry = readdir(dirp)) != NULL) 
+	{
+		if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)//ignore anything we put in this list
+			continue;		
+		if (entry->d_type == DT_DIR) 
+		{ 
+			sTmp = curDir;
+			sTmp += entry->d_name;
+			sTmp += SLASH;
+			folderList.push_back(sTmp);
 		}
-		closedir(dir);
 	}
-	else {
-		/* could not open directory */
-		perror("");
-		//return EXIT_FAILURE;
-	}
+	closedir(dirp);
+
 #endif
-		return folderList;
+	return folderList;
 }
 //--------------------------------------------------------------------------------------------------
 int FileUtils::GetNumFilesInDir(string path, string ext)//needs to have *.fileExt to work
@@ -225,30 +221,19 @@ int FileUtils::GetNumFilesInDir(string path, string ext)//needs to have *.fileEx
 		} while (FindNextFile(hFind, &FindFileData));
 		FindClose(hFind);
 #else
-	DIR *dir;
-	struct dirent *ent;
-	if ((dir = opendir(curDir.c_str())) != 0)
-	{
-		/* print all the files and directories within directory */
-		while ((ent = readdir(dir)) != 0)
-		{
-			if (strcmp(ent->d_name, ".") == 0 || strcmp(ent->d_name, "..") == 0)//ignore anything we put in this list
-				continue;
+	if(path.back() == '\r')
+		path.pop_back();
 
-			//if we find a directory, add its name to the stack, so we can parse it later
-			if (ent->d_type == DT_REG)
-			{
-				fileNum++;
-			}
-			//else this is a file, so add it to the list of files for this dir
-		}
-		closedir(dir);
+	DIR * dirp;
+	struct dirent * entry;
+
+	dirp = opendir(path.c_str()); /* There should be error handling after this */
+	while ((entry = readdir(dirp)) != NULL) {
+	    if (entry->d_type == DT_REG) { /* If the entry is a regular file */
+		 fileNum++;
+	    }
 	}
-	else {
-		/* could not open directory */
-		perror("");
-		//return EXIT_FAILURE;
-	}
+	closedir(dirp);
 #endif
 		return fileNum;
 }
@@ -296,32 +281,26 @@ vector<string> FileUtils::GetAllFileNamesInDir(string path,string ext, bool incl
 		} while (FindNextFile(hFind, &FindFileData));
 		FindClose(hFind);
 #else
-	DIR *dir;
-	struct dirent *ent;
-	if ((dir = opendir(curDir.c_str())) != 0)
-	{
-		/* print all the files and directories within directory */
-		while ((ent = readdir(dir)) != 0)
-		{
-			if (strcmp(ent->d_name, ".") == 0 || strcmp(ent->d_name, "..") == 0)//ignore anything we put in this list
-				continue;
+	if(path.back() == '\r')
+		path.pop_back();
 
-			//if we find a directory, add its name to the stack, so we can parse it later
-			if (ent->d_type == DT_REG)
-			{
-				sTmp = curDir;
-				sTmp += ent->d_name;
-				fileList.push_back(sTmp);
-			}
-			//else this is a file, so add it to the list of files for this dir
+	DIR * dirp;
+	struct dirent * entry;
+
+	dirp = opendir(path.c_str());
+	while ((entry = readdir(dirp)) != NULL) 
+	{
+		if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)//ignore anything we put in this list
+			continue;		
+		if (entry->d_type == DT_REG) 
+		{ 
+			sTmp = curDir;
+			sTmp += entry->d_name;
+			sTmp += SLASH;
+			fileList.push_back(sTmp);
 		}
-		closedir(dir);
 	}
-	else {
-		/* could not open directory */
-		perror("");
-		//return EXIT_FAILURE;
-	}
+	closedir(dirp);
 #endif
 		return fileList;
 }
