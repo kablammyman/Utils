@@ -87,4 +87,5 @@ struct PIXMAP
 	void Clear();
 	//takes unsigned char data (pixels) and adds them to the pixmap
 	void CopyPixels(unsigned char *src, int srcW, int srcH, int x, int y);
+	void CopyPixels(RGBA *src, int srcW, int srcH, int x, int y);
 };

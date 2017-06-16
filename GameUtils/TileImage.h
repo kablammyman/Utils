@@ -38,7 +38,10 @@ struct Tile
 		blockX = x;
 		blockY = y;
 	}
-	
+	RGBA * GetPixels()
+	{
+		return pixels[0];
+	}
 };
 class TileImage
 {
@@ -76,8 +79,8 @@ public:
 	inline int GetNumBlocksY() {return iHeight / BLOCK_HEIGHT;}
 	inline int GetNumBlocks() {return GetNumBlocksX()*GetNumBlocksY();}
 
-
+	void DrawTileToPixmap(PIXMAP *dest, Tile  *tile, int x, int y);
 	unsigned char* GetPNGDataFromBlockImage();
-	unsigned char* SaveBlockAsPNG(int index);
-	unsigned char* SaveBlockAsPNG( int x, int y);
+	unsigned char* GetBlockCopy(int index);
+	unsigned char* GetBlockCopy( int x, int y);
 };

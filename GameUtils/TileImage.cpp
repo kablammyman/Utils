@@ -151,6 +151,23 @@ Tile * TileImage::GetBlock(int index)
 	return NULL;
 }
 //---------------------------------------------------------------------------------------------------
+void TileImage::DrawTileToPixmap(PIXMAP *dest, Tile  *tile, int x, int y)
+{
+	RGBA *startPixel;
+	for (unsigned int uiV = 0; uiV < BLOCK_HEIGHT; ++uiV)
+	{
+		// reset coordinate for each row
+		RGBA* curPix = tile->pixels[uiV * BLOCK_WIDTH];
+		startPixel = &dest->pixels[(y + uiV) * dest->w + x];
+
+		for (unsigned int uiH = 0; uiH < BLOCK_WIDTH; ++uiH)
+		{
+			*startPixel++ = RGBA(curPix->r, curPix->g, curPix->b, curPix->a);
+			curPix++;// next RGBA
+		}
+	}
+}
+//---------------------------------------------------------------------------------------------------
 unsigned char*  TileImage::GetPNGDataFromBlockImage()
 {
 	unsigned char *rawData = new unsigned char[(iWidth * iHeight) * 4];
@@ -188,9 +205,8 @@ unsigned char*  TileImage::GetPNGDataFromBlockImage()
 	//delete[] rawData;
 	return rawData;
 }
-
 //---------------------------------------------------------------------------------------------------
-unsigned char* TileImage::SaveBlockAsPNG(int index)
+unsigned char* TileImage::GetBlockCopy(int index)
 {
 	unsigned char *rawData = new unsigned char[(BLOCK_WIDTH * BLOCK_HEIGHT) * 4];
 	unsigned char *runner = rawData;
@@ -209,24 +225,10 @@ unsigned char* TileImage::SaveBlockAsPNG(int index)
 	return rawData;
 }
 //---------------------------------------------------------------------------------------------------
-unsigned char* TileImage::SaveBlockAsPNG(int x, int y)
+unsigned char* TileImage::GetBlockCopy(int x, int y)
 {
-	unsigned char *rawData = new unsigned char[(BLOCK_WIDTH * BLOCK_HEIGHT) * 4];
-	unsigned char *runner = rawData;
-
 	int numBlocksX = iWidth / BLOCK_WIDTH;
+	int index = y * numBlocksX + x;
 
-
-	Tile curBlock = imgBlocks[y * numBlocksX + x];
-	for (int i = 0; i < NUM_PIXELS_BLOCK; i++)
-	{
-		RGBA *curPixel = curBlock.pixels[i];
-		*runner++ = curPixel->r;
-		*runner++ = curPixel->g;
-		*runner++ = curPixel->b;
-		*runner++ = curPixel->a;
-	}
-	//lodepng_encode32_file(filename.c_str(), rawData, BLOCK_WIDTH, BLOCK_HEIGHT);
-	//delete[] rawData;
-	return rawData;
+	return GetBlockCopy(index);
 }

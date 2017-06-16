@@ -402,7 +402,7 @@ string FileUtils::GetRandomFileQuick(string path)
 	if (allFiles.size() > 0)
 	{
 		//used to crash here
-		int num = GetRandomNum(0, (int)allFiles.size() - 1);
+		int num = GetRandomNum(0, (int)(allFiles.size() - 1));
 		return allFiles[num];
 	}
 	return ""; //this dir was empty, return empty string

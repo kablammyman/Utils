@@ -114,6 +114,10 @@ void PIXMAP::Blit(PIXMAP * dest, int x, int y)
 	if (totalPixW > dest->w)
 	{
 		numHorizPixelsToDraw = totalPixW - dest->w;
+		if (numHorizPixelsToDraw > dest->w)
+		{
+			numHorizPixelsToDraw = dest->w;
+		}
 	}
 
 	for (unsigned int uiV = y; uiV < vertSPanOfPix; ++uiV)
@@ -139,6 +143,23 @@ void PIXMAP::CopyPixels(unsigned char *src, int srcW, int srcH, int x, int y)
 		{
 			*startPixel++ = RGBA(curPix[0], curPix[1], curPix[2], curPix[3]);
 			curPix += 4;// 4 bytes per pixel
+		}
+	}
+}
+//---------------------------------------------------------------------------------------
+void PIXMAP::CopyPixels(RGBA *src, int srcW, int srcH, int x, int y)
+{
+	RGBA *startPixel;
+	for (unsigned int uiV = 0; uiV < srcH; ++uiV)
+	{
+		// reset coordinate for each row
+		RGBA* curPix = &src[uiV * srcW];
+		startPixel = &pixels[(y + uiV) * w + x];
+
+		for (unsigned int uiH = 0; uiH < srcW; ++uiH)
+		{
+			*startPixel++ = RGBA(curPix->r, curPix->g, curPix->b, curPix->a);
+			curPix++;// next RGBA
 		}
 	}
 }
