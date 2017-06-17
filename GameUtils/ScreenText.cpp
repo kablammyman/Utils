@@ -12,7 +12,7 @@ ScreenText::ScreenText(string t)
 
 ScreenText::ScreenText(string t, int _x, int _y)
 {
-	//ScreenText( t );
+	text = t;
 	x = _x;
 	y = _y;
 }

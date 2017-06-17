@@ -80,9 +80,12 @@ void RenderController::ResizeScreenBuffer(int screenW, int screenH)
 
 void RenderController::DrawTextToBuffer(ScreenText text)
 {
-	font.Draw(GetScreenBuffer(), text.GetText(), text.GetPosX(), text.GetPosY());
+	font.Draw(screenBuffer, text.GetText(), text.GetPosX(), text.GetPosY());
 }
-
+void RenderController::DrawTextToBuffer(std::string text, int _x, int _y)
+{
+	font.Draw(screenBuffer, text, _x, _y);
+}
 /*
 void clearScreen()
 {

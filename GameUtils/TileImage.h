@@ -71,8 +71,8 @@ public:
 	void GetBlockCords(unsigned int a_iPixelX, unsigned int a_iPixelY, int & blockX, int & blockY);
 	void GetBlockCordsFromPixelCords(unsigned int pixelX,unsigned int plixelY, int & blockX, int & blockY);
 
-	Tile * GetBlock(int blockX, int blockY);
-	Tile * GetBlock(int index);
+	Tile * GetBlock(unsigned int blockX, unsigned int blockY);
+	Tile * GetBlock(unsigned int index);
 
 
 	inline int GetNumBlocksX() { return iWidth / BLOCK_WIDTH; }
@@ -81,6 +81,6 @@ public:
 
 	void DrawTileToPixmap(PIXMAP *dest, Tile  *tile, int x, int y);
 	unsigned char* GetPNGDataFromBlockImage();
-	unsigned char* GetBlockCopy(int index);
-	unsigned char* GetBlockCopy( int x, int y);
+	unsigned char* GetBlockCopy(unsigned int index);
+	unsigned char* GetBlockCopy(unsigned int x, unsigned int y);
 };

@@ -133,7 +133,7 @@ void TileImage::GetBlockCordsFromPixelCords(unsigned int pixelX, unsigned int pi
 	}
 }
 //---------------------------------------------------------------------------------------------------
-Tile * TileImage::GetBlock(int blockX, int blockY)
+Tile * TileImage::GetBlock(unsigned int blockX, unsigned int blockY)
 {
 	int numBlocksX = iWidth / BLOCK_WIDTH;
 	//int numBlocksY = iHeight / BLOCK_HEIGHT;
@@ -141,7 +141,7 @@ Tile * TileImage::GetBlock(int blockX, int blockY)
 	return &imgBlocks[blockY * numBlocksX + blockX];
 }
 //---------------------------------------------------------------------------------------------------
-Tile * TileImage::GetBlock(int index)
+Tile * TileImage::GetBlock(unsigned int index)
 {
 	int numBlocksX = iWidth / BLOCK_WIDTH;
 	int numBlocksY = iHeight / BLOCK_HEIGHT;
@@ -206,7 +206,7 @@ unsigned char*  TileImage::GetPNGDataFromBlockImage()
 	return rawData;
 }
 //---------------------------------------------------------------------------------------------------
-unsigned char* TileImage::GetBlockCopy(int index)
+unsigned char* TileImage::GetBlockCopy(unsigned int index)
 {
 	unsigned char *rawData = new unsigned char[(BLOCK_WIDTH * BLOCK_HEIGHT) * 4];
 	unsigned char *runner = rawData;
@@ -225,7 +225,7 @@ unsigned char* TileImage::GetBlockCopy(int index)
 	return rawData;
 }
 //---------------------------------------------------------------------------------------------------
-unsigned char* TileImage::GetBlockCopy(int x, int y)
+unsigned char* TileImage::GetBlockCopy(unsigned int x, unsigned int y)
 {
 	int numBlocksX = iWidth / BLOCK_WIDTH;
 	int index = y * numBlocksX + x;

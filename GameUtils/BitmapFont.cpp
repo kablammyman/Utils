@@ -169,7 +169,7 @@ void StockBitmapFont::Draw(PIXMAP *dest, std::string text, int x, int y)
 
 	for (int i = 0; i < (int)text.size(); i++)
 	{
-		Tile* letter = GetFont()->GetBlock((int)text[i]);
+		Tile* letter = GetFont()->GetBlock((unsigned int)text[i]);
 		GetFont()->DrawTileToPixmap(dest, letter, x + (i * charW), y);
 		//dest->CopyPixels(letter->GetPixels(), 8, 8, x + (i * charW), y);
 	}

@@ -34,6 +34,7 @@ public:
 	void DrawAllRenderObjectsToBuffer();
 	void ResizeScreenBuffer(int screenW, int screenH);
 	void DrawTextToBuffer(ScreenText text);
+	void DrawTextToBuffer(std::string text, int _x, int _y);
 };
 
 #endif //RENDERER_H

@@ -46,8 +46,7 @@ public:
 	}
 	void DrawTextOnScene(std::string text, int x, int y)
 	{
-		ScreenText st(text,x,y);
-		renderController.DrawTextToBuffer(st);
+		renderController.DrawTextToBuffer(text, x, y);
 	}
 };
 
