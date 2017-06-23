@@ -59,6 +59,7 @@ StockBitmapFont::StockBitmapFont()
 	charH = 8;
 	RGBA *binData = Read1bbpBin();
 	font = new TileImage(binData, 256, 128, charW, charH);
+	SetPixelMask(RGBA(0,0,0,255));
 }
 //---------------------------------------------------------------------------------------
 void StockBitmapFont::Create1bppBin(unsigned char *pngData)
@@ -151,7 +152,7 @@ RGBA * StockBitmapFont::Read1bbpBin()
 	return data;
 }
 //---------------------------------------------------------------------------------------
-void StockBitmapFont::Draw(PIXMAP *dest, std::string text, int x, int y)
+void StockBitmapFont::Draw(PIXMAP *dest, std::string text, int x, int y,bool masked)
 {
 	unsigned int w, h;
 
@@ -170,7 +171,7 @@ void StockBitmapFont::Draw(PIXMAP *dest, std::string text, int x, int y)
 	for (int i = 0; i < (int)text.size(); i++)
 	{
 		Tile* letter = GetFont()->GetBlock((unsigned int)text[i]);
-		GetFont()->DrawTileToPixmap(dest, letter, x + (i * charW), y);
+		GetFont()->DrawTileToPixmap(dest, letter, x + (i * charW), y,masked);
 		//dest->CopyPixels(letter->GetPixels(), 8, 8, x + (i * charW), y);
 	}
 }

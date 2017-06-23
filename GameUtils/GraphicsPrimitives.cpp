@@ -169,6 +169,13 @@ void PIXMAP::Clear()
 	std::memset(pixels, 0, GetSize());
 }
 //---------------------------------------------------------------------------------------
+unsigned char * PIXMAP::GetRawPixelCopy()
+{
+	unsigned char *retPixels = new unsigned char[w * h * 4];
+	std::memcpy(retPixels, pixels, GetSize());
+	return retPixels;
+}
+//---------------------------------------------------------------------------------------
 void WriteToTextFile(PIXMAP *screen)
 {
 	FILE *ptr_file = fopen("example.txt", "w");

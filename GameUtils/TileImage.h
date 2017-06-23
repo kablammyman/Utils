@@ -47,6 +47,7 @@ class TileImage
 {
 	
 	RGBA *pixelData;
+	RGBA pixelMaskColor;
 
 	unsigned int iWidth;
 	unsigned int iHeight;
@@ -70,7 +71,10 @@ public:
 	void ConvertPixelArrayIntoBlocks();
 	void GetBlockCords(unsigned int a_iPixelX, unsigned int a_iPixelY, int & blockX, int & blockY);
 	void GetBlockCordsFromPixelCords(unsigned int pixelX,unsigned int plixelY, int & blockX, int & blockY);
-
+	void SetPixelMask(RGBA color)
+	{
+		pixelMaskColor = color;
+	}
 	Tile * GetBlock(unsigned int blockX, unsigned int blockY);
 	Tile * GetBlock(unsigned int index);
 
@@ -79,7 +83,8 @@ public:
 	inline int GetNumBlocksY() {return iHeight / BLOCK_HEIGHT;}
 	inline int GetNumBlocks() {return GetNumBlocksX()*GetNumBlocksY();}
 
-	void DrawTileToPixmap(PIXMAP *dest, Tile  *tile, int x, int y);
+	//ignore pixels that are a the masked pixel color
+	void DrawTileToPixmap(PIXMAP *dest, Tile  *tile, int x, int y,bool masked = false);
 	unsigned char* GetPNGDataFromBlockImage();
 	unsigned char* GetBlockCopy(unsigned int index);
 	unsigned char* GetBlockCopy(unsigned int x, unsigned int y);

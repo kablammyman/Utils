@@ -151,7 +151,7 @@ Tile * TileImage::GetBlock(unsigned int index)
 	return NULL;
 }
 //---------------------------------------------------------------------------------------------------
-void TileImage::DrawTileToPixmap(PIXMAP *dest, Tile  *tile, int x, int y)
+void TileImage::DrawTileToPixmap(PIXMAP *dest, Tile  *tile, int x, int y,bool masked)
 {
 	RGBA *startPixel;
 	for (unsigned int uiV = 0; uiV < BLOCK_HEIGHT; ++uiV)
@@ -162,7 +162,12 @@ void TileImage::DrawTileToPixmap(PIXMAP *dest, Tile  *tile, int x, int y)
 
 		for (unsigned int uiH = 0; uiH < BLOCK_WIDTH; ++uiH)
 		{
-			*startPixel++ = RGBA(curPix->r, curPix->g, curPix->b, curPix->a);
+			
+			if (masked && pixelMaskColor == *curPix)
+				*startPixel++;
+			else
+				*startPixel++ = RGBA(curPix->r, curPix->g, curPix->b, curPix->a);
+
 			curPix++;// next RGBA
 		}
 	}

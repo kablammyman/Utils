@@ -15,6 +15,10 @@ public:
 	BitmapFont(RGBA *data, int w, int h, int cW, int cH);
 	void CalcPixmapLineSize(int numChars, unsigned int &w, unsigned int &h);
 	TileImage *GetFont();
+	void SetPixelMask(RGBA color)
+	{
+		font->SetPixelMask(color);
+	}
 };
 
 class StockBitmapFont : public BitmapFont
@@ -22,7 +26,8 @@ class StockBitmapFont : public BitmapFont
 	RGBA *fontData;
 public:
 	StockBitmapFont();
-	void Draw(PIXMAP *dest, std::string text, int x, int y);
+	//maksed means to draw the background black pixels or not...false = use black pixels
+	void Draw(PIXMAP *dest, std::string text, int x, int y,bool masked = false);
 	void Create1bppBin(unsigned char *pngData);
 	RGBA *Read1bbpBin();
 };

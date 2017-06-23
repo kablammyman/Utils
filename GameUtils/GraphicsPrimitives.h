@@ -24,6 +24,12 @@ struct RGB
 		g = (n >> 16) & 0xFF;
 		b = (n >> 8) & 0xFF;
 	}
+	bool operator==(const RGB&  other)
+	{
+		if (r == other.r && g == other.g && b == other.b)
+			return true;
+		return false;
+	}
 };
 
 struct RGBA 
@@ -64,7 +70,19 @@ struct RGBA
 		return (r << 24) | (g << 16) | (b << 8) | a;
 	}
 
-	
+	bool operator==(const RGBA&  other)
+	{
+		if(r == other.r && g == other.g && b == other.b && a == other.a)
+			return true;
+		return false;
+	}
+	void operator=(const RGBA&  other)
+	{
+		r = other.r; 
+		g = other.g;
+		b = other.b; 
+		a = other.a;
+	}
 };
 //since everyone and their momma uses BITMAP, i named my struct PIXMAP so theres no name conflicts witout the use of a namespace
 struct PIXMAP
@@ -88,4 +106,5 @@ struct PIXMAP
 	//takes unsigned char data (pixels) and adds them to the pixmap
 	void CopyPixels(unsigned char *src, int srcW, int srcH, int x, int y);
 	void CopyPixels(RGBA *src, int srcW, int srcH, int x, int y);
+	unsigned char * GetRawPixelCopy();
 };
