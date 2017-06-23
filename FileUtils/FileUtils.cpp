@@ -19,9 +19,9 @@
 
 static DirectoryTree dirTree;//can't use it as a member variable due to the static conflict
 
-int GetRandomNum(int min, int max)
+unsigned int GetRandomNum(int min, int max)
 {
-	int diff = ((max - min) + 1);
+	unsigned int diff = ((max - min) + 1);
 	return ((diff * rand()) / RAND_MAX) + min;
 }
 

@@ -53,11 +53,12 @@ TileImage *BitmapFont::GetFont()
 	}
 }*/
 //---------------------------------------------------------------------------------------
-StockBitmapFont::StockBitmapFont()
+StockBitmapFont::StockBitmapFont(RGBA color)
 {
 	charW = 8;
 	charH = 8;
-	RGBA *binData = Read1bbpBin();
+	RGBA *binData = Read1bbpBin(color);
+	
 	font = new TileImage(binData, 256, 128, charW, charH);
 	SetPixelMask(RGBA(0,0,0,255));
 }
@@ -116,7 +117,7 @@ void StockBitmapFont::Create1bppBin(unsigned char *pngData)
 	fclose(ptr_file);
 }
 //---------------------------------------------------------------------------------------
-RGBA * StockBitmapFont::Read1bbpBin()
+RGBA * StockBitmapFont::Read1bbpBin(RGBA color)
 {
 	RGBA *data = new RGBA[256 * 128];
 	RGBA *curPixel = data;
@@ -140,7 +141,7 @@ RGBA * StockBitmapFont::Read1bbpBin()
 		for (int j = 0; j < sizeof(unsigned char) * 8; j++)
 		{
 			if (((1 << 1) & r))
-				*curPixel++ = RGBA(255, 255, 255, 255);
+				*curPixel++ = RGBA(color.r, color.g, color.b, color.a);
 			else
 				*curPixel++ = RGBA(0, 0, 0, 255);
 

@@ -24,12 +24,13 @@ public:
 class StockBitmapFont : public BitmapFont
 {
 	RGBA *fontData;
+	RGBA *Read1bbpBin(RGBA color);
 public:
-	StockBitmapFont();
+	StockBitmapFont(RGBA color = RGBA{ 255,255,255,255 });
 	//maksed means to draw the background black pixels or not...false = use black pixels
 	void Draw(PIXMAP *dest, std::string text, int x, int y,bool masked = false);
 	void Create1bppBin(unsigned char *pngData);
-	RGBA *Read1bbpBin();
+	
 };
 
 /*class StockFont
