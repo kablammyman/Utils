@@ -91,6 +91,16 @@ void PIXMAP::Fill(RGBA color)
 	//memset(pixels, 255, 640 * 480 * sizeof(Uint32));
 }
 //---------------------------------------------------------------------------------------
+void  PIXMAP::PutPixel(RGBA pix, int x, int y)
+{
+	pixels[y * w + x] = pix;
+}
+//---------------------------------------------------------------------------------------
+RGBA  PIXMAP::GetPixel(int x, int y)
+{
+	return pixels[y * w + x];
+}
+//---------------------------------------------------------------------------------------
 void PIXMAP::Blit(PIXMAP * dest, int x, int y)
 {
 	int srcX = 0;//,srcY = 0;
@@ -174,6 +184,70 @@ unsigned char * PIXMAP::GetRawPixelCopy()
 	unsigned char *retPixels = new unsigned char[w * h * 4];
 	std::memcpy(retPixels, pixels, GetSize());
 	return retPixels;
+}
+//---------------------------------------------------------------------------------------
+PIXMAP* PIXMAP::GetScaledCopy(unsigned int Width, unsigned int Height)
+{
+	PIXMAP *dest = new PIXMAP(Width, Height);
+	double _stretch_factor_x = (static_cast<double>(Width) / static_cast<double>(w));
+	double _stretch_factor_y = (static_cast<double>(Height) / static_cast<double>(h));
+
+	for (int y = 0; y < h; y++) //Run across all Y pixels.
+		for (int x = 0; x < w; x++) //Run across all X pixels.
+			for (int o_y = 0; o_y < _stretch_factor_y; ++o_y) //Draw _stretch_factor_y pixels for each Y pixel.
+				for (int o_x = 0; o_x < _stretch_factor_x; ++o_x) //Draw _stretch_factor_x pixels for each X pixel.
+				{
+					unsigned int destX = (_stretch_factor_x * x) + o_x;
+					unsigned int destY = (_stretch_factor_y * y) + o_y;
+					RGBA *curPixel = &pixels[y * w + x];
+					dest->pixels[destY * Width + destX] = *curPixel;
+				}
+	return dest;
+}
+//---------------------------------------------------------------------------------------
+void PIXMAP::Scale(unsigned int Width, unsigned int Height)
+{
+	PIXMAP *scaledCopy = new PIXMAP(Width, Height);
+	double _stretch_factor_x = (static_cast<double>(Width) / static_cast<double>(w));
+	double _stretch_factor_y = (static_cast<double>(Height) / static_cast<double>(h));
+
+	for (int y = 0; y < h; y++) //Run across all Y pixels.
+		for (int x = 0; x < w; x++) //Run across all X pixels.
+			for (int o_y = 0; o_y < _stretch_factor_y; ++o_y) //Draw _stretch_factor_y pixels for each Y pixel.
+				for (int o_x = 0; o_x < _stretch_factor_x; ++o_x) //Draw _stretch_factor_x pixels for each X pixel.
+				{
+					unsigned int destX = (_stretch_factor_x * x) + o_x;
+					unsigned int destY = (_stretch_factor_y * y) + o_y;
+					RGBA *curPixel = &pixels[y * w + x];
+					scaledCopy->pixels[destY * Width + destX] = *curPixel;
+				}
+	Destroy();
+	w = Width;
+	h = Height;
+	pixels = new RGBA[w*h];
+	std::memcpy(pixels, scaledCopy->pixels,GetSize());
+	delete scaledCopy;
+}
+//---------------------------------------------------------------------------------------
+void PIXMAP::DrawScaledCopy(PIXMAP *dest,unsigned int xPos, unsigned int yPos, unsigned int Width, unsigned int Height)
+{
+	//add clipping code here later, for now, dont draw if out of bounds
+	if(xPos+Width > dest->w || yPos+Height > dest->h)
+		return;
+
+	double _stretch_factor_x = (static_cast<double>(Width) / static_cast<double>(w));
+	double _stretch_factor_y = (static_cast<double>(Height) / static_cast<double>(h));
+
+	for (int y = 0; y < h; y++) //Run across all Y pixels.
+		for (int x = 0; x < w; x++) //Run across all X pixels.
+			for (int o_y = 0; o_y < _stretch_factor_y; ++o_y) //Draw _stretch_factor_y pixels for each Y pixel.
+				for (int o_x = 0; o_x < _stretch_factor_x; ++o_x) //Draw _stretch_factor_x pixels for each X pixel.
+				{
+					unsigned int destX = (_stretch_factor_x * x) + o_x;
+					unsigned int destY = (_stretch_factor_y * y) + o_y;
+					RGBA *curPixel = &pixels[y * w + x];
+					dest->pixels[destY * Width + destX] = *curPixel;
+				}
 }
 //---------------------------------------------------------------------------------------
 void WriteToTextFile(PIXMAP *screen)

@@ -103,8 +103,13 @@ struct PIXMAP
 	void Fill(RGBA color);
 	void Blit(PIXMAP * dest, int x, int y);
 	void Clear();
+	void PutPixel(RGBA pix,int x, int y);
+	RGBA GetPixel(int x, int y);
 	//takes unsigned char data (pixels) and adds them to the pixmap
 	void CopyPixels(unsigned char *src, int srcW, int srcH, int x, int y);
 	void CopyPixels(RGBA *src, int srcW, int srcH, int x, int y);
 	unsigned char * GetRawPixelCopy();
+	PIXMAP* GetScaledCopy(unsigned int Width, unsigned int Height);
+	void Scale(unsigned int Width, unsigned int Height);
+	void DrawScaledCopy(PIXMAP *dest, unsigned int xPos, unsigned int yPos, unsigned  int Width, unsigned int Height);
 };
