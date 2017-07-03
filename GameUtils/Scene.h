@@ -48,6 +48,10 @@ public:
 	{
 		renderController.DrawTextToBuffer(text, x, y);
 	}
+	void ClearScreenBuffer()
+	{
+		renderController.GetScreenBuffer()->Clear();
+	}
 };
 
 #endif //SCENE_H

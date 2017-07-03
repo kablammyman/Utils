@@ -101,6 +101,7 @@ struct PIXMAP
 	}
 
 	void Fill(RGBA color);
+	void Clip(unsigned int width, unsigned int height, unsigned int destX, unsigned int destY, unsigned int destW, unsigned int destH, int & numHorizPixelsToDraw, int & vertSPanOfPix);
 	void Blit(PIXMAP * dest, int x, int y);
 	void Clear();
 	void PutPixel(RGBA pix,int x, int y);
@@ -111,5 +112,5 @@ struct PIXMAP
 	unsigned char * GetRawPixelCopy();
 	PIXMAP* GetScaledCopy(unsigned int Width, unsigned int Height);
 	void Scale(unsigned int Width, unsigned int Height);
-	void DrawScaledCopy(PIXMAP *dest, unsigned int xPos, unsigned int yPos, unsigned  int Width, unsigned int Height);
+	void DrawScaledCopy(PIXMAP *dest, int xPos, int yPos, unsigned  int Width, unsigned int Height);
 };
