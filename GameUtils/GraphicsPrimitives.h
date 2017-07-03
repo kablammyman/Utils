@@ -106,6 +106,7 @@ struct PIXMAP
 	void Clear();
 	void PutPixel(RGBA pix,int x, int y);
 	RGBA GetPixel(int x, int y);
+	void DrawRect(int _x,int _y,int _w,int _h,RGBA color);
 	//takes unsigned char data (pixels) and adds them to the pixmap
 	void CopyPixels(unsigned char *src, int srcW, int srcH, int x, int y);
 	void CopyPixels(RGBA *src, int srcW, int srcH, int x, int y);
