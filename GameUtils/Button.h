@@ -93,9 +93,9 @@ public:
 		}
 		
 	}
-	void ButtonLogic(int x,int y, bool changeState)//change state basically means do or stop doing the button action
+	void ButtonLogic(int _x,int _y, bool changeState)//change state basically means do or stop doing the button action
 	{
-		MouseCollision(x, y);
+		MouseCollision(_x, _y);
 				
 		if(isHighlighted)
 		{

@@ -52,6 +52,8 @@ public:
 	{
 		renderController.GetScreenBuffer()->Clear();
 	}
+	int GetScreenW() { return renderController.GetScreenBuffer()->w; }
+	int GetScreenH() { return renderController.GetScreenBuffer()->h; }
 };
 
 #endif //SCENE_H
