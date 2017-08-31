@@ -26,7 +26,7 @@ SoundUtils::~SoundUtils()
 }
 
 //////////////////////////////////////////////////////////////////////////////////
-void write_little_endian(unsigned int word, int num_bytes, FILE *wav_file)
+void SoundUtils::write_little_endian(unsigned int word, int num_bytes, FILE *wav_file)
 {
     unsigned buf;
     while(num_bytes>0)
@@ -37,8 +37,17 @@ void write_little_endian(unsigned int word, int num_bytes, FILE *wav_file)
 	word >>= 8;
     }
 }
-
-unsigned char* write_to_buffer_little_endian(unsigned int word, int num_bytes)
+void SoundUtils::read_little_endian(unsigned char *buffer, int num_bytes, FILE *wav_file)
+{
+	unsigned buf;
+	while (num_bytes>0)
+	{
+		fread(&buf, 1, 1, wav_file);
+		num_bytes--;
+		buffer[num_bytes] <<= 8;
+	}
+}
+unsigned char* SoundUtils::write_to_buffer_little_endian(unsigned int word, int num_bytes)
 {
     unsigned buf;
 	unsigned char *buffer;
@@ -60,7 +69,7 @@ unsigned char* write_to_buffer_little_endian(unsigned int word, int num_bytes)
 	http://ccrma.stanford.edu/courses/422/projects/WaveFormat/
  */
 
-void write_wav(char * filename, unsigned long num_samples, /*short*/ int * data, int s_rate)
+void SoundUtils::WriteWav(char * filename, unsigned long num_samples, int * data, int s_rate)
 {
     FILE* wav_file;
     unsigned int sample_rate;
@@ -105,8 +114,37 @@ void write_wav(char * filename, unsigned long num_samples, /*short*/ int * data,
     fclose(wav_file);
 }
 
+void SoundUtils::LoadWav(char * filename)
+{
+	FILE* wav_file;
+	unsigned int sample_rate;
+	unsigned int num_channels;
+	unsigned int bytes_per_sample;
+	unsigned int byte_rate;
+	unsigned long i;	/* counter for samples */
+	unsigned char *buffer;
 
-void appendToWave(unsigned char *dest, unsigned char *src, int numBytes, int & offset)
+	wav_file = fopen(filename, "rb");
+	assert(wav_file);	/* make sure it opened */
+
+	// obtain file size:
+	fseek(wav_file, 0, SEEK_END);
+	long lSize = ftell(wav_file);
+	rewind(wav_file);
+
+	// allocate memory to contain the whole file:
+	buffer = (unsigned char*)malloc(sizeof(unsigned char)*lSize);
+	if (buffer == NULL) { fputs("Memory error", stderr); exit(2); }
+
+	// copy the file into the buffer:
+	long result = fread(buffer, 1, lSize, wav_file);
+	if (result != lSize) {
+		fputs("Reading error", stderr); exit(3);
+	}
+	fclose(wav_file);	
+}
+
+void SoundUtils::AppendToWave(unsigned char *dest, unsigned char *src, int numBytes, int & offset)
 {
 //	char *buffer = (char *)memcpy (dest+offset,src,numBytes);
 	//memmove (dest+offset,src,numBytes);
@@ -117,7 +155,7 @@ void appendToWave(unsigned char *dest, unsigned char *src, int numBytes, int & o
 	//return buffer;
 	
 }
-unsigned char *create_wav(unsigned long num_samples, /*short*/ int * data, int s_rate, int & sizeOfWav)
+unsigned char *SoundUtils::CreateWav(unsigned long num_samples, /*short*/ int * data, int s_rate, int & sizeOfWav)
 {
 	int blockCount = 0;// when we realloc, we willnned a running count on current size
 	unsigned char *wav_file;//final result
@@ -158,20 +196,20 @@ unsigned char *create_wav(unsigned long num_samples, /*short*/ int * data, int s
 	wav_file = (unsigned char*) malloc(45);//add up the previous mem allocations to get 45
 	 memset (wav_file,'-',44); 
 	//piece together wav broiler plate stuff here
-	appendToWave(wav_file, riffHeader, 4, blockCount);
-	appendToWave(wav_file, riffData, 4, blockCount);
-	appendToWave(wav_file, waveHeader, 4, blockCount);
-	appendToWave(wav_file, fmtSubchunk, 4, blockCount);
+	AppendToWave(wav_file, riffHeader, 4, blockCount);
+	AppendToWave(wav_file, riffData, 4, blockCount);
+	AppendToWave(wav_file, waveHeader, 4, blockCount);
+	AppendToWave(wav_file, fmtSubchunk, 4, blockCount);
 
-	appendToWave(wav_file, subChunk, 4, blockCount);
-	appendToWave(wav_file, format, 2, blockCount);
-	appendToWave(wav_file, channels, 2, blockCount);
-	appendToWave(wav_file, sampRate, 4, blockCount);
-	appendToWave(wav_file, byteRate, 4, blockCount);
-	appendToWave(wav_file, align, 2, blockCount);
-	appendToWave(wav_file, bitsPerSample, 2, blockCount);
-	appendToWave(wav_file, dataSubchunk, 4, blockCount);
-	appendToWave(wav_file, dataChunk, 4, blockCount);
+	AppendToWave(wav_file, subChunk, 4, blockCount);
+	AppendToWave(wav_file, format, 2, blockCount);
+	AppendToWave(wav_file, channels, 2, blockCount);
+	AppendToWave(wav_file, sampRate, 4, blockCount);
+	AppendToWave(wav_file, byteRate, 4, blockCount);
+	AppendToWave(wav_file, align, 2, blockCount);
+	AppendToWave(wav_file, bitsPerSample, 2, blockCount);
+	AppendToWave(wav_file, dataSubchunk, 4, blockCount);
+	AppendToWave(wav_file, dataChunk, 4, blockCount);
 	
 	//now add sound data that was passed in from param
     for (i=0; i< num_samples; i++)
@@ -179,7 +217,7 @@ unsigned char *create_wav(unsigned long num_samples, /*short*/ int * data, int s
      	
 		unsigned char *temp = write_to_buffer_little_endian((unsigned int)(data[i]),bytes_per_sample);
 		wav_file = (unsigned char*) realloc (wav_file, blockCount+bytes_per_sample * sizeof(unsigned char*));
-		appendToWave(wav_file, temp, bytes_per_sample, blockCount);
+		AppendToWave(wav_file, temp, bytes_per_sample, blockCount);
 
 	}
 	sizeOfWav = blockCount;
@@ -187,7 +225,7 @@ unsigned char *create_wav(unsigned long num_samples, /*short*/ int * data, int s
 	
 }
 
-unsigned char* SoundUtils::doSoundCreateTest()
+unsigned char* SoundUtils::DoSoundCreateTest()
 {
     float amplitude = 32000;//volume
     float freq_Hz = 261.626;//this is middle C //240;//note
@@ -202,5 +240,5 @@ unsigned char* SoundUtils::doSoundCreateTest()
 		buffer[i] = (int)(amplitude * sin(phase));
     }
 
-    return create_wav(BUF_SIZE, buffer, GEN_SAMP_RATE ,sizeOfWav);
+    return CreateWav(BUF_SIZE, buffer, GEN_SAMP_RATE ,sizeOfWav);
 }

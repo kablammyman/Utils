@@ -26,15 +26,20 @@ private:
 	int buffer[BUF_SIZE];
 	int sizeOfWav;
 	//SAMPLE *snd;
+	unsigned char* write_to_buffer_little_endian(unsigned int word, int num_bytes);
+	void write_little_endian(unsigned int word, int num_bytes, FILE *wav_file);
+	void read_little_endian(unsigned char *buffer, int num_bytes, FILE *wav_file);
 
-
-	//unsigned char* create_wav(unsigned long num_samples, /*short*/ int * data, int s_rate,int & sizeOfWav);
 public:
 	SoundUtils(const char * path);
 	~SoundUtils();
 
+	void LoadWav(char * filename);
 	void PlaySound();
-	unsigned char *doSoundCreateTest();
+	void AppendToWave(unsigned char *dest, unsigned char *src, int numBytes, int & offset);
+	unsigned char *CreateWav(unsigned long num_samples, /*short*/ int * data, int s_rate, int & sizeOfWav);
+	void WriteWav(char * filename, unsigned long num_samples, /*short*/ int * data, int s_rate);
+	unsigned char *DoSoundCreateTest();
 
 };
 
