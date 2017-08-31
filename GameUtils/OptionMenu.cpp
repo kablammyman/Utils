@@ -87,13 +87,14 @@ void OptionsMenu::GetKeyboardInput(int  newkey)
 }
 void OptionsMenu::SetCurMenuOptionPos(MenuItem *newItem)
 {
-	newItem->option->SetPos(x,y + level_y *(int)menuItems.size());
+	newItem->optionScreenText->SetPos(x,y + level_y *(int)menuItems.size());
 }
 
 void OptionsMenu::AddMenuOption(string add_menu_option, int value)
 {
 	MenuItem *newItem = new MenuItem();
-	newItem->text = add_menu_option;
+	//newItem->text = add_menu_option;
+	newItem->optionScreenText = new ScreenText(add_menu_option);
 	newItem->value = value;
 	newItem->isToggle = false;
 	
@@ -106,12 +107,12 @@ void OptionsMenu::AddMenuOption(string add_menu_option, int value)
 void OptionsMenu::AddMenuOption(string add_menu_option,int value, int min, int max)
 {
 	MenuItem *newItem = new MenuItem();
-	newItem->text = add_menu_option;
+	//newItem->text = add_menu_option;
 	newItem->value = value;
 	newItem->isToggle = false;
 	newItem->min = min;
 	newItem->max = max;
-	
+	newItem->optionScreenText = new ScreenText(add_menu_option);
 	SetCurMenuOptionPos(newItem);
 
 	menuItems.push_back(newItem);
@@ -120,13 +121,14 @@ void OptionsMenu::ResetMenuPositions()
 {
 	for (size_t i = 0; i < menuItems.size(); i++)
 	{
-		menuItems[i]->option->SetPos(x, y + level_y * (int)i);
+		menuItems[i]->optionScreenText->SetPos(x, y + level_y * (int)i);
 	}
 }
 void OptionsMenu::AddMenuToggleOption(string add_menu_option, bool value)
 {
 	MenuItem* newItem = new MenuItem();
-	newItem->text = add_menu_option;
+	//newItem->text = add_menu_option;
+	newItem->optionScreenText = new ScreenText(add_menu_option);
 	newItem->value = (int)value;
 	newItem->isToggle = true;
 
@@ -241,16 +243,16 @@ void OptionsMenu::Update()
 RGBA OptionsMenu::GetMenuItemColorAt(size_t menuPos)
 {
 	if (menuPos == menuItemIndex)
-		menuItems[menuPos]->option->SetColor(font1_color);
+		menuItems[menuPos]->optionScreenText->SetColor(font1_color);
 	else
-		menuItems[menuPos]->option->SetColor(font2_color);
+		menuItems[menuPos]->optionScreenText->SetColor(font2_color);
 
-	return menuItems[menuPos]->option->GetColor();
+	return menuItems[menuPos]->optionScreenText->GetColor();
 }
 
 ScreenText * OptionsMenu::GetMemuOptionAt(size_t menuPos)
 {
-	return menuItems[menuPos]->option;
+	return menuItems[menuPos]->optionScreenText;
 }
 
 /*void OptionsMenu::Draw(unsigned char *dest)

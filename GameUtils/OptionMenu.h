@@ -16,8 +16,8 @@ using namespace std;
 class OptionsMenu : public RenderObject {
 	struct MenuItem
 	{
-		ScreenText *option;
-		string text;
+		ScreenText *optionScreenText;
+		//string text;
 		int value;
 		bool isToggle;
 		int min,max;
@@ -80,7 +80,7 @@ public:
 	void GetKeyboardInput(int  newkey);//newkey = next key in keyboard buffer
 
 	size_t GetNumMenuItems() { return menuItems.size(); }
-	string GetMenuItemStringAt(size_t index) { return menuItems[index]->text; }
+	string GetMenuItemStringAt(size_t index) { return menuItems[index]->optionScreenText->GetText(); }
 	int GetMenuItemValueAt(size_t index) { return menuItems[index]->value; }
 	string GetMenuItemValueStringAt(size_t index) { return menuItems[index]->GetItemValueString(); }
 	RGBA GetMenuItemColorAt(size_t menuPos);
@@ -88,7 +88,7 @@ public:
 	int GetCurrentSelectionItemIndex() { return menuItemIndex; }
 
 	virtual void Update();
-	virtual void Draw(unsigned char *dest);
+	virtual void Draw(unsigned char *dest) {}
 };
 
 

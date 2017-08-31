@@ -21,4 +21,6 @@ file(GLOB SOURCES
 	${PROJECT_SOURCE_DIR}/*.cpp)
 ADD_LIBRARY(SQLiteUtils ${SOURCES})
 
-target_link_libraries (SQLiteUtils debug sqlite3 ${SQLITE3_LIB_DEBUG} debug ${SQLITE3_LIB_RELEASE})
+#target_link_libraries (SQLiteUtils debug sqlite3 ${SQLITE3_LIB_DEBUG} release ${SQLITE3_LIB_RELEASE})
+target_link_libraries (SQLiteUtils debug ${SQLITE3_LIB_DEBUG} release ${SQLITE3_LIB_RELEASE})
+#looks like i will have to add the sqlite lib manually in vis studio->Librarian\General\AdditionalDependencies
