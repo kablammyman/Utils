@@ -11,7 +11,17 @@ SoundUtils::SoundUtils(const char* sndFile)
 	volume = 255;
 	pan = 128;
 	speed = 1000;
-	//snd = load_sample(sndFile);
+	LoadWav(sndFile);
+	/*FILE *ptr_myfile;
+	ptr_myfile = fopen(sndFile, "rb");
+	if (!ptr_myfile)
+	{
+		printf("Unable to open file!");
+		return;
+	}
+
+	fread(&buffer, sizeof(buffer), 1, ptr_myfile);
+	fclose(ptr_myfile);*/
 }
 
 void SoundUtils::PlaySound()
@@ -114,7 +124,7 @@ void SoundUtils::WriteWav(char * filename, unsigned long num_samples, int * data
     fclose(wav_file);
 }
 
-void SoundUtils::LoadWav(char * filename)
+void SoundUtils::LoadWav(const char * filename)
 {
 	FILE* wav_file;
 	unsigned int sample_rate;
