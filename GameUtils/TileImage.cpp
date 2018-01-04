@@ -148,7 +148,8 @@ Tile * TileImage::GetBlock(unsigned int index)
 
 	if(index < (numBlocksX*numBlocksY))
 		return &imgBlocks[index];
-	return NULL;
+	//if we get here, we are trying to print a character we dont have
+	return &imgBlocks[0];
 }
 //---------------------------------------------------------------------------------------------------
 void TileImage::DrawTileToPixmap(PIXMAP *dest, Tile  *tile, int x, int y,bool masked)
