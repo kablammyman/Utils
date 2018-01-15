@@ -75,6 +75,83 @@ unsigned char* SoundUtils::write_to_buffer_little_endian(unsigned int word, int 
 	return buffer;
 }
 
+
+
+void SoundUtils::LoadWav(const char * filename)
+{
+	//http://rogerchansdigitalworld.blogspot.com/2010/05/how-to-read-wav-format-file-in-c.html
+	FILE* fp = fopen(filename, "rb");
+	if (fp) 
+	{
+		
+		fread(id, sizeof(char), 4, fp);
+		id[4] = '\0';
+
+		if (!strcmp(id, "RIFF")) 
+		{
+			fread(&size, sizeof(unsigned long), 1, fp);
+			fread(id, sizeof(char), 4, fp);
+			id[4] = '\0';
+
+			if (!strcmp(id, "WAVE")) {
+				fread(&format_length, sizeof(unsigned long), 1, fp);
+				fread(&format_tag, sizeof(short), 1, fp);
+				fread(&channels, sizeof(short), 1, fp);
+				fread(&sample_rate, sizeof(unsigned long), 1, fp);
+				fread(&avg_bytes_sec, sizeof(unsigned long), 1, fp);
+				fread(&block_align, sizeof(short), 1, fp);
+				fread(&bits_per_sample, sizeof(short), 1, fp);
+				fread(id, sizeof(char), 4, fp);
+				fread(&data_size, sizeof(unsigned long), 1, fp);
+
+				sizeOfWav = data_size / sizeof(unsigned char);
+				buffer = (unsigned char*)malloc(data_size);
+				fread(buffer, sizeof(short), sizeOfWav, fp);
+			}
+			else 
+			{
+				return;
+				//cout << "Error: RIFF file but not a wave file\n";
+			}
+		}
+		else 
+		{
+			return;
+			//cout << "Error: not a RIFF file\n";
+		}
+	}
+	fclose(fp);
+}
+
+/*void SoundUtils::LoadWav(const char * filename)
+{
+FILE* wav_file;
+
+
+wav_file = fopen(filename, "rb");
+assert(wav_file);	// make sure it opened
+
+// obtain file size:
+fseek(wav_file, 0, SEEK_END);
+long lSize = ftell(wav_file);
+rewind(wav_file);
+
+// allocate memory to contain the whole file:
+buffer = (unsigned char*)malloc(sizeof(unsigned char)*lSize);
+if (buffer == NULL) { fputs("Memory error", stderr); exit(2); }
+
+// copy the file into the buffer:
+long result = fread(buffer, 1, lSize, wav_file);
+if (result != lSize) {
+fputs("Reading error", stderr); exit(3);
+}
+sizeOfWav = lSize;
+fclose(wav_file);
+}*/
+
+
+
+
 /* information about the WAV file format from
 	http://ccrma.stanford.edu/courses/422/projects/WaveFormat/
  */
@@ -124,35 +201,7 @@ void SoundUtils::WriteWav(char * filename, unsigned long num_samples, int * data
     fclose(wav_file);
 }
 
-void SoundUtils::LoadWav(const char * filename)
-{
-	FILE* wav_file;
-	unsigned int sample_rate;
-	unsigned int num_channels;
-	unsigned int bytes_per_sample;
-	unsigned int byte_rate;
-	unsigned long i;	/* counter for samples */
-	unsigned char *buffer;
 
-	wav_file = fopen(filename, "rb");
-	assert(wav_file);	/* make sure it opened */
-
-	// obtain file size:
-	fseek(wav_file, 0, SEEK_END);
-	long lSize = ftell(wav_file);
-	rewind(wav_file);
-
-	// allocate memory to contain the whole file:
-	buffer = (unsigned char*)malloc(sizeof(unsigned char)*lSize);
-	if (buffer == NULL) { fputs("Memory error", stderr); exit(2); }
-
-	// copy the file into the buffer:
-	long result = fread(buffer, 1, lSize, wav_file);
-	if (result != lSize) {
-		fputs("Reading error", stderr); exit(3);
-	}
-	fclose(wav_file);	
-}
 
 void SoundUtils::AppendToWave(unsigned char *dest, unsigned char *src, int numBytes, int & offset)
 {
@@ -165,15 +214,10 @@ void SoundUtils::AppendToWave(unsigned char *dest, unsigned char *src, int numBy
 	//return buffer;
 	
 }
-unsigned char *SoundUtils::CreateWav(unsigned long num_samples, /*short*/ int * data, int s_rate, int & sizeOfWav)
+unsigned char *SoundUtils::CreateWav(unsigned long num_samples, /*short*/ unsigned int * data, int s_rate, unsigned int & sizeOfWav)
 {
 	int blockCount = 0;// when we realloc, we willnned a running count on current size
 	unsigned char *wav_file;//final result
-    unsigned int sample_rate;
-    unsigned int num_channels;
-    unsigned int bytes_per_sample;
-    unsigned int byte_rate;
-    unsigned long i;	/* counter for samples */
 
     num_channels = 1;	/* monoaural */
     bytes_per_sample = 2;
@@ -242,13 +286,13 @@ unsigned char* SoundUtils::DoSoundCreateTest()
     float phase=0;
 
     float freq_radians_per_sample = freq_Hz*2*M_PI/GEN_SAMP_RATE;
-
+	unsigned int buf[BUF_SIZE];
     // fill buffer with a sine wave 
     for (int i=0; i<BUF_SIZE; i++)
     {
         phase += freq_radians_per_sample;
 		buffer[i] = (int)(amplitude * sin(phase));
     }
-
-    return CreateWav(BUF_SIZE, buffer, GEN_SAMP_RATE ,sizeOfWav);
+	
+    return CreateWav(BUF_SIZE, buf, GEN_SAMP_RATE ,sizeOfWav);
 }

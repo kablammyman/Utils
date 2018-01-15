@@ -262,11 +262,9 @@ void PIXMAP::DrawScaledCopy(PIXMAP *dest, int xPos, int yPos, unsigned int Width
 	if (xPos > dest->w || yPos > dest->h)
 		return;
 
-	//int numHorizPixelsToDraw, vertSPanOfPix;
-	//Clip(Width, Height, xPos, yPos, dest->w, dest->h, numHorizPixelsToDraw, vertSPanOfPix);
-	//need to d clip AFTER the scaling
-	
-	
+	int numHorizPixelsToDraw = w, vertSPanOfPix = h;
+	//Clip(w, h, xPos, yPos, dest->w, dest->h, numHorizPixelsToDraw, vertSPanOfPix);
+
 	double _stretch_factor_x = (static_cast<double>(Width) / static_cast<double>(w));
 	double _stretch_factor_y = (static_cast<double>(Height) / static_cast<double>(h));
 	int startX = 0;
@@ -274,36 +272,41 @@ void PIXMAP::DrawScaledCopy(PIXMAP *dest, int xPos, int yPos, unsigned int Width
 	
 	if (xPos < 0)
 	{
-		int x = Width + xPos;
-		startX = Width - x;
-
-		if (startX+Width < 0)
+		if (xPos + Width < 0)
 			return;//way off screen
+
+	//	startX = w - numHorizPixelsToDraw;
 	}
+	
 	if (yPos < 0)
 	{
-		int y = Height + yPos;
-		startY = Height - y;
-
-		if (startY + Height < 0)
+		if (yPos + Height < 0)
 			return;//way off screen
+
+	//	startY = h - vertSPanOfPix;
 	}
-	for (int y = startY; y < h; y++) //Run across all Y pixels.
-		for (int x = startX; x < w; x++) //Run across all X pixels.
+
+	int newPixLoc = 0;
+	unsigned int destX ;
+	unsigned int destY;
+	for (int y = startY; y < vertSPanOfPix; y++) //Run across all Y pixels.
+		for (int x = startX; x < numHorizPixelsToDraw; x++) //Run across all X pixels.
 			for (int o_y = 0; o_y < _stretch_factor_y; ++o_y) //Draw _stretch_factor_y pixels for each Y pixel.
 				for (int o_x = 0; o_x < _stretch_factor_x; ++o_x) //Draw _stretch_factor_x pixels for each X pixel.
 				{
 					//unsigned int destX =  xPos + (_stretch_factor_x * x);
 					//unsigned int destY =  yPos + (_stretch_factor_y * y);
-					unsigned int destX = xPos + ((_stretch_factor_x * x) + o_x);
-					unsigned int destY = yPos + ((_stretch_factor_y * y) + o_y);
+					destX = xPos + ((_stretch_factor_x * x) + o_x);
+					destY = yPos + ((_stretch_factor_y * y) + o_y);
 					RGBA *curPixel = &pixels[y * w + x];
 					
-					if(destX > dest->w || destY > dest->h)
+					if(destX > dest->w || destY > dest->h || destX < 0 || destY < 0)
 						continue;
-					
-					dest->pixels[destY * dest->w + destX] = *curPixel;
-					//std::memcpy(curPixel, &dest->pixels[destY * dest->w + destX], _stretch_factor_x * sizeof(RGBA));
+
+					newPixLoc = destY * dest->w + destX;
+					if(newPixLoc < dest->GetNumPixels())
+						dest->pixels[newPixLoc] = *curPixel;
+						//std::memcpy(curPixel, &dest->pixels[destY * dest->w + destX], _stretch_factor_x * sizeof(RGBA));
 				}
 }
 //---------------------------------------------------------------------------------------
