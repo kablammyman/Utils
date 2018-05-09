@@ -99,7 +99,7 @@ struct PIXMAP
 	{
 		return  w*h * sizeof(RGBA);
 	}
-
+	inline unsigned int GetNumPixels() { return w * h; }
 	void Fill(RGBA color);
 	void Clip(unsigned int width, unsigned int height, unsigned int destX, unsigned int destY, unsigned int destW, unsigned int destH, int & numHorizPixelsToDraw, int & vertSPanOfPix);
 	void Blit(PIXMAP * dest, int x, int y);
