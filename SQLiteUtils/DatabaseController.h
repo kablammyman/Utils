@@ -13,6 +13,14 @@ class DatabaseController
 	string dataGrabber(string &word, size_t &startPos);
 
 public:
+		
+	//this should be used like a json obj...name, value.
+	//for many results in 1 query, use an array of these
+	struct DBResult
+	{
+		string colName;
+		string Value;
+	};
 	typedef pair <string, string> dbDataPair;
 	DatabaseController();
 	~DatabaseController();
@@ -27,6 +35,7 @@ public:
 
 	bool insertNewDataEntry(string table, dbDataPair data, string &output);
 	bool insertNewDataEntry(string table, vector<dbDataPair> data, string &output);
+	bool doDBQuerey(string querey, string &output);
 	bool doDBQuerey(string table, string data, string &output);
 	bool doDBQuerey(string table, string data, dbDataPair fromWhere, string &output);
 	bool doDBQuerey(string table, vector<string> data, string &output);
@@ -43,7 +52,10 @@ public:
 	void getDataPairFromOutput(string &inputData, string colName1, string colName2, vector<dbDataPair> &returnData);
 	void getAllValuesFromCol(string &inputData, string colName, vector<string> &returnData);
 	
-
+	int GetLatestRowID()
+	{
+		return db->GetLatestRowID();
+	}
 	//test methods
 	void createTable(string tableName, string fields);
 	void testGetTable();

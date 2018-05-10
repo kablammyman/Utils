@@ -99,6 +99,11 @@ string DatabaseController::getTable(string tableName)
 	return returnString;
 }
 
+bool DatabaseController::doDBQuerey(string querey, string &output)
+{
+	return db->executeSQL(querey, output);
+}
+
 bool DatabaseController::doDBQuerey(string table, string data, string &output)
 {
 	string querey = ("SELECT " + data + " FROM " + table + ";");
