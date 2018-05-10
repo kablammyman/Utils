@@ -14,14 +14,53 @@ class DatabaseController
 
 public:
 		
+	
+	
+	typedef pair <string, string> dbDataPair;
+	
 	//this should be used like a json obj...name, value.
 	//for many results in 1 query, use an array of these
 	struct DBResult
 	{
-		string colName;
-		string Value;
+		vector<dbDataPair> data;
+		
+		void insert(string fieldName,string value)
+		{
+			data.push_back(make_pair(fieldName, value));
+		}
+
+		void clear()
+		{
+			data.clear();
+		}
+		void GetAllKeys(vector<string> &retVec)
+		{
+			for (size_t i = 0; i < data.size(); i++)
+			{
+				retVec.push_back(data[i].first);
+			}
+		}
+
+		void GetAllValues(vector<string> &retVec)
+		{
+			for (size_t i = 0; i < data.size(); i++)
+			{
+				retVec.push_back(data[i].second);
+			}
+		}
+
+		string GetValueFromKey(string key)
+		{
+			for (size_t i = 0; i < data.size(); i++)
+			{
+				if(data[i].first == key)
+				{
+					return data[i].second;
+				}
+			}
+			return "";
+		}
 	};
-	typedef pair <string, string> dbDataPair;
 	DatabaseController();
 	~DatabaseController();
 
@@ -45,6 +84,8 @@ public:
 	bool UpdateEntry(string table, vector<dbDataPair> data, dbDataPair WhereClause, string &output);
 	
 	void parseDBOutput(string &inputData, int numFields, vector <vector<string>> &returnData);
+	void parseDBOutput(string &inputData, int numFields, vector<DBResult> &returnData);
+	
 	//num cols is hopw many cols were truthned from the querey, and the colToUse is the data we want to put in the vector
 	void removeTableNameFromOutput(string &inputData, int numCols, int colToUse, vector<string> &returnData);
 	void removeTableNameFromOutput(string &inputData);

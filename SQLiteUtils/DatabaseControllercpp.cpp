@@ -285,6 +285,34 @@ void DatabaseController::parseDBOutput(string &inputData, int numFields, vector<
 
 	}
 }
+void DatabaseController::parseDBOutput(string &inputData, int numFields, vector<DBResult> &returnData)
+{
+	returnData.clear();
+	
+	int curField = 0;
+	vector<string> tokens = StringUtils::Tokenize(inputData, "|\n");
+	//the first is the field name, the second is the value we want
+
+	size_t i = 0;
+	DBResult curRow;
+	while ( i < tokens.size())
+	{
+		if (curField == numFields - 1)
+		{
+			returnData.push_back(curRow);
+			curRow.clear();
+			curField = 0;
+		}
+		else
+			curField++;
+		
+		curRow.insert(tokens[i],tokens[i+1]);
+
+		i +=2;
+	}
+}
+
+
 
 string DatabaseController::dataGrabber(string &word, size_t &curPos)
 {
