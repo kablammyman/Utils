@@ -184,7 +184,31 @@ bool DatabaseController::doDBQuerey(string table, string selectData, vector<dbDa
 	return db->executeSQL(querey + fromString + whereString, output);
 }
 
-//used for quereies like: SELECT ID,path FROM Gallery WHERE CategoryID = "3" AND WebsiteID = "16";
+bool DatabaseController::doDBQuerey(string table, vector<string> selectData, dbDataPair whereData, string &output)
+{
+	string querey = "SELECT ";
+	string whereString = " WHERE ";
+	string fromString = (" FROM " + table);
+
+	//count how many specific items to querey
+	//ex select * from table where name ="bla" and age = "bla"; \\2 whereArgs here
+	
+	for (size_t i = 0; i < selectData.size(); i++)
+	{
+		if (i > 0)
+			querey += ",";
+
+		querey += selectData[i];
+
+	}
+	
+	whereString += (whereData.first + " = \"" + whereData.second + "\"");
+	whereString += ";";
+
+	return db->executeSQL(querey + fromString + whereString, output);
+}
+
+
 bool DatabaseController::doDBQuerey(string table, vector<string> selectData, vector<dbDataPair> whereData, string &output)
 {
 	string querey = "SELECT ";

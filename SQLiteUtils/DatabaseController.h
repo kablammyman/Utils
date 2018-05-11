@@ -18,10 +18,11 @@ public:
 	
 	typedef pair <string, string> dbDataPair;
 	
-	//this should be used like a json obj...name, value.
-	//for many results in 1 query, use an array of these
+	//each querey will have an array of these
 	struct DBResult
 	{
+		//this is for each col and value we ask for
+		//select name,addy,phone from person; -> name:vic|addy:123 fake|phone:1234567890
 		vector<dbDataPair> data;
 		
 		void insert(string fieldName,string value)
@@ -80,6 +81,11 @@ public:
 	bool doDBQuerey(string table, vector<string> data, string &output);
 	bool doDBQuerey(string table, vector<dbDataPair> data, string &output);
 	bool doDBQuerey(string table, string selectData, vector<dbDataPair> whereData, string &output);
+	
+	//select x,y,z from table where dbpair.first = dbpair.second
+	bool doDBQuerey(string table, vector<string> selectData, dbDataPair whereData, string &output);
+	
+	// SELECT x,y,x FROM Table WHERE dbpair[0].first = dbpair[0].second  AND dbpair[1].first = dbpair[1].second ;
 	bool doDBQuerey(string table, vector<string> selectData, vector<dbDataPair> whereData, string &output);
 	bool UpdateEntry(string table, vector<dbDataPair> data, dbDataPair WhereClause, string &output);
 	
