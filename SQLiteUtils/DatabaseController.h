@@ -91,14 +91,18 @@ public:
 	
 	void parseDBOutput(string &inputData, int numFields, vector <vector<string>> &returnData);
 	void parseDBOutput(string &inputData, int numFields, vector<DBResult> &returnData);
-	
+	void parseDBOutput(string &inputData, vector<string>fields, vector<DBResult> &returnData);
+
 	//num cols is hopw many cols were truthned from the querey, and the colToUse is the data we want to put in the vector
 	void removeTableNameFromOutput(string &inputData, int numCols, int colToUse, vector<string> &returnData);
 	void removeTableNameFromOutput(string &inputData);
 	//same as before, but now we can couple data together
 	void getDataPairFromOutput(string &inputData, string colName1, string colName2, vector<dbDataPair> &returnData);
 	void getAllValuesFromCol(string &inputData, string colName, vector<string> &returnData);
+	//specify your fields with a vector, and turn it into a csv, good for easily making long SELECT quereies
 	
+	static string GetCSVFromVector(vector<string> &fields);
+
 	int GetLatestRowID()
 	{
 		return db->GetLatestRowID();

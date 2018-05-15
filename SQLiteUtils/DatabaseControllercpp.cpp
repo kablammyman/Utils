@@ -314,7 +314,7 @@ void DatabaseController::parseDBOutput(string &inputData, int numFields, vector<
 	returnData.clear();
 	
 	int curField = 0;
-	vector<string> tokens = StringUtils::Tokenize(inputData, "|\n");
+	vector<string> tokens = StringUtils::Tokenize2(inputData, "|\n");
 	//the first is the field name, the second is the value we want
 
 	size_t i = 0;
@@ -335,8 +335,57 @@ void DatabaseController::parseDBOutput(string &inputData, int numFields, vector<
 		i +=2;
 	}
 }
+//this was needed so i can deal with data that has new lines within it
+void DatabaseController::parseDBOutput(string &inputData, vector<string>fields, vector<DBResult> &returnData)
+{
+	returnData.clear();
+	
+	int curField = 0;
 
+	//the first is the field name, the second is the value we want
 
+	size_t i = 0;
+	DBResult curRow;
+	size_t start = 0;
+	size_t curFieldIndex = 0;
+	while(i < inputData.size())
+	{
+		i = inputData.find('|',i);
+		if (i!=string::npos)
+		{
+			string curField = inputData.substr(start,i-start);
+			i++;//get cursor off '|'
+
+			//now collect all chars between here and next field name
+			if(curFieldIndex < fields.size()-1)
+				curFieldIndex++;
+			else
+				curFieldIndex = 0;
+
+			size_t end = inputData.find(fields[curFieldIndex],i);
+			//if we dont fond the next delim, then we prob at the end of the input data
+			if(end == string::npos)
+				end = inputData.size();	
+			size_t tokenLen = end - i;
+			string curValue = inputData.substr(i,tokenLen);
+			
+			//remove trailing new line
+			curValue.pop_back();
+
+			curRow.insert(curField,curValue);
+			start = end;
+
+			//e just got hte last piece of data for this row, then add to return data, and start the next row
+			if(curFieldIndex == 0)
+			{
+				returnData.push_back(curRow);
+				curRow.clear();
+			}
+		}
+		else
+			break;
+	}
+}
 
 string DatabaseController::dataGrabber(string &word, size_t &curPos)
 {
@@ -386,6 +435,18 @@ void DatabaseController::getDataPairFromOutput(string &inputData, string colName
 
 	}
 }
+
+string DatabaseController::GetCSVFromVector(vector<string> &fields)
+{
+	string ret = "";
+	for(size_t i = 0; i < fields.size(); i++)
+	{
+		ret += fields[i]+",";
+	}
+	ret.pop_back();
+	return ret;
+}
+
 //blah! the code is differnt enough that i cant reuse it woulth more loops... >=(
 void DatabaseController::removeTableNameFromOutput(string &inputData, int numCols, int colToUse, vector<string> &returnData)
 {

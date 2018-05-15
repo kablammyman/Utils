@@ -25,6 +25,25 @@ std::vector<std::string> StringUtils::Tokenize(std::string path, std::string del
 	}
 	return returnVec;
 }
+//tokenize 2 use a muklti char delimiter instead of usng many single char delims
+std::vector<std::string> StringUtils::Tokenize2(std::string path, std::string delim)
+{
+	std::vector<std::string> returnVec;
+	size_t start = 0;
+	size_t i = 0; 
+	while(i < path.size())
+	{
+		i = path.find(delim);
+		if (i!=std::string::npos)
+		{
+			std::string temp = path.substr (start,i);
+			returnVec.push_back(temp);
+		}
+		else
+			break;
+	}
+	return returnVec;
+}
 
 //turns words or sentences into all proper nouns
 void StringUtils::ToProperNoun(std::string &input)
