@@ -309,30 +309,37 @@ void DatabaseController::parseDBOutput(string &inputData, int numFields, vector<
 
 	}
 }
+
 void DatabaseController::parseDBOutput(string &inputData, int numFields, vector<DBResult> &returnData)
 {
 	returnData.clear();
 	
 	int curField = 0;
-	vector<string> tokens = StringUtils::Tokenize2(inputData, "|\n");
+	//this used to use tokenize2, but it didnt work for all cases, so ill have to figure it out later
+	vector<string> tokens = StringUtils::Tokenize(inputData, "|\n");
 	//the first is the field name, the second is the value we want
 
 	size_t i = 0;
 	DBResult curRow;
 	while ( i < tokens.size())
 	{
-		if (curField == numFields - 1)
+		if (numFields == 1 || curField < numFields - 1)
+		{
+			curRow.insert(tokens[i], tokens[i + 1]);
+			curField++;
+		}
+		else
 		{
 			returnData.push_back(curRow);
 			curRow.clear();
 			curField = 0;
 		}
-		else
-			curField++;
-		
-		curRow.insert(tokens[i],tokens[i+1]);
+		i += 2;
+	}
 
-		i +=2;
+	if (curRow.data.size() > 0)
+	{
+		returnData.push_back(curRow);
 	}
 }
 //this was needed so i can deal with data that has new lines within it

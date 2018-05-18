@@ -33,11 +33,12 @@ std::vector<std::string> StringUtils::Tokenize2(std::string path, std::string de
 	size_t i = 0; 
 	while(i < path.size())
 	{
-		i = path.find(delim);
+		i = path.find(delim,start);
 		if (i!=std::string::npos)
 		{
 			std::string temp = path.substr (start,i);
 			returnVec.push_back(temp);
+			start = i;
 		}
 		else
 			break;
