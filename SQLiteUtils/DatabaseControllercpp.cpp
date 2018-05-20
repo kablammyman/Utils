@@ -392,6 +392,10 @@ void DatabaseController::parseDBOutput(string &inputData, vector<string>fields, 
 		else
 			break;
 	}
+	if (curRow.data.size() > 0)
+	{
+		returnData.push_back(curRow);
+	}
 }
 
 string DatabaseController::dataGrabber(string &word, size_t &curPos)
