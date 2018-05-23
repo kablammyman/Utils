@@ -9,14 +9,14 @@ DatabaseController::DatabaseController()
 
 DatabaseController::~DatabaseController()
 {
-	if (isDBOpen())
+	if (IsDBOpen())
 	{
 		string output;
 		db->closeSQLiteDB(output);
 	}
 }
 
-bool DatabaseController::openDB(string path)
+bool DatabaseController::OpenDB(string path)
 {
 	//prob should parse the path and seperate that from the name at some point
 	//right nopw, path should only eb the name of the db file
@@ -36,18 +36,18 @@ bool DatabaseController::openDB(string path)
 	return true;
 }
 
-string DatabaseController::getDBName()
+string DatabaseController::GetDBName()
 {
 	return dbName;
 }
-bool DatabaseController::isDBOpen()
+bool DatabaseController::IsDBOpen()
 {
 	if (db == NULL)
 		return false;
 	return true;
 }
 
-bool DatabaseController::executeSQL(string command, string &output)
+bool DatabaseController::ExecuteSQL(string command, string &output)
 {
 	return db->executeSQL(command, output);
 	//curDBWindowData.clear();
@@ -58,11 +58,11 @@ bool DatabaseController::executeSQL(string command, string &output)
 
 }
 
-bool DatabaseController::createNewDB(string newDBName, string createCommand)
+bool DatabaseController::CreateNewDB(string newDBName, string createCommand)
 {
 	//close the current db before making a new one
 	string output;
-	if (isDBOpen())
+	if (IsDBOpen())
 	{
 		db->closeSQLiteDB(output);
 		delete db;
@@ -84,12 +84,12 @@ bool DatabaseController::createNewDB(string newDBName, string createCommand)
 	return true;
 }
 
-string DatabaseController::getLastError()
+string DatabaseController::GetLastError()
 {
 	return db->getLastError();
 }
 
-string DatabaseController::getTable(string tableName)
+string DatabaseController::GetTable(string tableName)
 {
 	string returnString;
 	string command = ("SELECT * FROM " + tableName);
@@ -99,24 +99,24 @@ string DatabaseController::getTable(string tableName)
 	return returnString;
 }
 
-bool DatabaseController::doDBQuerey(string querey, string &output)
+bool DatabaseController::DoDBQuerey(string querey, string &output)
 {
 	return db->executeSQL(querey, output);
 }
 
-bool DatabaseController::doDBQuerey(string table, string data, string &output)
+bool DatabaseController::DoDBQuerey(string table, string data, string &output)
 {
 	string querey = ("SELECT " + data + " FROM " + table + ";");
 	return db->executeSQL(querey, output);
 }
 
-bool DatabaseController::doDBQuerey(string table, string data, dbDataPair fromWhere, string &output)
+bool DatabaseController::DoDBQuerey(string table, string data, dbDataPair fromWhere, string &output)
 {
 	string querey = ("SELECT " + data + " FROM " + table + " WHERE " + fromWhere.first + " = \"" + fromWhere.second + "\";");
 	return db->executeSQL(querey, output);
 }
 
-bool DatabaseController::doDBQuerey(string table, vector<string> data, string &output)
+bool DatabaseController::DoDBQuerey(string table, vector<string> data, string &output)
 {
 	string querey = "SELECT "; 
 
@@ -130,7 +130,7 @@ bool DatabaseController::doDBQuerey(string table, vector<string> data, string &o
 	return db->executeSQL(querey, output);
 }
 //used for quereies like: SELECT path,CategoryID,WebsiteID FROM Gallery WHERE CategoryID = "3" AND WebsiteID = "16";
-bool DatabaseController::doDBQuerey(string table, vector<dbDataPair> data, string &output)
+bool DatabaseController::DoDBQuerey(string table, vector<dbDataPair> data, string &output)
 {
 	string querey = "SELECT ";
 	string whereString = " WHERE ";
@@ -164,7 +164,7 @@ bool DatabaseController::doDBQuerey(string table, vector<dbDataPair> data, strin
 }
 
 //used for quereies like: SELECT path FROM Gallery WHERE CategoryID = "3" AND WebsiteID = "16";
-bool DatabaseController::doDBQuerey(string table, string selectData, vector<dbDataPair> whereData, string &output)
+bool DatabaseController::DoDBQuerey(string table, string selectData, vector<dbDataPair> whereData, string &output)
 {
 	string querey = "SELECT ";
 	string whereString = " WHERE ";
@@ -184,7 +184,7 @@ bool DatabaseController::doDBQuerey(string table, string selectData, vector<dbDa
 	return db->executeSQL(querey + fromString + whereString, output);
 }
 
-bool DatabaseController::doDBQuerey(string table, vector<string> selectData, dbDataPair whereData, string &output)
+bool DatabaseController::DoDBQuerey(string table, vector<string> selectData, dbDataPair whereData, string &output)
 {
 	string querey = "SELECT ";
 	string whereString = " WHERE ";
@@ -209,7 +209,7 @@ bool DatabaseController::doDBQuerey(string table, vector<string> selectData, dbD
 }
 
 
-bool DatabaseController::doDBQuerey(string table, vector<string> selectData, vector<dbDataPair> whereData, string &output)
+bool DatabaseController::DoDBQuerey(string table, vector<string> selectData, vector<dbDataPair> whereData, string &output)
 {
 	string querey = "SELECT ";
 	string whereString = " WHERE ";
@@ -241,7 +241,7 @@ bool DatabaseController::doDBQuerey(string table, vector<string> selectData, vec
 }
 
 //returns true when successful
-bool DatabaseController::insertNewDataEntry(string table, dbDataPair data, string &output)
+bool DatabaseController::InsertNewDataEntry(string table, dbDataPair data, string &output)
 {
 	string querey = ("INSERT INTO " + table + " (" + data.first + ")");
 	string values = "VALUES ( \""+ data.second +  "\");";
@@ -251,7 +251,7 @@ bool DatabaseController::insertNewDataEntry(string table, dbDataPair data, strin
 }
 
 //returns true when successful
-bool DatabaseController::insertNewDataEntry(string table, vector<dbDataPair> data, string &output)
+bool DatabaseController::InsertNewDataEntry(string table, vector<dbDataPair> data, string &output)
 {
 	string querey = ("INSERT INTO " + table + " (");
 	string values = "VALUES ( ";
@@ -272,6 +272,15 @@ bool DatabaseController::insertNewDataEntry(string table, vector<dbDataPair> dat
 	return db->executeSQL(querey + values, output);
 
 }
+bool DatabaseController::UpdateEntry(string table, dbDataPair data, dbDataPair WhereClause, string &output)
+{
+	string querey = ("UPDATE " + table + " SET ");
+	string whereClause(" WHERE " + WhereClause.first + "= \""+ WhereClause.second +"\"");
+
+	querey += (data.first + "= \""+ data.second +"\"");
+
+	return db->executeSQL(querey + whereClause, output);
+}
 
 bool DatabaseController::UpdateEntry(string table, vector<dbDataPair> data, dbDataPair WhereClause, string &output)
 {
@@ -290,9 +299,8 @@ bool DatabaseController::UpdateEntry(string table, vector<dbDataPair> data, dbDa
 	}
 
 	return db->executeSQL(querey + whereClause, output);
-
 }
-void DatabaseController::parseDBOutput(string &inputData, int numFields, vector<vector<string>> &returnData)
+void DatabaseController::ParseDBOutput(string &inputData, int numFields, vector<vector<string>> &returnData)
 {
 	returnData.clear();
 	returnData.resize(numFields, vector<string>(0));//initialise tahe num vectors we need with 1 elements each
@@ -310,7 +318,7 @@ void DatabaseController::parseDBOutput(string &inputData, int numFields, vector<
 	}
 }
 
-void DatabaseController::parseDBOutput(string &inputData, int numFields, vector<DBResult> &returnData)
+void DatabaseController::ParseDBOutput(string &inputData, int numFields, vector<DBResult> &returnData)
 {
 	returnData.clear();
 	
@@ -343,7 +351,7 @@ void DatabaseController::parseDBOutput(string &inputData, int numFields, vector<
 	}
 }
 //this was needed so i can deal with data that has new lines within it
-void DatabaseController::parseDBOutput(string &inputData, vector<string>fields, vector<DBResult> &returnData)
+void DatabaseController::ParseDBOutput(string &inputData, vector<string>fields, vector<DBResult> &returnData)
 {
 	returnData.clear();
 	
@@ -398,7 +406,7 @@ void DatabaseController::parseDBOutput(string &inputData, vector<string>fields, 
 	}
 }
 
-string DatabaseController::dataGrabber(string &word, size_t &curPos)
+string DatabaseController::DataGrabber(string &word, size_t &curPos)
 {
 	string curWord;
 	curPos = word.find('|', curPos);
@@ -409,7 +417,7 @@ string DatabaseController::dataGrabber(string &word, size_t &curPos)
 	return curWord;
 }
 
-void DatabaseController::getAllValuesFromCol(string &inputData, string colName, vector<string> &returnData)
+void DatabaseController::GetAllValuesFromCol(string &inputData, string colName, vector<string> &returnData)
 {
 	bool done = false;
 	string curWord;
@@ -418,7 +426,7 @@ void DatabaseController::getAllValuesFromCol(string &inputData, string colName, 
 	{
 		c = inputData.find(colName,c);
 		if (c != string::npos)
-			returnData.push_back(dataGrabber(inputData,c));
+			returnData.push_back(DataGrabber(inputData,c));
 		
 		else
 			done = true;
@@ -427,7 +435,7 @@ void DatabaseController::getAllValuesFromCol(string &inputData, string colName, 
 
 
 
-void DatabaseController::getDataPairFromOutput(string &inputData, string colName1, string colName2,vector<dbDataPair> &returnData)
+void DatabaseController::GetDataPairFromOutput(string &inputData, string colName1, string colName2,vector<dbDataPair> &returnData)
 {
 	bool done = false;
 	string firstWord;
@@ -436,11 +444,11 @@ void DatabaseController::getDataPairFromOutput(string &inputData, string colName
 	{
 		c = inputData.find(colName1,c);
 		if (c != string::npos)
-			firstWord = dataGrabber(inputData, c);
+			firstWord = DataGrabber(inputData, c);
 
 		c = inputData.find(colName2,c);
 		if (c != string::npos)
-			returnData.push_back(make_pair(firstWord, dataGrabber(inputData, c)));
+			returnData.push_back(make_pair(firstWord, DataGrabber(inputData, c)));
 		else
 			done = true;
 
@@ -459,7 +467,7 @@ string DatabaseController::GetCSVFromVector(vector<string> &fields)
 }
 
 //blah! the code is differnt enough that i cant reuse it woulth more loops... >=(
-void DatabaseController::removeTableNameFromOutput(string &inputData, int numCols, int colToUse, vector<string> &returnData)
+void DatabaseController::RemoveTableNameFromOutput(string &inputData, int numCols, int colToUse, vector<string> &returnData)
 {
 	if (colToUse > numCols || colToUse < 1)
 		return;
@@ -481,7 +489,7 @@ void DatabaseController::removeTableNameFromOutput(string &inputData, int numCol
 			counter = 1;
 	}
 }
-void DatabaseController::removeTableNameFromOutput(string &inputData)
+void DatabaseController::RemoveTableNameFromOutput(string &inputData)
 {
 	size_t f = inputData.find_first_of('|');
 	if(f == string::npos)
@@ -500,7 +508,7 @@ void DatabaseController::createTable(string tableName, string fields)
 
 void DatabaseController::testGetTable()
 {
-	string result = getTable("BodyPart");
+	string result = GetTable("BodyPart");
 	printf("%s", result.c_str());
 
 	/*SQLiteDBDataParser temp;
@@ -511,7 +519,7 @@ void DatabaseController::testDBEntry()
 {
 	string output;
 	dbDataPair test1 = make_pair("name", "test");
-	insertNewDataEntry("Category", test1, output);
+	InsertNewDataEntry("Category", test1, output);
 
 	vector<dbDataPair> data;
 
@@ -521,7 +529,7 @@ void DatabaseController::testDBEntry()
 	data.push_back(make_pair("path", "C:\\some\\fake\\path"));
 	data.push_back(make_pair("tags", "test,testData,wow doge"));
 
-	insertNewDataEntry("Gallery", data, output);
+	InsertNewDataEntry("Gallery", data, output);
 
 
 }
@@ -531,15 +539,15 @@ void DatabaseController::testDBQuerey()
 {
 	string output;
 	 
-	doDBQuerey("Category", "name", output);
+	DoDBQuerey("Category", "name", output);
 
 	vector <vector<string>> returnData1; 
-	parseDBOutput(output, 2, returnData1);
+	ParseDBOutput(output, 2, returnData1);
 
 	vector<string> test2;
 	test2.push_back("WebsiteID");
 	test2.push_back("path");
-	doDBQuerey("Gallery", test2, output);
+	DoDBQuerey("Gallery", test2, output);
 
 	vector<dbDataPair> data;
 	data.push_back(make_pair("ID", "000"));
@@ -547,7 +555,7 @@ void DatabaseController::testDBQuerey()
 	data.push_back(make_pair("SubWebsiteID", "002"));
 	data.push_back(make_pair("path", "C:\\some\\fake\\path"));
 
-	doDBQuerey("Gallery", data, output);
+	DoDBQuerey("Gallery", data, output);
 
 	
 }

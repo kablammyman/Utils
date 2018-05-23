@@ -10,7 +10,7 @@ class DatabaseController
 {
 	SQLiteUtils *db;
 	string dbName;
-	string dataGrabber(string &word, size_t &startPos);
+	static string DataGrabber(string &word, size_t &startPos);
 
 public:
 		
@@ -65,40 +65,41 @@ public:
 	DatabaseController();
 	~DatabaseController();
 
-	bool openDB(string path);
-	bool isDBOpen();
-	bool createNewDB(string newDBName, string createCommand="");
-	bool executeSQL(string command, string &output);
-	string getDBName();
-	string getTable(string tableName);
-	string getLastError();
+	bool OpenDB(string path);
+	bool IsDBOpen();
+	bool CreateNewDB(string newDBName, string createCommand="");
+	bool ExecuteSQL(string command, string &output);
+	string GetDBName();
+	string GetTable(string tableName);
+	string GetLastError();
 
-	bool insertNewDataEntry(string table, dbDataPair data, string &output);
-	bool insertNewDataEntry(string table, vector<dbDataPair> data, string &output);
-	bool doDBQuerey(string querey, string &output);
-	bool doDBQuerey(string table, string data, string &output);
-	bool doDBQuerey(string table, string data, dbDataPair fromWhere, string &output);
-	bool doDBQuerey(string table, vector<string> data, string &output);
-	bool doDBQuerey(string table, vector<dbDataPair> data, string &output);
-	bool doDBQuerey(string table, string selectData, vector<dbDataPair> whereData, string &output);
+	bool InsertNewDataEntry(string table, dbDataPair data, string &output);
+	bool InsertNewDataEntry(string table, vector<dbDataPair> data, string &output);
+	bool DoDBQuerey(string querey, string &output);
+	bool DoDBQuerey(string table, string data, string &output);
+	bool DoDBQuerey(string table, string data, dbDataPair fromWhere, string &output);
+	bool DoDBQuerey(string table, vector<string> data, string &output);
+	bool DoDBQuerey(string table, vector<dbDataPair> data, string &output);
+	bool DoDBQuerey(string table, string selectData, vector<dbDataPair> whereData, string &output);
 	
 	//select x,y,z from table where dbpair.first = dbpair.second
-	bool doDBQuerey(string table, vector<string> selectData, dbDataPair whereData, string &output);
+	bool DoDBQuerey(string table, vector<string> selectData, dbDataPair whereData, string &output);
 	
 	// SELECT x,y,x FROM Table WHERE dbpair[0].first = dbpair[0].second  AND dbpair[1].first = dbpair[1].second ;
-	bool doDBQuerey(string table, vector<string> selectData, vector<dbDataPair> whereData, string &output);
+	bool DoDBQuerey(string table, vector<string> selectData, vector<dbDataPair> whereData, string &output);
+	bool UpdateEntry(string table, dbDataPair data, dbDataPair WhereClause, string &output);
 	bool UpdateEntry(string table, vector<dbDataPair> data, dbDataPair WhereClause, string &output);
 	
-	void parseDBOutput(string &inputData, int numFields, vector <vector<string>> &returnData);
-	void parseDBOutput(string &inputData, int numFields, vector<DBResult> &returnData);
-	void parseDBOutput(string &inputData, vector<string>fields, vector<DBResult> &returnData);
+	static void ParseDBOutput(string &inputData, int numFields, vector <vector<string>> &returnData);
+	static void ParseDBOutput(string &inputData, int numFields, vector<DBResult> &returnData);
+	static void ParseDBOutput(string &inputData, vector<string>fields, vector<DBResult> &returnData);
 
 	//num cols is hopw many cols were truthned from the querey, and the colToUse is the data we want to put in the vector
-	void removeTableNameFromOutput(string &inputData, int numCols, int colToUse, vector<string> &returnData);
-	void removeTableNameFromOutput(string &inputData);
+	static void RemoveTableNameFromOutput(string &inputData, int numCols, int colToUse, vector<string> &returnData);
+	static void RemoveTableNameFromOutput(string &inputData);
 	//same as before, but now we can couple data together
-	void getDataPairFromOutput(string &inputData, string colName1, string colName2, vector<dbDataPair> &returnData);
-	void getAllValuesFromCol(string &inputData, string colName, vector<string> &returnData);
+	static void GetDataPairFromOutput(string &inputData, string colName1, string colName2, vector<dbDataPair> &returnData);
+	static void GetAllValuesFromCol(string &inputData, string colName, vector<string> &returnData);
 	//specify your fields with a vector, and turn it into a csv, good for easily making long SELECT quereies
 	
 	static string GetCSVFromVector(vector<string> &fields);
