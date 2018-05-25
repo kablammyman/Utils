@@ -489,6 +489,50 @@ void DatabaseController::RemoveTableNameFromOutput(string &inputData, int numCol
 			counter = 1;
 	}
 }
+void DatabaseController::RemoveTableNameFromOutput(string &inputData, int numCols, int colToUse, vector<int> &returnData)
+{
+	if (colToUse > numCols || colToUse < 1)
+		return;
+
+	string delims = "|\n";
+	int counter = 1;
+	colToUse *= 2;
+	
+	vector<string> temp = StringUtils::Tokenize(inputData, delims);
+
+	for (size_t i = 0; i < temp.size(); i++)
+	{
+		if (counter == colToUse)
+			returnData.push_back(atoi(temp[i].c_str()));
+		//x2 becasue it goes colName|data, we only want the data, not the col name
+		if (counter < (numCols * 2))
+			counter++;
+		else
+			counter = 1;
+	}
+}
+void DatabaseController::RemoveTableNameFromOutput(string &inputData, int numCols, int colToUse, vector<float> &returnData)
+{
+	if (colToUse > numCols || colToUse < 1)
+		return;
+
+	string delims = "|\n";
+	int counter = 1;
+	colToUse *= 2;
+	
+	vector<string> temp = StringUtils::Tokenize(inputData, delims);
+
+	for (size_t i = 0; i < temp.size(); i++)
+	{
+		if (counter == colToUse)
+			returnData.push_back(atof(temp[i].c_str()));
+		//x2 becasue it goes colName|data, we only want the data, not the col name
+		if (counter < (numCols * 2))
+			counter++;
+		else
+			counter = 1;
+	}
+}
 void DatabaseController::RemoveTableNameFromOutput(string &inputData)
 {
 	size_t f = inputData.find_first_of('|');

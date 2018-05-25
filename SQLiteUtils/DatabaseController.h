@@ -96,6 +96,8 @@ public:
 
 	//num cols is hopw many cols were truthned from the querey, and the colToUse is the data we want to put in the vector
 	static void RemoveTableNameFromOutput(string &inputData, int numCols, int colToUse, vector<string> &returnData);
+	static void RemoveTableNameFromOutput(string &inputData, int numCols, int colToUse, vector<int> &returnData);
+	static void RemoveTableNameFromOutput(string &inputData, int numCols, int colToUse, vector<float> &returnData);
 	static void RemoveTableNameFromOutput(string &inputData);
 	//same as before, but now we can couple data together
 	static void GetDataPairFromOutput(string &inputData, string colName1, string colName2, vector<dbDataPair> &returnData);
