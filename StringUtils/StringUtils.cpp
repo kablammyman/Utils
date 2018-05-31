@@ -146,3 +146,127 @@ std::string StringUtils::GetDataBetweenSubStrings(std::string line, std::string 
 	}
 	return returnString;
 }
+
+int StringUtils::GetStandAloneWordInLineIndex(std::string line,std::string word)
+{
+	size_t index = 0;
+			
+	while (index < line.size())
+	{
+		size_t start = line.find(word,index);
+		index += start+1;
+		
+		size_t end = start + word.size()-1;
+		bool startIsFirst = false;
+		bool endIsLast = false;
+		
+		if (start == 0)
+			startIsFirst = true;
+		else if( start > 0)
+			start--;
+		else //the word is not in here at all!
+			return -1;
+			
+		if (end >= line.size()-1)
+		{
+			endIsLast = true;
+			end = line.size()-1;
+		}
+		else
+			end++;
+				
+		if(	!startIsFirst && endIsLast)
+		{
+			if (! isalpha(line[start]))
+				return start;
+		}
+		else if( startIsFirst && endIsLast)
+			return start;
+			
+		else if( startIsFirst && !endIsLast)
+		{
+			if (! isalpha(line[end]))
+				return start;
+		}
+		else
+		{
+			if (! isalpha(line[start]) && !isalpha(line[end]))				
+				return start;
+		}
+	}
+	return -1;
+}
+
+bool StringUtils::IsWordFromListInLine(std::vector<std::string> &wordList,std::string line)
+{
+	//if any(word in line for word in wordList):
+	ToUpper(line);
+	for(size_t i = 0; i < wordList.size(); i++)
+	{
+		if (wordList[i] == line)
+			if (GetStandAloneWordInLineIndex(line,wordList[i]) > -1)
+				return true;
+	}
+	return false;
+}
+
+std::string StringUtils::GetWordFromListInLine(std::vector<std::string> &wordList,std::string line)
+{
+	ToUpper(line);
+	for (size_t i = 0; i < wordList.size(); i++)
+	{
+		if(line.find( wordList[i] ) != std::string::npos )
+			if( GetStandAloneWordInLineIndex(line,wordList[i]) > -1)
+				return wordList[i];
+	}
+	return "";
+}
+
+int StringUtils::GetIndexOfWordFromListInLine(std::vector<std::string> &wordList,std::string line)
+{
+	ToUpper(line);
+	for (size_t i = 0; i < wordList.size(); i++)
+	{
+		if(line.find( wordList[i] ) != std::string::npos )
+		{
+			int index = GetStandAloneWordInLineIndex(line,wordList[i]);
+			if ( index > -1)
+				return index;
+		}
+	}
+	return -1;
+}
+std::string StringUtils::CopyCharsBetweenQuotes(std::string word, size_t index)
+{
+	std::string retString;
+	index = word.find('"',index);
+	index++;
+	
+	while (index < word.size())
+	{
+		if (word[index] == '"')
+			break;
+		retString += word[index];
+		index++;
+	}
+	return retString;
+}
+
+bool StringUtils::IsPrevCharNonAlpha(std::string line,std::string word)
+{
+	size_t start = line.find(word);
+	if (start != std::string::npos)
+		if (! isalpha(line[start-1]))
+			return true;
+	return false;
+}
+	
+bool StringUtils::IsPostCharNonAlpha(std::string line,std::string word)
+{
+	size_t start = line.find(word);
+	size_t end = start + word.size();
+	
+	if (! isalpha(line[end + 1]))
+		return true;
+	return false;
+}
