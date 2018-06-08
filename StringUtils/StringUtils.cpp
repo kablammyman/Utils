@@ -36,12 +36,21 @@ std::vector<std::string> StringUtils::Tokenize2(std::string path, std::string de
 		i = path.find(delim,start);
 		if (i!=std::string::npos)
 		{
-			std::string temp = path.substr (start,i);
+			std::string temp = path.substr (start,i-start);
 			returnVec.push_back(temp);
-			start = i;
+			start = i+delim.size();
 		}
+		//if we got here, maybe we got to the endof the string, if sol give whats left
 		else
+		{
+			if (start < path.size())
+			{
+				std::string temp = path.substr (start);
+				returnVec.push_back(temp);
+				start = i+delim.size();
+			}
 			break;
+		}
 	}
 	return returnVec;
 }
