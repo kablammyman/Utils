@@ -18,6 +18,7 @@ public:
 	static bool IsWordFromListInLine(std::vector<std::string> &wordList,std::string line);
 	static int GetStandAloneWordInLineIndex(std::string line,std::string word);
 	static std::string CopyCharsBetweenQuotes(std::string word, size_t index = 0);
+	static std::string CopyCharsBetweenTags(std::string word, char open,char closed,size_t index = 0);
 	static std::string GetWordFromListInLine(std::vector<std::string> &wordList,std::string line);
 	static int GetIndexOfWordFromListInLine(std::vector<std::string> &wordList,std::string line);
 	static bool IsPostCharNonAlpha(std::string line,std::string word);

@@ -249,6 +249,10 @@ std::string StringUtils::CopyCharsBetweenQuotes(std::string word, size_t index)
 {
 	std::string retString;
 	index = word.find('"',index);
+	
+	if(index == std::string::npos)
+		return "";
+
 	index++;
 	
 	while (index < word.size())
@@ -260,7 +264,25 @@ std::string StringUtils::CopyCharsBetweenQuotes(std::string word, size_t index)
 	}
 	return retString;
 }
+std::string StringUtils::CopyCharsBetweenTags(std::string word, char open,char closed,size_t index)
+{
+	std::string retString;
+	index = word.find(open,index);
+	
+	if(index == std::string::npos)
+		return "";
 
+	index++;
+	
+	while (index < word.size())
+	{
+		if (word[index] == closed)
+			break;
+		retString += word[index];
+		index++;
+	}
+	return retString;
+}
 bool StringUtils::IsPrevCharNonAlpha(std::string line,std::string word)
 {
 	size_t start = line.find(word);
