@@ -301,3 +301,42 @@ bool StringUtils::IsPostCharNonAlpha(std::string line,std::string word)
 		return true;
 	return false;
 }
+//copy all apha numeric values until the pattern is broken by puncation or space\tab
+//bonus chars are teh non alpha numeric chars we want to include as well
+std::string StringUtils::GetAlphaNumericString(std::string line,int index,std::string bonusChars)
+{
+	std::string ret = "";
+	for(size_t i = index; i < line.size();i++)
+	{
+		if( isalpha(line[i]) ||  isdigit(line[i]))
+		{
+			ret += line[i];
+		}
+		else if(bonusChars.size() > 0)
+		{
+			for(size_t j = 0; j < bonusChars.size(); j++)
+			{
+				if(bonusChars[j] == line[i])
+				{
+					ret += line[i];
+					break;
+				}
+			}
+		}
+		else
+			break;
+	}
+	return ret;
+}
+std::string StringUtils::CopyUntilChar(std::string line,int index, char delim)
+{
+	std::string ret = "";
+	for(size_t i = index; i < line.size();i++)
+	{
+		if(line[i] != delim)
+			ret += line[i];
+		else
+			break;
+	}
+	return ret;
+}

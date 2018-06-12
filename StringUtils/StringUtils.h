@@ -23,4 +23,6 @@ public:
 	static int GetIndexOfWordFromListInLine(std::vector<std::string> &wordList,std::string line);
 	static bool IsPostCharNonAlpha(std::string line,std::string word);
 	static bool IsPrevCharNonAlpha(std::string line,std::string word);
+	static std::string GetAlphaNumericString(std::string line,int index, std::string bonusChars = "");
+	static std::string CopyUntilChar(std::string line,int index, char delim);
 };
