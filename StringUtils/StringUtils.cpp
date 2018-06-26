@@ -340,3 +340,16 @@ std::string StringUtils::CopyUntilChar(std::string line,int index, char delim)
 	}
 	return ret;
 }
+std::string  StringUtils::GetRandomString(int size)
+{
+	std::string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz";
+	std::string ret = "";
+	srand(0);
+	for(int i = 0; i < size; i++)
+	{
+		int curIndex = rand()%chars.size()-1;
+		ret.push_back(chars[curIndex]);
+	}
+
+	return ret;
+}
