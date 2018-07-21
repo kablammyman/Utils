@@ -26,7 +26,7 @@ unsigned int GetRandomNum(int min, int max)
 }
 
 //--------------------------------------------------------------------------------------------------	
-bool FileUtils::DoesPathExist(string path)
+bool FileUtils::DoesPathExist(string &path)
 {
 #ifdef _WIN32	
 	DWORD ftyp = GetFileAttributesA(path.c_str());
@@ -56,8 +56,17 @@ bool FileUtils::DoesPathExist(string path)
 	return false;
 #endif
 }
-/* rename example */
-
+//--------------------------------------------------------------------------------------------------
+bool FileUtils::DoesFileExist(string &path)
+{
+    if (FILE *file = fopen(path.c_str(), "r")) 
+	{
+        fclose(file);
+        return true;
+    } 
+	else 
+        return false;
+}
 //--------------------------------------------------------------------------------------------------	
 bool FileUtils::Move_File(string oldName, string newName)
 {
@@ -77,7 +86,7 @@ string FileUtils::GetFileExt(string fullPath)
 	return fullPath.substr(found + 1);
 }
 //--------------------------------------------------------------------------------------------------
-string FileUtils::GetFileNameNoExt(string fullPath)
+string FileUtils::GetFileNameNoExt(string &fullPath)
 {
 	string name = GetFileNameFromPathString(fullPath);
 	if (name == "")//if we passed in a file name without path
@@ -86,7 +95,7 @@ string FileUtils::GetFileNameNoExt(string fullPath)
 	return name.substr(0,found);
 }
 //--------------------------------------------------------------------------------------------------
-int FileUtils::GetNumFoldersinDir(string path)//needs to have *.fileExt to work
+int FileUtils::GetNumFoldersinDir(string &path)//needs to have *.fileExt to work
 {
 	if (DoesPathExist(path) == false)
 		return -1;
@@ -128,7 +137,7 @@ int FileUtils::GetNumFoldersinDir(string path)//needs to have *.fileExt to work
 	return folderNum;
 }
 //--------------------------------------------------------------------------------------------------
-vector<string> FileUtils::GetAllFolderNamesInDir(string path)//needs to have *.fileExt to work
+vector<string> FileUtils::GetAllFolderNamesInDir(string &path)//needs to have *.fileExt to work
 {
 	vector<string> folderList;
 	if (DoesPathExist(path) == false)
@@ -189,7 +198,7 @@ vector<string> FileUtils::GetAllFolderNamesInDir(string path)//needs to have *.f
 	return folderList;
 }
 //--------------------------------------------------------------------------------------------------
-int FileUtils::GetNumFilesInDir(string path, string ext)//needs to have *.fileExt to work
+int FileUtils::GetNumFilesInDir(string &path, string ext)//needs to have *.fileExt to work
 {
 	if (DoesPathExist(path) == false)
 		return-1;
@@ -239,7 +248,7 @@ int FileUtils::GetNumFilesInDir(string path, string ext)//needs to have *.fileEx
 }
 
 //--------------------------------------------------------------------------------------------------
-vector<string> FileUtils::GetAllFileNamesInDir(string path,string ext, bool includePath)
+vector<string> FileUtils::GetAllFileNamesInDir(string &path,string ext, bool includePath)
 {
 	vector<string> fileList;
 	if (DoesPathExist(path) == false)
@@ -336,7 +345,7 @@ bool FileUtils::Delete_File(string file, bool permanetDelete)
 #endif
 }
 //--------------------------------------------------------------------------------------------------
-string FileUtils::DeleteAllFilesInDir(string path)
+string FileUtils::DeleteAllFilesInDir(string &path)
 {
 
 	string returnString = "";
@@ -357,7 +366,7 @@ string FileUtils::DeleteAllFilesInDir(string path)
 }
 //--------------------------------------------------------------------------------------------------------
 //pics a dir from the master list, then "digs" down to get soething new
-string FileUtils::GetRandomDirQuick(string path)
+string FileUtils::GetRandomDirQuick(string &path)
 {
 	if (DoesPathExist(path) == false)
 		return "";
@@ -370,7 +379,7 @@ string FileUtils::GetRandomDirQuick(string path)
 
 	while (!done)//keep "digging" until theres no more folders, just images remain
 	{
-		vector<string> curDirList = GetAllFolderNamesInDir(curDir.c_str());
+		vector<string> curDirList = GetAllFolderNamesInDir(curDir);
 
 		if (curDirList.size() == 0)//there are no more folders
 			done = true;
@@ -395,7 +404,7 @@ string FileUtils::GetRandomDirQuick(string path)
 }
 //--------------------------------------------------------------------------------------------------------
 //enumerates all files, and pics a random one
-string FileUtils::GetRandomFileQuick(string path)
+string FileUtils::GetRandomFileQuick(string &path)
 {
 	vector<string> allFiles = GetAllFileNamesInDir(path, "", true);
 
@@ -408,17 +417,17 @@ string FileUtils::GetRandomFileQuick(string path)
 	return ""; //this dir was empty, return empty string
 }
 //--------------------------------------------------------------------------------------------------------
-string FileUtils::GetFileNameFromPathString(string path)
+string FileUtils::GetFileNameFromPathString(string &path)
 {
 	return DirectoryTree::GetFileNameFromPathString(path);
 }
 //--------------------------------------------------------------------------------------------------------
-string FileUtils::GetPathFromFullyQualifiedPathString(string path)
+string FileUtils::GetPathFromFullyQualifiedPathString(string &path)
 {
 	return DirectoryTree::GetPathFromFullyQualifiedPathString(path);
 }
 //--------------------------------------------------------------------------------------------------
-void FileUtils::AddDirTree(string path, int numThreads)
+void FileUtils::AddDirTree(string &path, int numThreads)
 {
 	if (DoesPathExist(path) == false)
 		return;
@@ -433,7 +442,7 @@ void FileUtils::AddDirTree(string path, int numThreads)
 	return dirTree.getDirTreeRoot();
 }
 //--------------------------------------------------------------------------------------------------
-DirNode* FileUtils::getDirTree(string path)
+DirNode* FileUtils::getDirTree(string &path)
 {
 	return dirTree.getDirNode(path);
 }*/
@@ -443,12 +452,12 @@ DirNode* FileUtils::getDirTree(string path)
 	dirNode
 }*/
 //--------------------------------------------------------------------------------------------------
-int FileUtils::GetNumFilesInTree(string path)
+int FileUtils::GetNumFilesInTree(string &path)
 {
 	return  dirTree.GetNumFilesInTree();
 }
 //--------------------------------------------------------------------------------------------------
-void FileUtils::StartDirTreeStep(string path)
+void FileUtils::StartDirTreeStep(string &path)
 {
 	dirTree.StartProcessFilesFromDirStep(path);
 }
@@ -499,13 +508,13 @@ void FileUtils::ClearDirTree()
 	dirTree.ClearAll();
 }
 //--------------------------------------------------------------------------------------------------
-int FileUtils::GetNumDirsInTree(string path)
+int FileUtils::GetNumDirsInTree(string &path)
 {
 	return dirTree.GetNumDirsInTree();
 }
 
 //--------------------------------------------------------------------------------------------------
-void FileUtils::DumpTreeToVector(string path, vector<string> &ret)
+void FileUtils::DumpTreeToVector(string &path, vector<string> &ret)
 {
 	dirTree.DumpTreeToVector(ret);
 }
@@ -515,7 +524,7 @@ void FileUtils::DumpTreeToVector(string path, vector<string> &ret)
 	return dirNode->ToString();
 }*/
 //--------------------------------------------------------------------------------------------------
-long long FileUtils::GetDirSize(string path)
+long long FileUtils::GetDirSize(string &path)
 {
 	return DirectoryTree::GetDirSize(path);
 }

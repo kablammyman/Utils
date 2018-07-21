@@ -353,3 +353,37 @@ std::string  StringUtils::GetRandomString(int size)
 
 	return ret;
 }
+
+std::string StringUtils::FindAndReplace(std::string orig, std::string findToken, std::string replaceToken)
+{
+	size_t index = orig.find(findToken);
+	std::string ret = "";
+	
+	if (index != std::string::npos)
+	{
+		//orig.replace(index,replaceToken.size(),replaceToken);
+		bool replaced = false;
+		size_t i = 0;
+		size_t j = 0;
+		while(i < index)
+		{
+			ret += orig[i];
+			i++;
+		}
+		i = index + findToken.size();
+
+		while( j < replaceToken.size())
+		{
+			ret += replaceToken[j];
+			j++;
+		}
+		while(i < orig.size())
+		{
+			ret += orig[i];
+			i++;
+		}
+		return ret;
+	}
+	else
+		return orig;
+}
