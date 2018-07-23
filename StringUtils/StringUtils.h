@@ -26,5 +26,6 @@ public:
 	static std::string GetAlphaNumericString(std::string line,int index, std::string bonusChars = "");
 	static std::string CopyUntilChar(std::string line,int index, char delim);
 	static std::string GetRandomString(int size);
+
 	static std::string FindAndReplace(std::string orig, std::string findToken, std::string replaceToken);
 };
