@@ -3,7 +3,7 @@
 
 
 //--------------------------------------------------------------------------------------------------------------------	
-std::vector<std::string> CFGReader::getStringTokens(std::string origString, std::string delims)
+std::vector<std::string> CFGReader::GetStringTokens(std::string origString, std::string delims)
 	{
 		std::vector<std::string> returnVec;
 
@@ -31,14 +31,14 @@ std::vector<std::string> CFGReader::getStringTokens(std::string origString, std:
 				if (found!= std::string::npos)//we have more delims!
 				{
 					 newToken = origString.substr (curPos,found);   // get from "live" to the end
-					 newToken = trim(newToken);
+					 newToken = Trim(newToken);
 					 returnVec.push_back(newToken);
 					 curPos = found;
 				}
 				else//didnt find any more delemiters, so treat rest of std::string as 1 big token
 				{
 					newToken = origString.substr (curPos);   // get from "live" to the end
-					newToken = trim(newToken);
+					newToken = Trim(newToken);
 					returnVec.push_back(newToken);
 					done = true;
 				}
@@ -47,15 +47,24 @@ std::vector<std::string> CFGReader::getStringTokens(std::string origString, std:
 		return returnVec;
 	}
 //--------------------------------------------------------------------------------------------------------------------	
-std::vector<std::string> CFGReader::getStringTokens(std::string origString, char delim)
+std::vector<std::string> CFGReader::GetStringTokens(std::string origString, char delim)
 {
 	std::string delims;
 	delims += delim;
-	return getStringTokens(origString, delims);
+	return GetStringTokens(origString, delims);
 }
 //--------------------------------------------------------------------------------------------------------------------	
-bool CFGReader::readProfile(std::string file, char delim)
+bool CFGReader::ReadProfile(std::string file, char delim)
 {
+	//its already been opened
+	if (cfgFile.size() > 0)
+	{
+		if (cfgFileName == file)
+			return true;
+		else
+			cfgFile.clear();
+	}
+
 	bool inList = false;
 	delimiter = delim;
 	std::string line = "";
@@ -65,6 +74,7 @@ bool CFGReader::readProfile(std::string file, char delim)
 		
 	if (inputFile.is_open())
 	{
+		cfgFileName = file;
 		std::vector<std::string> dataList;//this will hold any collection of items (anythign between { and }) 
 		std::string curListName ="";
 
@@ -72,7 +82,7 @@ bool CFGReader::readProfile(std::string file, char delim)
 		{
 			lineNum++;
 				
-			line = trim(line); //remove all white space before and after
+			line = Trim(line); //remove all white space before and after
 			//look for comments
 			if(line.size() > 2)
 			{
@@ -138,7 +148,7 @@ bool CFGReader::readProfile(std::string file, char delim)
 			else //single value option
 			{
 				cfgOption newOption;
-				std::vector<std::string> token = getStringTokens(line, delimiter);
+				std::vector<std::string> token = GetStringTokens(line, delimiter);
 				newOption.optionName = token[0];
 				newOption.optionValue = token[1];//put that data in there
 				newOption.isList = false;
@@ -159,7 +169,7 @@ bool CFGReader::readProfile(std::string file, char delim)
 
 }
 //--------------------------------------------------------------------------------------------------------------------			
-cfgOption* CFGReader::getCfgOption(std::string optionName)
+cfgOption* CFGReader::GetCfgOption(std::string optionName)
 {
 	//return cfgFile.Find(x => x.optionName == optionName);
 	for(size_t i = 0; i < cfgFile.size(); i++)
@@ -170,11 +180,11 @@ cfgOption* CFGReader::getCfgOption(std::string optionName)
 	return 0;
 }
 //--------------------------------------------------------------------------------------------------------------------		
-std::string CFGReader::getListData(std::string listName,std::string optionName)
+std::string CFGReader::GetListData(std::string listName,std::string optionName)
 {
-	if (getCfgOption(listName) == 0)
+	if (GetCfgOption(listName) == 0)
 		return "";
-	cfgOption* listOption = getCfgOption(listName);
+	cfgOption* listOption = GetCfgOption(listName);
 	if(!listOption->isList)
 		return "";
 	
@@ -184,16 +194,16 @@ std::string CFGReader::getListData(std::string listName,std::string optionName)
 	{
 		if(listArray[i].find(optionName)!=std::string::npos)//if the keyword is in this std::string
 		{
-			std::vector<std::string> curOption = getStringTokens(listArray[i], delimiter);
+			std::vector<std::string> curOption = GetStringTokens(listArray[i], delimiter);
 			return curOption[curOption.size()-1];//give us the data only!
 		}
 	}
 	return "";//wasnt found :(
 }
 //--------------------------------------------------------------------------------------------------------------------		
-std::string CFGReader::getRawListData(std::string listName,std::string optionName)//no delimiter splitting
+std::string CFGReader::GetRawListData(std::string listName,std::string optionName)//no delimiter splitting
 {
-	cfgOption* listOption = getCfgOption(listName);//get the list obj
+	cfgOption* listOption = GetCfgOption(listName);//get the list obj
 	if(!listOption->isList)
 		return "";
 	
@@ -207,56 +217,56 @@ std::string CFGReader::getRawListData(std::string listName,std::string optionNam
 	return "";//wasnt found :(
 }
 //--------------------------------------------------------------------------------------------------------------------			
-bool CFGReader::getBooleanData(std::string data)
+bool CFGReader::GetBooleanData(std::string data)
 {
-	std::string tempString = trim(data);
+	std::string tempString = Trim(data);
 	tempString = StringToLower(tempString);
 	if(tempString == "true")
 		return true;
 	return false;
 }
 //--------------------------------------------------------------------------------------------------------------------		
-int CFGReader::getIntData(std::string data)
+int CFGReader::GetIntData(std::string data)
 {
-	std::string tempString = trim(data);
+	std::string tempString = Trim(data);
 	int returnData = atoi(tempString.c_str());
 	return returnData;
 }
 //--------------------------------------------------------------------------------------------------------------------		
-float CFGReader::getFloatData(std::string data)
+float CFGReader::GetFloatData(std::string data)
 {
-	std::string tempString = trim(data);
+	std::string tempString = Trim(data);
 	float returnData = (float)atof(tempString.c_str());
 	return returnData;
 }
 //--------------------------------------------------------------------------------------------------------------------		
-std::vector<int> CFGReader::getIntArrayData(std::string data)//good for csv values
+std::vector<int> CFGReader::GetIntArrayData(std::string data)//good for csv values
 {
-	std::string tempString = trim(data);
-	std::vector<std::string> intValues = getStringTokens(tempString, delimiter);
+	std::string tempString = Trim(data);
+	std::vector<std::string> intValues = GetStringTokens(tempString, delimiter);
 	std::vector<int>returnArray(intValues.size());
 	for(size_t i = 0; i < intValues.size(); i++)
-		returnArray[i] = getIntData(intValues[i]);
+		returnArray[i] = GetIntData(intValues[i]);
 	return returnArray;
 }
 //--------------------------------------------------------------------------------------------------------------------		
-std::vector<float> CFGReader::getFloatArrayData(std::string data)//good for csv values
+std::vector<float> CFGReader::GetFloatArrayData(std::string data)//good for csv values
 {
-	std::string tempString = trim(data);
-	std::vector<std::string> floatValues = getStringTokens(tempString, delimiter);
+	std::string tempString = Trim(data);
+	std::vector<std::string> floatValues = GetStringTokens(tempString, delimiter);
 	std::vector<float> returnArray(floatValues.size());
 	for(size_t i = 0; i < floatValues.size(); i++)
-		returnArray[i] = getFloatData(floatValues[i]);
+		returnArray[i] = GetFloatData(floatValues[i]);
 	return returnArray;
 }
 //--------------------------------------------------------------------------------------------------------------------		
-std::vector<std::string> CFGReader::getStringArrayData(std::string data)//good for csv values
+std::vector<std::string> CFGReader::GetStringArrayData(std::string data)//good for csv values
 {
-	std::string tempString = trim(data);
-	return getStringTokens(tempString, delimiter);
+	std::string tempString = Trim(data);
+	return GetStringTokens(tempString, delimiter);
 }
 //--------------------------------------------------------------------------------------------------------------------		
-size_t CFGReader::findInStringArray(std::vector<std::string> data, std::string searchItem)//good for getting a particular piece of data from a csv line
+size_t CFGReader::FindInStringArray(std::vector<std::string> data, std::string searchItem)//good for getting a particular piece of data from a csv line
 {
 	for(size_t i = 0; i < data.size(); i++)
 		if(data[i] == searchItem)
@@ -264,41 +274,41 @@ size_t CFGReader::findInStringArray(std::vector<std::string> data, std::string s
 	return std::string::npos;
 }
 //--------------------------------------------------------------------------------------------------------------------		
-bool CFGReader::getOptionBooleanValue(std::string optionName)
+bool CFGReader::GetOptionBooleanValue(std::string optionName)
 {
-	cfgOption* option = getCfgOption(optionName);
+	cfgOption* option = GetCfgOption(optionName);
 	if(option != 0)
-		return getBooleanData(option->optionValue);
+		return GetBooleanData(option->optionValue);
 	return false;
 }
 //--------------------------------------------------------------------------------------------------------------------		
-int CFGReader::getOptionIntValue(std::string optionName)
+int CFGReader::GetOptionIntValue(std::string optionName)
 {
-	cfgOption* option = getCfgOption(optionName);
+	cfgOption* option = GetCfgOption(optionName);
 	if(option != 0)
-		return getIntData(option->optionValue);
+		return GetIntData(option->optionValue);
 	return 0;
 }
 //--------------------------------------------------------------------------------------------------------------------		
-float CFGReader::getOptionFloatValue(std::string optionName)
+float CFGReader::GetOptionFloatValue(std::string optionName)
 {
-	cfgOption* option = getCfgOption(optionName);
+	cfgOption* option = GetCfgOption(optionName);
 	if(option != 0)
-		return getFloatData(option->optionValue);
+		return GetFloatData(option->optionValue);
 	return 0;
 }
 //--------------------------------------------------------------------------------------------------------------------		
-std::string CFGReader::getOptionStringValue(std::string optionName)
+std::string CFGReader::GetOptionStringValue(std::string optionName)
 {
-	cfgOption* option = getCfgOption(optionName);
+	cfgOption* option = GetCfgOption(optionName);
 	if(option != 0)
 		return option->optionValue;
 	return "";
 }
 //--------------------------------------------------------------------------------------------------------------------		
-std::vector<std::string> CFGReader::getOptionListValue(std::string optionName)
+std::vector<std::string> CFGReader::GetOptionListValue(std::string optionName)
 {
-	cfgOption* option = getCfgOption(optionName);
+	cfgOption* option = GetCfgOption(optionName);
 	if(option == 0)
 	{
 		std::cout << optionName<<" is not in the list!";
@@ -314,46 +324,46 @@ std::vector<std::string> CFGReader::getOptionListValue(std::string optionName)
 }
 //--------------------------------------------------------------------------------------------------------------------			
 //these mothds are to grab individual data from a list we already read in
-bool CFGReader::getOptionListBooleanValue(std::string listName, std::string optionName)
+bool CFGReader::GetOptionListBooleanValue(std::string listName, std::string optionName)
 {
-	std::string value = getListData(listName, optionName);
+	std::string value = GetListData(listName, optionName);
 	if (value == "")
 		return false;
-	return getBooleanData(value);
+	return GetBooleanData(value);
 }
 //--------------------------------------------------------------------------------------------------------------------		
-int CFGReader::getOptionListIntValue(std::string listName,std::string optionName)
+int CFGReader::GetOptionListIntValue(std::string listName,std::string optionName)
 {
-	std::string value = getListData(listName, optionName);
+	std::string value = GetListData(listName, optionName);
 	if (value == "")
 		return 0;
-	return getIntData(value);
+	return GetIntData(value);
 }
 //--------------------------------------------------------------------------------------------------------------------		
-float CFGReader::getOptionListFloatValue(std::string listName,std::string optionName)
+float CFGReader::GetOptionListFloatValue(std::string listName,std::string optionName)
 {
-	std::string value = getListData(listName, optionName);
+	std::string value = GetListData(listName, optionName);
 	if (value == "")
 		return 0;
-	return getFloatData(value);
+	return GetFloatData(value);
 }
 //--------------------------------------------------------------------------------------------------------------------		
-std::string CFGReader::getOptionListStringValue(std::string listName,std::string optionName)
+std::string CFGReader::GetOptionListStringValue(std::string listName,std::string optionName)
 {
-	return  getListData(listName, optionName);
+	return  GetListData(listName, optionName);
 }
 //--------------------------------------------------------------------------------------------------------------------		
-std::string CFGReader::getOptionListRawString(std::string listName,std::string optionName)//no delimiter stuff, just return the raw std::string, good fro csv files
+std::string CFGReader::GetOptionListRawString(std::string listName,std::string optionName)//no delimiter stuff, just return the raw std::string, good fro csv files
 {
-	return  getRawListData(listName, optionName);
+	return  GetRawListData(listName, optionName);
 }
 //--------------------------------------------------------------------------------------------------------------------		
-void CFGReader::clearCfgFile()
+void CFGReader::ClearCfgFile()
 {
 	cfgFile.clear();
 }
 //--------------------------------------------------------------------------------------------------------------------		
-std::string CFGReader::getAllStates()
+std::string CFGReader::GetAllStates()
 {
 	std::string returnString = "";
 	for(size_t i = 0; i < cfgFile.size(); i++)

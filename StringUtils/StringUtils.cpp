@@ -105,17 +105,14 @@ std::string StringUtils::FlattenVector(std::vector<std::string> input)
 
 	return returnString;
 }
-//this will only trim a single white space char from each side...should be more robust...
+
 void StringUtils::TrimWhiteSpace(std::string &input)
 {
 	if(input.size() == 0)
 		return;
 
-	if(input.back() == ' ')
-		input.pop_back();
-
-	if(input[0] == ' ')
-		input.erase(0, 1);
+	input.erase(0, input.find_first_not_of(' '));       //prefixing spaces
+	input.erase(input.find_last_not_of(' ')+1);         //surfixing spaces
 }
 
 std::string StringUtils::GetDataBetweenChars(std::string line, char char1, char char2, size_t start)
