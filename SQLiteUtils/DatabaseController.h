@@ -61,6 +61,12 @@ public:
 			}
 			return "";
 		}
+		bool IsEmpty()
+		{
+			if (data.size() == 0)
+				return true;
+			return false;
+		}
 	};
 	DatabaseController();
 	~DatabaseController();
