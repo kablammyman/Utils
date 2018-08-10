@@ -87,6 +87,8 @@ public:
 	
 	// SELECT x,y,x FROM Table WHERE dbpair[0].first = dbpair[0].second  AND dbpair[1].first = dbpair[1].second ;
 	bool DoDBQuerey(string table, vector<string> selectData, vector<dbDataPair> whereData, string &output);
+	//this is good whe we have a multi select, but need to use LIKE instead of =. provide the whole like string, "data like LIKE %someVale%"
+	bool DoDBQuerey(string table, vector<string> selectData, string whereString, string &output);
 	bool UpdateEntry(string table, dbDataPair data, dbDataPair WhereClause, string &output);
 	bool UpdateEntry(string table, vector<dbDataPair> data, dbDataPair WhereClause, string &output);
 	

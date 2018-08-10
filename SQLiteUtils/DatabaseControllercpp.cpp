@@ -208,6 +208,28 @@ bool DatabaseController::DoDBQuerey(string table, vector<string> selectData, dbD
 	return db->executeSQL(querey + fromString + whereString, output);
 }
 
+bool DatabaseController::DoDBQuerey(string table, vector<string> selectData, string whereString, string &output)
+{
+	string querey = "SELECT ";
+	string fromString = (" FROM " + table);
+
+	//count how many specific items to querey
+	//ex select * from table where name ="bla" and age = "bla"; \\2 whereArgs here
+	
+	for (size_t i = 0; i < selectData.size(); i++)
+	{
+		if (i > 0)
+			querey += ",";
+
+		querey += selectData[i];
+
+	}
+	
+	whereString += ";";
+
+	return db->executeSQL(querey + fromString + whereString, output);
+}
+
 
 bool DatabaseController::DoDBQuerey(string table, vector<string> selectData, vector<dbDataPair> whereData, string &output)
 {
