@@ -26,6 +26,7 @@ public:
 	~SQLiteUtils();
 	bool openSQLiteDB(std::string name, std::string &output);
 	void closeSQLiteDB(std::string &output);
+	bool IsOpen();
 	std::string getLastError();
 	bool executeSQL(std::string command, std::string &output);
 

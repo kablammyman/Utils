@@ -42,9 +42,7 @@ string DatabaseController::GetDBName()
 }
 bool DatabaseController::IsDBOpen()
 {
-	if (db == NULL)
-		return false;
-	return true;
+	return db->IsOpen();
 }
 
 bool DatabaseController::ExecuteSQL(string command, string &output)

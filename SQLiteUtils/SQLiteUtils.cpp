@@ -123,11 +123,13 @@ SQLiteUtils::~SQLiteUtils()
 //i get linker errors with this now...hmm...
 //	sqlite3_create_function(db, "hammingDistance", 2, SQLITE_UTF8, 0, &hammingDistance, 0, 0);
 
-   if (returnCode)
+   if (returnCode != SQLITE_OK)
    {
       string  errMsg = sqlite3_errmsg(db);
 	  output += ("Error opening SQLite3 SQLiteUtils: " +errMsg + "\n");
-      sqlite3_close(db);
+	  lastError = output;
+	  sqlite3_close(db);
+	  db = nullptr;
 	  return false;
    }
 
@@ -139,12 +141,20 @@ SQLiteUtils::~SQLiteUtils()
  void SQLiteUtils::closeSQLiteDB(string &output)
  {
 	  // Close SQLiteUtils if its open
-	if (db == 0)
+	if (db == nullptr)
 		 return;
-   output = ("Attepmting to Close " + DBName + "...");
-   sqlite3_close(db);
-   output +=  "Closed";
-   lastError.clear();
+
+	output = ("Attepmting to Close " + DBName + "...");
+	sqlite3_close(db);
+	db = nullptr;
+	output +=  "Closed";
+}
+ //--------------------------------------------------------------------------------------------------
+ bool SQLiteUtils::IsOpen()
+ {
+	 if (db == nullptr)
+		 return false;
+	 return true;
  }
 //--------------------------------------------------------------------------------------------------
  string SQLiteUtils::getLastError()
