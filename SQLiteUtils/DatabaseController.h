@@ -34,6 +34,7 @@ public:
 		{
 			data.clear();
 		}
+//-------------------------------------------------------------
 		void GetAllKeys(vector<string> &retVec)
 		{
 			for (size_t i = 0; i < data.size(); i++)
@@ -41,7 +42,7 @@ public:
 				retVec.push_back(data[i].first);
 			}
 		}
-
+//-------------------------------------------------------------
 		void GetAllValues(vector<string> &retVec)
 		{
 			for (size_t i = 0; i < data.size(); i++)
@@ -49,7 +50,7 @@ public:
 				retVec.push_back(data[i].second);
 			}
 		}
-
+//-------------------------------------------------------------
 		string GetValueFromKey(string key)
 		{
 			for (size_t i = 0; i < data.size(); i++)
@@ -61,6 +62,45 @@ public:
 			}
 			return "";
 		}
+//-------------------------------------------------------------
+		int GetIntValueFromKey(string key)
+		{
+			for (size_t i = 0; i < data.size(); i++)
+			{
+				if(data[i].first == key)
+				{
+					try
+					{
+						return stoi(data[i].second);
+					}
+					catch (...)
+					{
+						return 0;
+					}
+				}
+			}
+			return 0;
+		}
+//-------------------------------------------------------------
+		float GetFloatValueFromKey(string key)
+		{
+			for (size_t i = 0; i < data.size(); i++)
+			{
+				if (data[i].first == key)
+				{
+					try
+					{
+						return stof(data[i].second);
+					}
+					catch (...)
+					{
+						return 0.0f;
+					}
+				}
+			}
+			return 0.0f;
+		}
+//-------------------------------------------------------------
 		bool IsEmpty()
 		{
 			if (data.size() == 0)
