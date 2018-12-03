@@ -296,3 +296,11 @@ unsigned char* SoundUtils::DoSoundCreateTest()
 	
     return CreateWav(BUF_SIZE, buf, GEN_SAMP_RATE ,sizeOfWav);
 }
+
+int SoundUtils::GetDurationInSeconds(struct header* hdr)
+{
+    int numSamples = hdr->subchunk2_size /
+                         (hdr->num_channels * (hdr->bits_per_sample/8));
+    int durationSeconds = numSamples / hdr->sample_rate;
+    return durationSeconds;
+}

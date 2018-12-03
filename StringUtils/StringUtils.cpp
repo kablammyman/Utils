@@ -115,16 +115,21 @@ void StringUtils::TrimWhiteSpace(std::string &input)
 	input.erase(input.find_last_not_of(' ')+1);         //surfixing spaces
 }
 
-std::string StringUtils::GetDataBetweenChars(std::string line, char char1, char char2, size_t start)
+std::string StringUtils::GetDataBetweenChars(std::string line, char char1, char char2, size_t &start)
 {
 	size_t dataStart = line.find(char1,start);
-	if(dataStart == std::string::npos)
+	if (dataStart == std::string::npos)
+	{
+		start = line.size();
 		return "";
+	}
 	std::string returnString = "";
 
 	//i like loops better thans substring for this...its easier to understand
 	for (size_t i = dataStart+1; i < line.size(); i++)
 	{
+		//update the index, so we can do this again on the same line if nesc
+		start = i;
 		if(line[i] != char2)
 			returnString+=line[i];
 		else break;

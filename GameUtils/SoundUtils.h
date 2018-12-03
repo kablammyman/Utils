@@ -55,7 +55,7 @@ public:
 	unsigned char *CreateWav(unsigned long num_samples, /*short*/ unsigned int * data, int s_rate, unsigned int & sizeOfWav);
 	void WriteWav(char * filename, unsigned long num_samples, /*short*/ int * data, int s_rate);
 	unsigned char *DoSoundCreateTest();
-
+	int GetDurationInSeconds(struct header* hdr);
 };
 
 #endif //SOUND_PROXY_H
