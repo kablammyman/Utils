@@ -187,7 +187,10 @@ vector<string> FileUtils::GetAllFolderNamesInDir(string &path)//needs to have *.
 		if (entry->d_type == DT_DIR) 
 		{ 
 			sTmp = curDir;
-			sTmp += entry->d_name;
+			string temp = entry->d_name;
+			if(temp[0] == ' ')
+				temp.erase(temp[0]);
+			sTmp += temp;
 			sTmp += SLASH;
 			folderList.push_back(sTmp);
 		}
