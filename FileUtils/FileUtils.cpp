@@ -25,10 +25,10 @@ unsigned int GetRandomNum(int min, int max)
 	return ((diff * rand()) / RAND_MAX) + min;
 }
 
-//--------------------------------------------------------------------------------------------------	
+//--------------------------------------------------------------------------------------------------
 bool FileUtils::DoesPathExist(string &path)
 {
-#ifdef _WIN32	
+#ifdef _WIN32
 	DWORD ftyp = GetFileAttributesA(path.c_str());
 	if (ftyp == INVALID_FILE_ATTRIBUTES)
 		return false;  //something is wrong with your path!
@@ -46,12 +46,12 @@ bool FileUtils::DoesPathExist(string &path)
 	}
 	/*else if (ENOENT == errno)
 	{
-	    // Directory does not exist. 
+	    // Directory does not exist.
 		return false;
 	}
 	else
 	{
-	    // opendir() failed for some other reason. 
+	    // opendir() failed for some other reason.
 	}*/
 	return false;
 #endif
@@ -59,15 +59,15 @@ bool FileUtils::DoesPathExist(string &path)
 //--------------------------------------------------------------------------------------------------
 bool FileUtils::DoesFileExist(string &path)
 {
-    if (FILE *file = fopen(path.c_str(), "r")) 
+    if (FILE *file = fopen(path.c_str(), "r"))
 	{
         fclose(file);
         return true;
-    } 
-	else 
+    }
+	else
         return false;
 }
-//--------------------------------------------------------------------------------------------------	
+//--------------------------------------------------------------------------------------------------
 bool FileUtils::Move_File(string oldName, string newName)
 {
 	//should i do this one first?
@@ -148,7 +148,7 @@ vector<string> FileUtils::GetAllFolderNamesInDir(string &path)//needs to have *.
 #if _WIN32
 	HANDLE hFind;
 	WIN32_FIND_DATA FindFileData;
-	
+
 	hFind = FindFirstFile(curDir.c_str(), &FindFileData);
 
 	size_t removeAst = curDir.length() - 1;
@@ -180,12 +180,12 @@ vector<string> FileUtils::GetAllFolderNamesInDir(string &path)//needs to have *.
 	struct dirent * entry;
 
 	dirp = opendir(path.c_str());
-	while ((entry = readdir(dirp)) != NULL) 
+	while ((entry = readdir(dirp)) != NULL)
 	{
 		if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)//ignore anything we put in this list
-			continue;		
-		if (entry->d_type == DT_DIR) 
-		{ 
+			continue;
+		if (entry->d_type == DT_DIR)
+		{
 			sTmp = curDir;
 			string temp = entry->d_name;
 			if(temp[0] == ' ')
@@ -211,7 +211,7 @@ int FileUtils::GetNumFilesInDir(string &path, string ext)//needs to have *.fileE
 #if _WIN32
 	HANDLE hFind;
 	WIN32_FIND_DATA FindFileData;
-	
+
 	hFind = FindFirstFile(curDir.c_str(), &FindFileData);
 
 	size_t removeAst = curDir.length() - 1;
@@ -262,7 +262,7 @@ vector<string> FileUtils::GetAllFileNamesInDir(string &path,string ext, bool inc
 #if _WIN32
 	HANDLE hFind;
 	WIN32_FIND_DATA FindFileData;
-	
+
 	hFind = FindFirstFile(curDir.c_str(), &FindFileData);
 
 	size_t removeAst = curDir.length() - 1;
@@ -285,7 +285,7 @@ vector<string> FileUtils::GetAllFileNamesInDir(string &path,string ext, bool inc
 
 				if(ext == "")
 					fileList.push_back(sTmp);
-				
+
 				else if(GetFileExt(FindFileData.cFileName) == ext)
 					fileList.push_back(sTmp);
 			}
@@ -300,15 +300,15 @@ vector<string> FileUtils::GetAllFileNamesInDir(string &path,string ext, bool inc
 	struct dirent * entry;
 
 	dirp = opendir(path.c_str());
-	while ((entry = readdir(dirp)) != NULL) 
+	while ((entry = readdir(dirp)) != NULL)
 	{
 		if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)//ignore anything we put in this list
-			continue;		
-		if (entry->d_type == DT_REG) 
-		{ 
+			continue;
+		if (entry->d_type == DT_REG)
+		{
 			sTmp = curDir;
 			sTmp += entry->d_name;
-			sTmp += SLASH;
+			//sTmp += SLASH;
 			fileList.push_back(sTmp);
 		}
 	}
@@ -364,7 +364,7 @@ string FileUtils::DeleteAllFilesInDir(string &path)
 			returnString += "\n";
 		}
 	}
-	
+
 	return returnString;
 }
 //--------------------------------------------------------------------------------------------------------

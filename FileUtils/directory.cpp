@@ -22,7 +22,7 @@ void DirectoryTree::AddToIgnoreList(string badFile)
 {
 	list<string>::iterator it;
 	bool inList = false;
-	
+
 	for ( it=ignoreList.begin() ; it != ignoreList.end(); it++ )
 		if(*it == badFile)
 			inList = true;
@@ -34,7 +34,7 @@ void DirectoryTree::AddToIgnoreList(string badFile)
 bool DirectoryTree::IsInIgnoreList(string badFile)
 {
 	list<string>::iterator it;
-	
+
 	for ( it=ignoreList.begin() ; it != ignoreList.end(); it++ )
 		if(*it == badFile)
 			return true;
@@ -44,7 +44,7 @@ bool DirectoryTree::IsInIgnoreList(string badFile)
 
 void DirectoryTree::ProcessSingleDir(DirNode *curNode, vector<string> &childrenDirs)
 {
-	
+
 
 	string curDir = PrepPathForTraversal(curNode->ToString());
 
@@ -54,7 +54,7 @@ void DirectoryTree::ProcessSingleDir(DirNode *curNode, vector<string> &childrenD
 
 	size_t removeAst = curDir.length() - 1;
 	curDir.resize(removeAst); //curDir[removeAst]='\0';//remove the asterisk
-	
+
 	do {
 		if (IsInIgnoreList(FindFileData.cFileName))//ignore anything we put in this list
 			continue;
@@ -79,10 +79,10 @@ void DirectoryTree::ProcessSingleDir(DirNode *curNode, vector<string> &childrenD
 #else
 	DIR *dir;
 	struct dirent *ent;
-	if ((dir = opendir(curDir.c_str())) != 0) 
+	if ((dir = opendir(curDir.c_str())) != 0)
 	{
 		/* print all the files and directories within directory */
-		while ((ent = readdir(dir)) != 0) 
+		while ((ent = readdir(dir)) != 0)
 		{
 			if (IsInIgnoreList(ent->d_name))//ignore anything we put in this list
 				continue;
@@ -108,7 +108,7 @@ void DirectoryTree::ProcessSingleDir(DirNode *curNode, vector<string> &childrenD
 		perror("");
 		//return EXIT_FAILURE;
 	}
-#endif	
+#endif
 }
 void DirectoryTree::ProcessFilesFromDir(string path)//needs to have *.fileExt to work
 {
@@ -185,13 +185,13 @@ DirNode* DirectoryTree::NextProcessFilesFromDirStep()//needs to have *.fileExt t
 void DirectoryTree::ProcessFilesFromDirMT(string path, int maxThreads)
 {
 //since some projects that i build for doesnt support c++11 stuff, i need to makre sure i disable it when building for them
-#if _WIN32	
+#if _WIN32
 #if __cplusplus <= 199711L
 	maxThreads = 1;
 	ProcessFilesFromDir(path);
 #elif
 
-	
+
 	int numThreads = 0;
 	mutex stackLock;
 
@@ -206,12 +206,12 @@ void DirectoryTree::ProcessFilesFromDirMT(string path, int maxThreads)
 	AddToIgnoreList("Thumbs.db");
 
 	//if we want to clear the data firs, we must explicitly call it now
-	
+
 	vector<vector<string>> childDirs(maxThreads, vector<string>(0));
 	vector<DirNode *> curNode(maxThreads,0);
-	
+
 	//okay, now we need to make all of our threads
-	
+
 	//packaged_task<void(DirNode *, vector<string>&)> task(&DirectoryTree::processSingleDir);
 	//future<void> *fut = new future<void>[maxThreads];
 	//thread *t = new thread[maxThreads];
@@ -220,7 +220,7 @@ void DirectoryTree::ProcessFilesFromDirMT(string path, int maxThreads)
 
 		//okay, now we need to make all of our threads
 		thread *t = new thread[maxThreads];
-		
+
 		for (int i = 0; i < maxThreads; i++)
 		{
 			//if this object isnt in use, use it, other wise, look for one that isnt in use
@@ -251,7 +251,7 @@ void DirectoryTree::ProcessFilesFromDirMT(string path, int maxThreads)
 			/*auto status = fut[i].wait_for(std::chrono::seconds(0));
 			if (status == std::future_status::timeout)
 				continue;*/
-			
+
 			//else if (status == std::future_status::ready)
 			//{
 			if (t[i].joinable())
@@ -293,7 +293,7 @@ DirNode * DirectoryTree::GetDirNode(string path)
 
 	string curPath = dirRoot->ToString();
 	size_t find = path.find(curPath);
-	
+
 	//make sure the path we are lookging for is within our tree
 	if (find == string::npos)
 		return 0;
@@ -304,10 +304,10 @@ DirNode * DirectoryTree::GetDirNode(string path)
 	vector<string> tokens = StringUtils::Tokenize(shortPath,delims);
 
 	size_t i = 0;
-	
+
 	DirNode *runner = dirRoot;
-	
-	//make sure the path we want matches the tree root 
+
+	//make sure the path we want matches the tree root
 	if (!runner->IsPathName(curPath))
 		return 0;
 	//if so, then start the actual search
@@ -337,7 +337,7 @@ void DirectoryTree::DumpTreeToFile(string path)
 	string fileName = path;
 
 	fileName += ".txt";
-	
+
 	pFile = fopen (fileName.c_str(),"w");
 
 	if (pFile==0)
@@ -348,7 +348,7 @@ void DirectoryTree::DumpTreeToFile(string path)
 
 	for(size_t i = 0; i < pathList.size(); i++)
 		fprintf(pFile,"%s\n", pathList[i].c_str() );
-	
+
 	fclose (pFile);
 }
 
@@ -361,7 +361,7 @@ void DirectoryTree::DumpTreeToVector(vector<string> &returnVec)
 	{
 		DirNode *curNode = dStack.top(); //get the next dr to process
 		dStack.pop(); //take it off of stack
-		
+
 		if (curNode == 0)
 			continue;
 		returnVec.push_back(curNode->ToString());
@@ -370,7 +370,7 @@ void DirectoryTree::DumpTreeToVector(vector<string> &returnVec)
 		list<DirNode *>::iterator it;
 		for (it = curNode->childDir.begin(); it != curNode->childDir.end(); it++)
 			dStack.push((*it));
-	} 
+	}
 }
 
 
@@ -378,9 +378,9 @@ string DirectoryTree::GetRandomFile()
 {
 	/*int index = rand()%dirList.size();
 	size_t randFile = dirList[index]->fileAndFolderList.size();
-	
-	list<string>::iterator it = dirList[index]->fileAndFolderList.begin(); 
-	
+
+	list<string>::iterator it = dirList[index]->fileAndFolderList.begin();
+
 	if (dirList[index]->fileAndFolderList.size() > randFile)
 	{
 		std::advance(it, randFile);// 'it' points to the element at index 'N'
@@ -405,18 +405,18 @@ long long DirectoryTree::GetDirSize(string path)//needs to have *.fileExt to wor
 	do{
 		string curDir = dirStack.top(); //get the next dr to process
 		dirStack.pop(); //take it off of stack
-		
+
 		curDir +="*";//add asterisk to look for all "files" in cur dir
 		hFind = FindFirstFile(curDir.c_str(), &FindFileData);
 
 		size_t removeAst = curDir.length()-1;
 		curDir.resize (removeAst); //curDir[removeAst]='\0';//remove the asterisk
 
-	
+
 
 		if(hFind != INVALID_HANDLE_VALUE)
 		do{
- 
+
 			if(strcmp(FindFileData.cFileName, ".") == 0 || strcmp(FindFileData.cFileName, "..")==0)
 				continue;
 		//if we find a directory, add its name to the stack, so we can parse it later
@@ -438,7 +438,7 @@ long long DirectoryTree::GetDirSize(string path)//needs to have *.fileExt to wor
 			}
 
 		}while(FindNextFile(hFind, &FindFileData));
-		
+
 	}while(!dirStack.empty());
 
 	FindClose(hFind);
@@ -490,9 +490,19 @@ string DirectoryTree::PrepPathForTraversal(string path)
 		return path;
 
 	else if(lastChar == SLASH)
-		newPath += ast;//add asterisk to look for all "files" in cur dir
+	{
+        if(ast != ' ')
+            newPath += ast;//add asterisk to look for all "files" in cur dir
+	}
+
 	else
-		newPath += SLASH + ast;//if we forgot to add the last back slash, add it, so we dont crash
+	{
+        if(ast != ' ')
+            newPath += SLASH + ast;//if we forgot to add the last back slash, add it, so we dont crash
+        else
+            newPath += SLASH;//if we forgot to add the last back slash, add it, so we dont crash
+	}
+
 	return  newPath;
 }
 string DirectoryTree::GetFileNameFromPathString(string path)
@@ -519,10 +529,10 @@ void DirectoryTree::ClearAll()
 
 	if (dirRoot == 0)
 		return;
-	
+
 	stack<DirNode *> dStack;
 	dStack.push(dirRoot);
-	
+
 	while (!dStack.empty())
 	{
 		DirNode *curNode = dStack.top(); //get the next dr to process
