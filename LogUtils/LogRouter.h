@@ -12,15 +12,18 @@
 #define EVENT_LOG_OUTPUT 8
 #define EVENT_LOG_OUTPUT_STRING "EVENTLOG"
 
-#define NUM_MESSAGE_TYPES 4
+//debug, informational,notice,warning,error,critical, alert or emergency
+#define NUM_MESSAGE_TYPES 8 
+
+//console, textfile, tcp/ip,windows event long
 #define MAX_LOG_ENTITIES 4
 
 //an array of these are filled with the data from each "blob" of the cfg
 struct LogEntity
 {
-	LogOutput *logOut;
+	LogOutput *logOut; //a pointer the the class that will actually "do" the message (write it to cosole, or to a file or whatever)
 	int logClassId;      //what type of logs are we listening for
-	int id; //the id...assigned by the order itwas found
+	int id; //the id...assigned by the order it was found
 	string type; //more for debugging
 };
 
@@ -34,7 +37,11 @@ class LogRouter
 	int logSeverityFlags;    //where are we dispaying the log message? concole? logfile? 
 	int scanLogFlags; //all teh tye of scan log results we can have. we check these since these are special
 
+
+	//this is an array of linked list really. each array index correspoonds with a message type (debug, warning, error, etc)
 	std::vector<LogEntity *> severityLookupTable[NUM_MESSAGE_TYPES];
+	
+	
 	/* to help visualize what this does, think of this as a table of all the differnt severity tags.
 	each log entity goes into each slot that is specified in the seveirty string
 
@@ -52,6 +59,8 @@ class LogRouter
 	so everytime we get a log message of type warning, we will go thru the list of ids (in this case, theres just 1 in the vector)
 	each enitity has its own way to do output, and this is how all the messages will end up where you want them with very lil branching logic
 	*/
+
+	//keep track of all the loggers in one place
 	vector<LogEntity *> logs;
 
 	void InitLogEntities();

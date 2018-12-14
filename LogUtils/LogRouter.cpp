@@ -52,6 +52,7 @@ LogEntity * LogRouter::AddLogger(LogOutput *newLog, vector<string> severityToken
 
 	return newLogEntity;
 }
+//-------------------------------------------------------------------------------------
 LogEntity * LogRouter::AddLogger(LogOutput *newLog, string severityToken)
 {
 	int id = (int)logs.size();
@@ -75,7 +76,7 @@ void LogRouter::InitLogEntities()
 	logSeverityFlags = 0;
 	fill(severityLookupTable, severityLookupTable + NUM_MESSAGE_TYPES, vector<LogEntity *>());
 }
-
+//-------------------------------------------------------------------------------------
 void LogRouter::ClearLogEntities()
 {
 	while (!logs.empty())
@@ -89,9 +90,7 @@ void LogRouter::ClearLogEntities()
 	for (int i = 0; i < NUM_MESSAGE_TYPES; i++)
 		severityLookupTable[i].clear();
 }
-
-
-
+//-------------------------------------------------------------------------------------
 void LogRouter::Log(int logSeverity, string msg)
 {
 	//see if we are checking for this type of message
@@ -110,7 +109,7 @@ void LogRouter::Log(int logSeverity, string msg)
 	}
 
 }
-
+//-------------------------------------------------------------------------------------
 LogOutput * LogRouter::LogOutputFactory(string logType, string loggerDetails)
 {
 	if (logType.compare(CONSOLE_OUTPUT_STRING) == 0)
