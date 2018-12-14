@@ -5,6 +5,15 @@ Right now, we will use slow methods to log things, but in teh future a lib can b
 #include "LogRouter.h"
 #include "StringUtils.h"
 
+#include "ConsoleOutput.h"
+#include "LogfileOutput.h"
+#include "LogMessage.h"
+
+#if _WIN32
+//#include "TCPOutput.h"
+#include "WindowsEventLogOutput.h"
+#endif
+
 LogRouter::LogRouter()
 {
 	InitLogEntities();
@@ -27,7 +36,7 @@ void LogRouter::AddLoggerSeverityDetails(vector<string> severityVec, LogEntity *
 	}
 }
 //-------------------------------------------------------------------------------------
-//an be used to add a logger from code outside of the cfg file
+//can be used to add a logger from code outside of the cfg file
 LogEntity * LogRouter::AddLogger(LogOutput *newLog, vector<string> severityTokens)
 {
 	int id = (int)logs.size();
@@ -100,4 +109,26 @@ void LogRouter::Log(int logSeverity, string msg)
 
 	}
 
+}
+
+LogOutput * LogRouter::LogOutputFactory(string logType, string loggerDetails)
+{
+	if (logType.compare(CONSOLE_OUTPUT_STRING) == 0)
+		return new ConsoleOutput();
+
+	else if (logType.compare(FILE_OUTPUT_STRING) == 0)
+		return new LogFileOutput(loggerDetails);
+
+	#if _WIN32
+	//else if (logType.compare(TCP_OUTPUT_STRING) == 0)
+	//	return new TCPOutput();
+
+	else if (logType.compare(EVENT_LOG_OUTPUT_STRING) == 0)
+		return new WindowsEventLogOutput();
+	#endif
+
+
+	//uf we get here, we got an invalid type.
+	//instad of returning null, return a console output
+	return new ConsoleOutput();
 }

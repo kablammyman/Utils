@@ -83,6 +83,7 @@ public:
 	~LogRouter();
 	
 	void Log(int logSeverity, string msg);
+	LogOutput * LogOutputFactory(string logType, string loggerDetails);
 	LogEntity * AddLogger(LogOutput *newLog, vector<string> severityTokens);
 	LogEntity * AddLogger(LogOutput *newLog, string severityToken);
 };
