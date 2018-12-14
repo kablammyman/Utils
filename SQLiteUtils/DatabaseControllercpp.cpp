@@ -374,11 +374,8 @@ void DatabaseController::ParseDBOutput(string &inputData, int numFields, vector<
 void DatabaseController::ParseDBOutput(string &inputData, vector<string>fields, vector<DBResult> &returnData)
 {
 	returnData.clear();
-	
-	int curField = 0;
 
 	//the first is the field name, the second is the value we want
-
 	size_t i = 0;
 	DBResult curRow;
 	size_t start = 0;
