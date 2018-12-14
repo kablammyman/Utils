@@ -51,8 +51,8 @@ class CFGReader
 		std::vector<std::string> GetStringArrayData(std::string data);
 		//good for getting a particular piece of data from a csv line	
 		size_t FindInStringArray(std::vector<std::string> data, std::string searchItem);
-		std::vector<std::string> GetStringTokens(std::string origString, std::string delims);
-		std::vector<std::string> GetStringTokens(std::string origString, char delim);
+		//std::vector<std::string> GetStringTokens(std::string origString, std::string delims);
+		//std::vector<std::string> GetStringTokens(std::string origString, char delim);
 		inline std::string Trim(std::string& str)
 		{
 			str.erase(0, str.find_first_not_of(' '));       //prefixing spaces

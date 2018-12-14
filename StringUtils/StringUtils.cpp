@@ -3,7 +3,11 @@
 #ifndef _WIN32
 #include <cstring> //strtok_r
 #endif
-
+std::vector<std::string> StringUtils::Tokenize(std::string path, char delim)
+{
+	std::string delims(1, delim);
+	return Tokenize(path, delims);
+}
 std::vector<std::string> StringUtils::Tokenize(std::string path, std::string delims)
 {
 	std::vector<std::string> returnVec;

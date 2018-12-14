@@ -1,20 +1,13 @@
 #include <fstream>
 #include "CFGReader.h"
+#include "StringUtils.h"
 
 
 //--------------------------------------------------------------------------------------------------------------------	
-std::vector<std::string> CFGReader::GetStringTokens(std::string origString, std::string delims)
+/*std::vector<std::string> CFGReader::GetStringTokens(std::string origString, std::string delims)
 	{
 		std::vector<std::string> returnVec;
 
-		/*char *p = strtok(origString.c_str(), delims.c_str());
-		while (p) 
-		{
-			std::string newString = p;
-			//printf ("Token: %s\n", newString.c_str());
-			returnVec.push_back(newString);
-			p = strtok(0, delims.c_str());
-		}*/
 		size_t found=origString.find(delims);
 		if (found== std::string::npos)
 			returnVec.push_back(origString);
@@ -52,7 +45,7 @@ std::vector<std::string> CFGReader::GetStringTokens(std::string origString, char
 	std::string delims;
 	delims += delim;
 	return GetStringTokens(origString, delims);
-}
+}*/
 //--------------------------------------------------------------------------------------------------------------------	
 bool CFGReader::ReadProfile(std::string file, char delim)
 {
@@ -80,9 +73,15 @@ bool CFGReader::ReadProfile(std::string file, char delim)
 
 		while ( getline (inputFile,line) )
 		{
+			
 			lineNum++;
 				
 			line = Trim(line); //remove all white space before and after
+#ifndef _WIN32 
+			//linux bullshit
+			if (line.back() == '\r')
+				line.pop_back();
+#endif
 			//look for comments
 			if(line.size() > 2)
 			{
@@ -148,7 +147,7 @@ bool CFGReader::ReadProfile(std::string file, char delim)
 			else //single value option
 			{
 				cfgOption newOption;
-				std::vector<std::string> token = GetStringTokens(line, delimiter);
+				std::vector<std::string> token = StringUtils::Tokenize(line, delimiter);
 				newOption.optionName = token[0];
 				newOption.optionValue = token[1];//put that data in there
 				newOption.isList = false;
@@ -194,7 +193,7 @@ std::string CFGReader::GetListData(std::string listName,std::string optionName)
 	{
 		if(listArray[i].find(optionName)!=std::string::npos)//if the keyword is in this std::string
 		{
-			std::vector<std::string> curOption = GetStringTokens(listArray[i], delimiter);
+			std::vector<std::string> curOption = StringUtils::Tokenize(listArray[i], delimiter);
 			return curOption[curOption.size()-1];//give us the data only!
 		}
 	}
@@ -243,7 +242,7 @@ float CFGReader::GetFloatData(std::string data)
 std::vector<int> CFGReader::GetIntArrayData(std::string data)//good for csv values
 {
 	std::string tempString = Trim(data);
-	std::vector<std::string> intValues = GetStringTokens(tempString, delimiter);
+	std::vector<std::string> intValues = StringUtils::Tokenize(tempString, delimiter);
 	std::vector<int>returnArray(intValues.size());
 	for(size_t i = 0; i < intValues.size(); i++)
 		returnArray[i] = GetIntData(intValues[i]);
@@ -253,7 +252,7 @@ std::vector<int> CFGReader::GetIntArrayData(std::string data)//good for csv valu
 std::vector<float> CFGReader::GetFloatArrayData(std::string data)//good for csv values
 {
 	std::string tempString = Trim(data);
-	std::vector<std::string> floatValues = GetStringTokens(tempString, delimiter);
+	std::vector<std::string> floatValues = StringUtils::Tokenize(tempString, delimiter);
 	std::vector<float> returnArray(floatValues.size());
 	for(size_t i = 0; i < floatValues.size(); i++)
 		returnArray[i] = GetFloatData(floatValues[i]);
@@ -263,7 +262,7 @@ std::vector<float> CFGReader::GetFloatArrayData(std::string data)//good for csv 
 std::vector<std::string> CFGReader::GetStringArrayData(std::string data)//good for csv values
 {
 	std::string tempString = Trim(data);
-	return GetStringTokens(tempString, delimiter);
+	return StringUtils::Tokenize(tempString, delimiter);
 }
 //--------------------------------------------------------------------------------------------------------------------		
 size_t CFGReader::FindInStringArray(std::vector<std::string> data, std::string searchItem)//good for getting a particular piece of data from a csv line
