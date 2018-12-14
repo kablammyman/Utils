@@ -193,20 +193,20 @@ int StringUtils::GetStandAloneWordInLineIndex(std::string line,std::string word)
 		if(	!startIsFirst && endIsLast)
 		{
 			if (! isalpha(line[start]))
-				return start;
+				return (int)start;
 		}
 		else if( startIsFirst && endIsLast)
-			return start;
+			return (int)start;
 			
 		else if( startIsFirst && !endIsLast)
 		{
 			if (! isalpha(line[end]))
-				return start;
+				return (int)start;
 		}
 		else
 		{
 			if (! isalpha(line[start]) && !isalpha(line[end]))				
-				return start;
+				return (int)start;
 		}
 	}
 	return -1;
@@ -368,7 +368,6 @@ std::string StringUtils::FindAndReplace(std::string orig, std::string findToken,
 	if (index != std::string::npos)
 	{
 		//orig.replace(index,replaceToken.size(),replaceToken);
-		bool replaced = false;
 		size_t i = 0;
 		size_t j = 0;
 		while(i < index)

@@ -6,7 +6,7 @@
 class StringUtils
 {
 public:
-	static std::vector<std::string> StringUtils::Tokenize(std::string path, char delim);
+	static std::vector<std::string> Tokenize(std::string path, char delim);
 	static std::vector<std::string> Tokenize(std::string path, std::string delims);
 	static std::vector<std::string> Tokenize2(std::string path, std::string delims);
 	static void ToProperNoun(std::string &input);
