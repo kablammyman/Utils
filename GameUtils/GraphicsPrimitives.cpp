@@ -118,14 +118,17 @@ void PIXMAP::DrawRect(int _x, int _y, int _w, int _h,RGBA color)
 	}
 }
 //---------------------------------------------------------------------------------------
-void PIXMAP::Clip(unsigned int width, unsigned int height, unsigned int destX, unsigned int destY, unsigned int destW, unsigned int destH, int & numHorizPixelsToDraw, int & vertSPanOfPix)
+void PIXMAP::Clip(unsigned int width, unsigned int height,  int destX,  int destY, unsigned int destW, unsigned int destH, int & numHorizPixelsToDraw, int & vertSPanOfPix)
 {
 	int totalPixH = (destY + height);
 	int totalPixW = (destX + width);
 
-	vertSPanOfPix = totalPixH;
-	numHorizPixelsToDraw = width;
-	//int numVertPixelsToDraw = height;
+	
+	
+	if (destX >= 0)
+		numHorizPixelsToDraw = width;
+	else
+		numHorizPixelsToDraw = totalPixW;
 
 	if (totalPixH > destH)
 	{
@@ -145,13 +148,23 @@ void PIXMAP::Clip(unsigned int width, unsigned int height, unsigned int destX, u
 //---------------------------------------------------------------------------------------
 void PIXMAP::Blit(PIXMAP * dest, int x, int y)
 {
-	int srcX = 0;//,srcY = 0;
+	
+	int srcX = 0;
+	//int srcY = 0;
+	
 	int vertSPanOfPix;
 	int numHorizPixelsToDraw;
 	//int numVertPixelsToDraw = h;
 
 
 	Clip(w, h, x, y, dest->w, dest->h, numHorizPixelsToDraw, vertSPanOfPix);
+
+	if (x < 0)
+	{
+		srcX = w - x;
+		x = 0;
+	}
+		
 	for (unsigned int uiV = y; uiV < vertSPanOfPix; ++uiV)
 	{
 		// reset coordinate for each row
