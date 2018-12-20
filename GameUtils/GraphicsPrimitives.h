@@ -114,4 +114,7 @@ struct PIXMAP
 	PIXMAP* GetScaledCopy(unsigned int Width, unsigned int Height);
 	void Scale(unsigned int Width, unsigned int Height);
 	void DrawScaledCopy(PIXMAP *dest, int xPos, int yPos, unsigned  int Width, unsigned int Height);
+	//specailized scaled method...this was born by trying to get this to work right when part of the image is clipped off the screen
+	//this will eventually be moved to the screen saver itself, but for now, its here
+	void DrawScaledCopyForScreenSaver(PIXMAP *dest, int xPos, int yPos, unsigned int Width, unsigned int Height);
 };

@@ -120,33 +120,41 @@ void PIXMAP::DrawRect(int _x, int _y, int _w, int _h,RGBA color)
 //---------------------------------------------------------------------------------------
 void PIXMAP::Clip(unsigned int width, unsigned int height,  int destX,  int destY, unsigned int destW, unsigned int destH, int & numHorizPixelsToDraw, int & vertSPanOfPix)
 {
-	int totalPixH = (destY + height);
-	int totalPixW = (destX + width);
+	numHorizPixelsToDraw = width;
+	vertSPanOfPix = height;
 
-	
-	
-	if (destX >= 0)
-		numHorizPixelsToDraw = width;
-	else
-		numHorizPixelsToDraw = totalPixW;
-
-	if (totalPixH > destH)
+	//the bmp is easily inside the parent bmp
+	if (destX >= 0 && destY >= 0 && destX + width > 0 && destY + height > 0)
 	{
-		//numVertPixelsToDraw = totalPixH - dest->h;
-		vertSPanOfPix = destH;
+		
+		return;
 	}
 
-	if (totalPixW > destW)
+	//if (destX < 0 || destY < 0 || destX + width > destW || destY + height > destH)
+	//first lets deal with the X side off the left side of the screen/bmp
+	if (destX < 0)
 	{
-		numHorizPixelsToDraw = totalPixW - destW;
-		if (numHorizPixelsToDraw > destW)
-		{
-			numHorizPixelsToDraw = destW;
-		}
+		numHorizPixelsToDraw = (destX + width);//this should give me the number of visible pixels
+	}
+	//now lets look at if the pixesl will go off teh right side of screen/bmp
+	else if(destX+width > destW)
+	{
+		numHorizPixelsToDraw = (width - destX);
+	}
+
+	//now look at the Y diminsion
+	if (destY < 0)
+	{
+		vertSPanOfPix = (destY + height);//this should give me the number of visible pixels
+	}
+	//now lets look at if the pixesl will go off teh right side of screen/bmp
+	else if(destX+width > destW)
+	{
+		numHorizPixelsToDraw = (height - destY);
 	}
 }
 //---------------------------------------------------------------------------------------
-void PIXMAP::Blit(PIXMAP * dest, int x, int y)
+void PIXMAP::Blit(PIXMAP * dest, int _x, int _y)
 {
 	
 	int srcX = 0;
@@ -157,18 +165,20 @@ void PIXMAP::Blit(PIXMAP * dest, int x, int y)
 	//int numVertPixelsToDraw = h;
 
 
-	Clip(w, h, x, y, dest->w, dest->h, numHorizPixelsToDraw, vertSPanOfPix);
+	Clip(w, h, _x, _y, dest->w, dest->h, numHorizPixelsToDraw, vertSPanOfPix);
 
-	if (x < 0)
+	//part of this image will be off screen, part will be on screen
+	if (_x < 0 && _x+w > 0)
 	{
-		srcX = w - x;
-		x = 0;
+		//flip the neg start pixel location to pos
+		srcX = _x*=-1;
+		_x = 0;
 	}
 		
-	for (unsigned int uiV = y; uiV < vertSPanOfPix; ++uiV)
+	for (unsigned int uiV = _y; uiV < vertSPanOfPix; ++uiV)
 	{
 		// reset coordinate for each row
-		RGBA *startPixel = &dest->pixels[uiV * dest->w + x];
+		RGBA *startPixel = &dest->pixels[uiV * dest->w + _x];
 
 		std::memcpy(startPixel, &pixels[srcX], numHorizPixelsToDraw * sizeof(RGBA));
 		srcX += w;
@@ -272,36 +282,114 @@ void PIXMAP::Scale(unsigned int Width, unsigned int Height)
 //---------------------------------------------------------------------------------------
 void PIXMAP::DrawScaledCopy(PIXMAP *dest, int xPos, int yPos, unsigned int Width, unsigned int Height)
 {
-	if (xPos > dest->w || yPos > dest->h)
-		return;
-
 	int numHorizPixelsToDraw = w, vertSPanOfPix = h;
-	//Clip(w, h, xPos, yPos, dest->w, dest->h, numHorizPixelsToDraw, vertSPanOfPix);
 
-	double _stretch_factor_x = (static_cast<double>(Width) / static_cast<double>(w));
-	double _stretch_factor_y = (static_cast<double>(Height) / static_cast<double>(h));
+	//if (xPos > dest->w || yPos > dest->h)
+	//	return;
+
 	int startX = 0;
 	int startY = 0;
 	
+	Clip(w, h, xPos, yPos, dest->w, dest->h, numHorizPixelsToDraw, vertSPanOfPix);
 	if (xPos < 0)
 	{
 		if (xPos + Width < 0)
 			return;//way off screen
+		else if (xPos < 0 && xPos + Width > 0)
+		{
+			//flip the neg start pixel location to pos
+			startX = xPos *= -1;
+			xPos = 0;
+		}
+	}
 
-	//	startX = w - numHorizPixelsToDraw;
+	if (yPos < 0)
+	{
+		if (yPos + Height < 0)
+			return;//way off screen
+		else if (yPos < 0 && yPos + Height > 0)
+		{
+			//flip the neg start pixel location to pos
+			startY = yPos *= -1;
+			yPos = 0;
+		}
+	}
+
+	double _stretch_factor_x = (static_cast<double>(Width) / static_cast<double>(w));
+	double _stretch_factor_y = (static_cast<double>(Height) / static_cast<double>(h));
+	int newPixLoc = 0;
+	unsigned int destX;
+	unsigned int destY;
+	RGBA *curPixel;
+	for (int y = startY; y < vertSPanOfPix; y++) //Run across all Y pixels.
+	{
+		for (int x = startX; x < numHorizPixelsToDraw; x++) //Run across all X pixels.
+		{
+			for (int o_y = 0; o_y < _stretch_factor_y; ++o_y) //Draw _stretch_factor_y pixels for each Y pixel.
+			{
+				for (int o_x = 0; o_x < _stretch_factor_x; ++o_x) //Draw _stretch_factor_x pixels for each X pixel.
+				{
+					destX = xPos + ((_stretch_factor_x * x) + o_x);
+					destY = yPos + ((_stretch_factor_y * y) + o_y);
+
+					if (destX > dest->w || destY > dest->h || destX < 0 || destY < 0)
+						continue;
+
+					curPixel = &pixels[y * w + x];
+
+					newPixLoc = destY * dest->w + destX;
+					if (newPixLoc < dest->GetNumPixels()-1)
+						dest->pixels[newPixLoc] = *curPixel;
+					//std::memcpy(curPixel, &dest->pixels[destY * dest->w + destX], _stretch_factor_x * sizeof(RGBA));
+				}
+			}
+		}
+	}
+}
+void PIXMAP::DrawScaledCopyForScreenSaver(PIXMAP *dest, int xPos, int yPos, unsigned int Width, unsigned int Height)
+{
+	int numHorizPixelsToDraw = w, vertSPanOfPix = h;
+	
+	//if (xPos > dest->w || yPos > dest->h)
+	//	return;
+
+	int startX = 0;
+	int startY = 0;
+
+	Clip(w, h, xPos, yPos, dest->w, dest->h, numHorizPixelsToDraw, vertSPanOfPix);
+	if (xPos < 0)
+	{
+		if (xPos + Width < 0)
+			return;//way off screen
+		else if (xPos < 0 && xPos+Width > 0)
+		{
+			//flip the neg start pixel location to pos
+			startX = xPos*=-1;
+			xPos = 0;
+		}
 	}
 	
 	if (yPos < 0)
 	{
 		if (yPos + Height < 0)
 			return;//way off screen
-
-	//	startY = h - vertSPanOfPix;
+		else if (yPos < 0 && yPos+Height > 0)
+		{
+			//flip the neg start pixel location to pos
+			startY = yPos*=-1;
+			yPos = 0;
+		}
 	}
 
+	double _stretch_factor_x = (static_cast<double>(Width) / static_cast<double>(numHorizPixelsToDraw));
+	double _stretch_factor_y = (static_cast<double>(Height) / static_cast<double>(vertSPanOfPix));
+	//double _stretch_factor_x = (static_cast<double>(Width) / static_cast<double>(w));
+	//double _stretch_factor_y = (static_cast<double>(Height) / static_cast<double>(h));
 	int newPixLoc = 0;
-	unsigned int destX ;
+	unsigned int destX;
 	unsigned int destY;
+	RGBA *curPixel;
+
 	for (int y = startY; y < vertSPanOfPix; y++) //Run across all Y pixels.
 		for (int x = startX; x < numHorizPixelsToDraw; x++) //Run across all X pixels.
 			for (int o_y = 0; o_y < _stretch_factor_y; ++o_y) //Draw _stretch_factor_y pixels for each Y pixel.
@@ -311,13 +399,14 @@ void PIXMAP::DrawScaledCopy(PIXMAP *dest, int xPos, int yPos, unsigned int Width
 					//unsigned int destY =  yPos + (_stretch_factor_y * y);
 					destX = xPos + ((_stretch_factor_x * x) + o_x);
 					destY = yPos + ((_stretch_factor_y * y) + o_y);
-					RGBA *curPixel = &pixels[y * w + x];
 					
 					if(destX > dest->w || destY > dest->h || destX < 0 || destY < 0)
 						continue;
-
+					
+					curPixel = &pixels[y * w + x];
+					
 					newPixLoc = destY * dest->w + destX;
-					if(newPixLoc < dest->GetNumPixels())
+					if(newPixLoc < dest->GetNumPixels()-1)
 						dest->pixels[newPixLoc] = *curPixel;
 						//std::memcpy(curPixel, &dest->pixels[destY * dest->w + destX], _stretch_factor_x * sizeof(RGBA));
 				}
