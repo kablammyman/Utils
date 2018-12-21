@@ -61,13 +61,15 @@ public:
 	static  size_t GetCurNodeNumFolders();
 	static  list<string> GetCurNodeFileList();
 	//static  string FileNodeHandleToString(FileNodeHandle dirNode);
-	static  int GetNumFilesInTree(string &path);
+	static  int GetNumFilesInTree();
 	//static  int getNumFilesInTree(FileNodeHandle dirNode);
 	//static  void ToString(FileNodeHandle dirNode);
 
-	static  int GetNumDirsInTree(string &path);
+	static  int GetNumDirsInTree();
 
-	static  void DumpTreeToVector(string &path, vector<string> &ret);
+	static  void DumpTreeToVector(vector<string> &ret);
+
+	static int GetRandomInt(int min, int max);
 
 	static  int Test();
 		

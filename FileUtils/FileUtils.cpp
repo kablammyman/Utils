@@ -8,7 +8,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #endif
-
+#include <random>
 #include <cstring>
 #include <fstream>
 #include <vector>
@@ -19,12 +19,14 @@
 
 static DirectoryTree dirTree;//can't use it as a member variable due to the static conflict
 
-unsigned int GetRandomNum(int min, int max)
+//---------------------------------------------------------------------------------------
+int FileUtils::GetRandomInt(int min, int max)
 {
-	unsigned int diff = ((max - min) + 1);
-	return ((diff * rand()) / RAND_MAX) + min;
+	std::random_device rd;
+    std::mt19937 mt(rd());
+    std::uniform_int_distribution<int> dist(min, max);
+	return dist(mt);
 }
-
 //--------------------------------------------------------------------------------------------------
 bool FileUtils::DoesPathExist(string &path)
 {
@@ -396,7 +398,7 @@ string FileUtils::GetRandomDirQuick(string &path)
 		{
 			int nextDir = 0;
 			if (curDirList.size() - 1 > 1)
-				nextDir = GetRandomNum(0, (int)curDirList.size() - 1);
+				nextDir = GetRandomInt(0, (int)curDirList.size() - 1);
 			string newDir = curDirList[nextDir];
 
 			curDir = newDir;//no directory is off limits
@@ -414,7 +416,7 @@ string FileUtils::GetRandomFileQuick(string &path)
 	if (allFiles.size() > 0)
 	{
 		//used to crash here
-		int num = GetRandomNum(0, (int)(allFiles.size() - 1));
+		int num = GetRandomInt(0, (int)(allFiles.size() - 1));
 		return allFiles[num];
 	}
 	return ""; //this dir was empty, return empty string
@@ -455,7 +457,7 @@ DirNode* FileUtils::getDirTree(string &path)
 	dirNode
 }*/
 //--------------------------------------------------------------------------------------------------
-int FileUtils::GetNumFilesInTree(string &path)
+int FileUtils::GetNumFilesInTree()
 {
 	return  dirTree.GetNumFilesInTree();
 }
@@ -511,13 +513,13 @@ void FileUtils::ClearDirTree()
 	dirTree.ClearAll();
 }
 //--------------------------------------------------------------------------------------------------
-int FileUtils::GetNumDirsInTree(string &path)
+int FileUtils::GetNumDirsInTree()
 {
 	return dirTree.GetNumDirsInTree();
 }
 
 //--------------------------------------------------------------------------------------------------
-void FileUtils::DumpTreeToVector(string &path, vector<string> &ret)
+void FileUtils::DumpTreeToVector(vector<string> &ret)
 {
 	dirTree.DumpTreeToVector(ret);
 }
