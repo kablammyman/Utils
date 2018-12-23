@@ -189,6 +189,12 @@ int SQLiteUtils::callback(void *data, int argc, char **argv, char **azColName)
 //--------------------------------------------------------------------------------------------------
 bool SQLiteUtils::executeSQL(string command, string &output)
 {
+	if (db == nullptr)
+	{
+		output = "the database hasnt been opened!";
+		lastError = "the database hasnt been opened!";
+		return false;
+	}
 	char *error;
 	returnData = "";
 	returnCode = sqlite3_exec(db, command.c_str(), callback, 0, &error);
