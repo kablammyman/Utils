@@ -31,12 +31,12 @@ public:
 	bool executeSQL(std::string command, std::string &output);
 
 	bool createTable(std::string name, std::string query);
-	std::vector<std::string> displayTable();
+	//std::vector<std::string> displayTable();
 	
 	std::vector<std::string> viewData() ;
 	std::vector<std::string> query(char* query);
 	std::vector<std::vector<std::string>> queryV2(char* query);
-	std::vector<std::string> getAllTables();
+	//std::vector<std::string> getAllTables();
 	bool insertData(std::string query); 
 	void setTableName(std::string name);
 	int GetLatestRowID();
