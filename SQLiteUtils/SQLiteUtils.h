@@ -16,7 +16,7 @@ class SQLiteUtils
 	static int callback(void *data, int argc, char **argv, char **azColName);
 	static std::string returnData;
 	static bool gettingData;
-	std::string dataGrabber(std::string &word, std::size_t &startPos);
+	std::string DataGrabber(std::string &word, std::size_t &startPos);
 	
 public:
 	typedef std::pair <std::string, std::string> dbDataPair;
@@ -53,9 +53,11 @@ public:
 	bool doDBQuerey(std::vector<std::string> selectData, std::vector<dbDataPair> whereData, std::string &output);
 	bool UpdateStringEntry(std::vector<dbDataPair> data, dbDataPair WhereClause, std::string &output);
 	bool UpdateIntEntry(std::vector<dbDataPair> data, dbDataPair WhereClause, std::string &output);
-	void getDataPairFromOutput(std::string &inputData, std::string colName1, std::string colName2, std::vector<dbDataPair> &returnData);
-	void getAllValuesFromCol(std::string &inputData, std::string colName, std::vector<std::string> &returnData);
+	void GetDataPairFromOutput(std::string &inputData, std::string colName1, std::string colName2, std::vector<dbDataPair> &returnData);
+	void GetAllValuesFromCol(std::string &inputData, std::string colName, std::vector<std::string> &returnData);
+	void GetAllColsInTable(std::string tableName, std::vector<std::string> &retData);
 	int GetLatestID();
+	void GetAllTablesInDB(std::vector<std::string> &retData);
 	void SplitDataIntoResults(std::vector<std::string> &returnData, std::string allData,std::string firstField, bool removeNewline = true);
 private:
 	std::string GetUpdateQuereyString(std::vector<dbDataPair> data, dbDataPair WhereClause);

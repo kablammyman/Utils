@@ -229,16 +229,6 @@ bool SQLiteUtils::insertData(string query)
 	return executeSQL(sqlInsert,output);
 }
 //--------------------------------------------------------------------------------------------------
-vector<string> SQLiteUtils::getAllTables() 
-{
-	string getTables = "SELECT name FROM sqlite_master WHERE type='table'ORDER BY name;";
-	//SELECT name FROM my_db.sqlite_master WHERE type='table';
-	//executeSQL(getTables);
-	//[x][y] x = tabel name [y] is...??
-	
-	return query(const_cast<char*>(getTables.c_str()));
-}
-//--------------------------------------------------------------------------------------------------
 vector<string> SQLiteUtils::viewData() 
 {
 	string getTables = "SELECT value FROM " + curTableName;
@@ -550,7 +540,7 @@ bool SQLiteUtils::UpdateIntEntry(vector<dbDataPair> data, dbDataPair WhereClause
 	
 	return executeSQL(querey, output);
 }
-string SQLiteUtils::dataGrabber(string &word, size_t &curPos)
+string SQLiteUtils::DataGrabber(string &word, size_t &curPos)
 {
 	string curWord;
 	curPos = word.find('|', curPos);
@@ -561,7 +551,7 @@ string SQLiteUtils::dataGrabber(string &word, size_t &curPos)
 	return curWord;
 }
 
-void SQLiteUtils::getAllValuesFromCol(string &inputData, string colName, vector<string> &retData)
+void SQLiteUtils::GetAllValuesFromCol(string &inputData, string colName, vector<string> &retData)
 {
 	bool done = false;
 	string curWord;
@@ -570,14 +560,14 @@ void SQLiteUtils::getAllValuesFromCol(string &inputData, string colName, vector<
 	{
 		c = inputData.find(colName, c);
 		if (c != string::npos)
-			retData.push_back(dataGrabber(inputData, c));
+			retData.push_back(DataGrabber(inputData, c));
 
 		else
 			done = true;
 	}
 }
 
-void SQLiteUtils::getDataPairFromOutput(string &inputData, string colName1, string colName2, vector<dbDataPair> &retData)
+void SQLiteUtils::GetDataPairFromOutput(string &inputData, string colName1, string colName2, vector<dbDataPair> &retData)
 {
 	bool done = false;
 	string firstWord;
@@ -586,11 +576,11 @@ void SQLiteUtils::getDataPairFromOutput(string &inputData, string colName1, stri
 	{
 		c = inputData.find(colName1, c);
 		if (c != string::npos)
-			firstWord = dataGrabber(inputData, c);
+			firstWord = DataGrabber(inputData, c);
 
 		c = inputData.find(colName2, c);
 		if (c != string::npos)
-			retData.push_back(make_pair(firstWord, dataGrabber(inputData, c)));
+			retData.push_back(make_pair(firstWord, DataGrabber(inputData, c)));
 		else
 			done = true;
 
@@ -640,4 +630,21 @@ void SQLiteUtils::SplitDataIntoResults(std::vector<std::string> &retData, string
 		retData.push_back(curData);
 		i=end;
 	}
+}
+
+void SQLiteUtils::GetAllTablesInDB(std::vector<std::string> &retData)
+{
+	string output;
+	//string getTables = "SELECT name FROM sqlite_master WHERE type='table'ORDER BY name;";
+	executeSQL("SELECT name FROM sqlite_master WHERE type = \"table\"", output);
+	GetAllValuesFromCol(output, "table", retData);
+}
+
+void SQLiteUtils::GetAllColsInTable(string tableName,std::vector<std::string> &retData)
+{
+	string output;
+	executeSQL("PRAGMA table_info(\""+tableName+"\");", output);
+	//vector<string> cols = { "cid","name","type","notnull","dflt_value","pk" };
+	GetAllValuesFromCol(output, "name", retData);
+
 }
