@@ -153,6 +153,8 @@ public:
 	//specify your fields with a vector, and turn it into a csv, good for easily making long SELECT quereies
 	
 	static string GetCSVFromVector(vector<string> &fields);
+	void GetAllTablesInDB(std::vector<std::string> &retData);
+	void GetAllColsInTable(string tableName, std::vector<std::string> &retData);
 
 	int GetLatestRowID()
 	{

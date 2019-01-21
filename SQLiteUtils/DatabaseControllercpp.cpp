@@ -561,6 +561,16 @@ void DatabaseController::RemoveTableNameFromOutput(string &inputData)
 		inputData.pop_back();
 }
 
+void DatabaseController::GetAllTablesInDB(std::vector<std::string> &retData)
+{
+	db->GetAllTablesInDB(retData);
+}
+
+void DatabaseController::GetAllColsInTable(string tableName,std::vector<std::string> &retData)
+{
+	db->GetAllColsInTable(tableName, retData);
+}
+
 ///////////////////////////////////////////////////////////test methods
 void DatabaseController::createTable(string tableName, string fields)
 {

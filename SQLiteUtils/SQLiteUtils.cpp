@@ -637,7 +637,7 @@ void SQLiteUtils::GetAllTablesInDB(std::vector<std::string> &retData)
 	string output;
 	//string getTables = "SELECT name FROM sqlite_master WHERE type='table'ORDER BY name;";
 	executeSQL("SELECT name FROM sqlite_master WHERE type = \"table\"", output);
-	GetAllValuesFromCol(output, "table", retData);
+	GetAllValuesFromCol(output, "name", retData);
 }
 
 void SQLiteUtils::GetAllColsInTable(string tableName,std::vector<std::string> &retData)
