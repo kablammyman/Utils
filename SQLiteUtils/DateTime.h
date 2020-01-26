@@ -24,8 +24,23 @@ public:
 	}
 	void ParseDateString(std::string dateString)
 	{
-		
-		std::vector<std::string> date = StringUtils::Tokenize(dateString," ");
+		std::vector<std::string> date;
+		bool slashDate = false;
+		//this is a date thats demited by slashes...not sure how to tell the diff between formats
+		if (dateString.find("/") != std::string::npos)
+		{
+			date = StringUtils::Tokenize(dateString, "/");
+			slashDate = true;
+		}
+		else if (dateString.find("\\") != std::string::npos)
+		{
+			date = StringUtils::Tokenize(dateString, "\\");
+			slashDate = true;
+		}
+		else
+		{
+			date = StringUtils::Tokenize(dateString, " ");
+		}
 		if (date.size() < 3) //if(dateString == "0")
 		{
 			year = 1900;
@@ -34,9 +49,18 @@ public:
 		}
 		else
 		{
-			year = atoi(date[0].c_str());
-			month = atoi(date[1].c_str());
-			day = atoi(date[2].c_str());
+			if (slashDate)
+			{
+				year = atoi(date[2].c_str());
+				month = atoi(date[0].c_str());
+				day = atoi(date[1].c_str());
+			}
+			else
+			{
+				year = atoi(date[0].c_str());
+				month = atoi(date[1].c_str());
+				day = atoi(date[2].c_str());
+			}
 		}
 	}
 	std::string ToString()
@@ -69,6 +93,32 @@ public:
 		month =  1 + buf.tm_mon;
 		day = buf.tm_mday;
 	}
+	
+	int TimeDiff(DateTime & otherDate)
+	{
+		if (year == otherDate.year && month == otherDate.month)
+		{
+			return abs(day - otherDate.day);
+		}
+		else
+		{
+			int yr = abs(year - otherDate.year);
+			int mon = abs(month - otherDate.month);
+			int days = abs(day - otherDate.day);
+			
+			//this is innaccurate, since this doesnt account for leap years, or how many days are in each month
+			//for now, each month has 30 days, and eyach year has 365 days
+			return (yr * 365) + (mon * 30) + days;
+		}
+	}
+
+	//convert a date string that looks like mon/day/year to my format
+	static std::string ConvertSlashDate(std::string slashDate)
+	{
+		std::vector<std::string> date = StringUtils::Tokenize(slashDate,"/");
+		return date[2] + " " + date[0] + " " + date[1];
+	}
+
 	static std::string Now()
 	{
 		DateTime temp;
@@ -76,6 +126,7 @@ public:
 
 		return temp.ToString();
 	}
+
 	DateTime operator=(const DateTime& d)
 	{
 		this->year = d.year;
