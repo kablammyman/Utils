@@ -28,7 +28,7 @@ public:
 	void closeSQLiteDB(std::string &output);
 	bool IsOpen();
 	std::string getLastError();
-	bool executeSQL(std::string command, std::string &output);
+	bool ExecuteSQL(std::string command, std::string &output);
 
 	bool createTable(std::string name, std::string query);
 	//std::vector<std::string> displayTable();
@@ -43,14 +43,14 @@ public:
 	std::string GetDataFromID(int id, std::string table = "");
 	std::string GetDataFromSingleLineOutput(std::string colName);
 
-	bool insertNewDataEntry(dbDataPair data, std::string &output);
-	bool insertNewDataEntry( std::vector<dbDataPair> data, std::string &output);
-	bool doDBQuerey(std::string data, std::string &output);
-	bool doDBQuerey(std::string data, dbDataPair fromWhere, std::string &output);
-	bool doDBQuerey(std::vector<std::string> data, std::string &output);
-	bool doDBQuerey(std::vector<dbDataPair> data, std::string &output);
-	bool doDBQuerey(std::string selectData, std::vector<dbDataPair> whereData, std::string &output);
-	bool doDBQuerey(std::vector<std::string> selectData, std::vector<dbDataPair> whereData, std::string &output);
+	bool InsertNewDataEntry(dbDataPair data, std::string &output);
+	bool InsertNewDataEntry( std::vector<dbDataPair> data, std::string &output);
+	bool DoDBQuerey(std::string data, std::string &output);
+	bool DoDBQuerey(std::string data, dbDataPair fromWhere, std::string &output);
+	bool DoDBQuerey(std::vector<std::string> data, std::string &output);
+	bool DoDBQuerey(std::vector<dbDataPair> data, std::string &output);
+	bool DoDBQuerey(std::string selectData, std::vector<dbDataPair> whereData, std::string &output);
+	bool DoDBQuerey(std::vector<std::string> selectData, std::vector<dbDataPair> whereData, std::string &output);
 	bool UpdateStringEntry(std::vector<dbDataPair> data, dbDataPair WhereClause, std::string &output);
 	bool UpdateIntEntry(std::vector<dbDataPair> data, dbDataPair WhereClause, std::string &output);
 	void GetDataPairFromOutput(std::string &inputData, std::string colName1, std::string colName2, std::vector<dbDataPair> &returnData);

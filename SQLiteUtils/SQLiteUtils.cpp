@@ -54,16 +54,16 @@ static void testFunc2(sqlite3_context *context, int argc, sqlite3_value **argv)
 	//	sqlite3_result_null(context);
 
 	//success!!
-	//dbCtrlr.executeSQL("SELECT testFunc(id,name) FROM BodyPart where id = 1;", output);
+	//dbCtrlr.ExecuteSQL("SELECT testFunc(id,name) FROM BodyPart where id = 1;", output);
 	//success!! it will only return the data that has less than 9 chars...looks like: testFunc2(id,name) | 1~~~Head
-	//dbCtrlr.executeSQL("SELECT testFunc2(id,name) FROM BodyPart where testFunc2(id,name) NOT 0;", output);
+	//dbCtrlr.ExecuteSQL("SELECT testFunc2(id,name) FROM BodyPart where testFunc2(id,name) NOT 0;", output);
 	//can i only reutnr special cols now? YES
-	//dbCtrlr.executeSQL("SELECT name FROM Gallery where testFunc2(id,name) NOT 0;", output);
+	//dbCtrlr.ExecuteSQL("SELECT name FROM Gallery where testFunc2(id,name) NOT 0;", output);
 	//what happens with a large table? seems super fast!
-	//dbCtrlr.executeSQL("SELECT galleryName FROM Gallery where testFunc2(id,galleryName) NOT 0;", output);
+	//dbCtrlr.ExecuteSQL("SELECT galleryName FROM Gallery where testFunc2(id,galleryName) NOT 0;", output);
 
 	//lets add in our own data instead of using query data for params
-	//dbCtrlr.executeSQL("SELECT galleryName FROM Gallery where testFunc2('yup',id) NOT 0;", output);
+	//dbCtrlr.ExecuteSQL("SELECT galleryName FROM Gallery where testFunc2('yup',id) NOT 0;", output);
 }
 */
 static void hammingDistance(sqlite3_context *context,sqlite3_value **argv)
@@ -187,7 +187,7 @@ int SQLiteUtils::callback(void *data, int argc, char **argv, char **azColName)
 	return 0;
 }
 //--------------------------------------------------------------------------------------------------
-bool SQLiteUtils::executeSQL(string command, string &output)
+bool SQLiteUtils::ExecuteSQL(string command, string &output)
 {
 	if (db == nullptr)
 	{
@@ -218,7 +218,7 @@ bool SQLiteUtils::createTable(string name, string query)
 	string output;
 	//string sqlCreateTable = "CREATE TABLE MyTable (id INTEGER PRIMARY KEY, value STRING);";
 	string sqlCreateTable = "CREATE TABLE "+ curTableName + "(" +query+");";
-	return executeSQL(sqlCreateTable,output);
+	return ExecuteSQL(sqlCreateTable,output);
 }
 //--------------------------------------------------------------------------------------------------
 bool SQLiteUtils::insertData(string query) 
@@ -226,14 +226,14 @@ bool SQLiteUtils::insertData(string query)
 	string sqlInsert = "INSERT INTO " + curTableName +" VALUES(" + query + ");";
 	string output;
 	//string sqlInsert = "INSERT INTO MyTable VALUES(0, 'A Value');";
-	return executeSQL(sqlInsert,output);
+	return ExecuteSQL(sqlInsert,output);
 }
 //--------------------------------------------------------------------------------------------------
 vector<string> SQLiteUtils::viewData() 
 {
 	string getTables = "SELECT value FROM " + curTableName;
 	//SELECT name FROM my_db.sqlite_master WHERE type='table';
-	//executeSQL(getTables);
+	//ExecuteSQL(getTables);
 	//so, it seems every colom in the tbale is returned as a vector
 	//ex if my table has time, date, name, addy -> those 4 will be returned...this is one record
 	//then each record is put into another vector
@@ -323,7 +323,7 @@ int SQLiteUtils::GetLatestRowID()
 {
 	string output;
 	//get the id that was just created from the insert
-	executeSQL("SELECT last_insert_rowid()", output);
+	ExecuteSQL("SELECT last_insert_rowid()", output);
 	//othe ouput looks like: last_insert_rowid()|6
 
 	size_t found = output.find_last_of("|");
@@ -340,7 +340,7 @@ string SQLiteUtils::GetDataFromID(int id, string table)
 	string querey = "SELECT * FROM " + table;
 	querey += " WHERE ID = ";
 	querey += to_string(id);
-	executeSQL(querey, output);
+	ExecuteSQL(querey, output);
 	return output;
 }
 
@@ -357,19 +357,19 @@ string SQLiteUtils::GetDataFromSingleLineOutput(string colName)
 	return colName;
 }
 
-bool SQLiteUtils::doDBQuerey(string data, string &output)
+bool SQLiteUtils::DoDBQuerey(string data, string &output)
 {
 	string querey = ("SELECT " + data + " FROM " + curTableName + ";");
-	return executeSQL(querey, output);
+	return ExecuteSQL(querey, output);
 }
 
-bool SQLiteUtils::doDBQuerey(string data, dbDataPair fromWhere, string &output)
+bool SQLiteUtils::DoDBQuerey(string data, dbDataPair fromWhere, string &output)
 {
 	string querey = ("SELECT " + data + " FROM " + curTableName + " WHERE " + fromWhere.first + " = \"" + fromWhere.second + "\";");
-	return executeSQL(querey, output);
+	return ExecuteSQL(querey, output);
 }
 
-bool SQLiteUtils::doDBQuerey( vector<string> data, string &output)
+bool SQLiteUtils::DoDBQuerey( vector<string> data, string &output)
 {
 	string querey = "SELECT ";
 
@@ -380,10 +380,10 @@ bool SQLiteUtils::doDBQuerey( vector<string> data, string &output)
 			querey += ",";
 	}
 	querey += (" FROM " + curTableName + ";");
-	return executeSQL(querey, output);
+	return ExecuteSQL(querey, output);
 }
 //used for quereies like: SELECT path,CategoryID,WebsiteID FROM Gallery WHERE CategoryID = "3" AND WebsiteID = "16";
-bool SQLiteUtils::doDBQuerey( vector<dbDataPair> data, string &output)
+bool SQLiteUtils::DoDBQuerey( vector<dbDataPair> data, string &output)
 {
 	string querey = "SELECT ";
 	string whereString = " WHERE ";
@@ -413,11 +413,11 @@ bool SQLiteUtils::doDBQuerey( vector<dbDataPair> data, string &output)
 	}
 	whereString += ";";
 
-	return executeSQL(querey + fromString + whereString, output);
+	return ExecuteSQL(querey + fromString + whereString, output);
 }
 
 //used for quereies like: SELECT path FROM Gallery WHERE CategoryID = "3" AND WebsiteID = "16";
-bool SQLiteUtils::doDBQuerey(string selectData, vector<dbDataPair> whereData, string &output)
+bool SQLiteUtils::DoDBQuerey(string selectData, vector<dbDataPair> whereData, string &output)
 {
 	string querey = "SELECT ";
 	string whereString = " WHERE ";
@@ -434,11 +434,11 @@ bool SQLiteUtils::doDBQuerey(string selectData, vector<dbDataPair> whereData, st
 	}
 	whereString += ";";
 
-	return executeSQL(querey + fromString + whereString, output);
+	return ExecuteSQL(querey + fromString + whereString, output);
 }
 
 //used for quereies like: SELECT ID,path FROM Gallery WHERE CategoryID = "3" AND WebsiteID = "16";
-bool SQLiteUtils::doDBQuerey(vector<string> selectData, vector<dbDataPair> whereData, string &output)
+bool SQLiteUtils::DoDBQuerey(vector<string> selectData, vector<dbDataPair> whereData, string &output)
 {
 	string querey = "SELECT ";
 	string whereString = " WHERE ";
@@ -466,21 +466,21 @@ bool SQLiteUtils::doDBQuerey(vector<string> selectData, vector<dbDataPair> where
 	}
 	whereString += ";";
 
-	return executeSQL(querey + fromString + whereString, output);
+	return ExecuteSQL(querey + fromString + whereString, output);
 }
 
 //returns true when successful
-bool SQLiteUtils::insertNewDataEntry(dbDataPair data, string &output)
+bool SQLiteUtils::InsertNewDataEntry(dbDataPair data, string &output)
 {
 	string querey = ("INSERT INTO " + curTableName + " (" + data.first + ")");
 	string values = "VALUES ( \"" + data.second + "\");";
 
-	return executeSQL(querey + values, output);
+	return ExecuteSQL(querey + values, output);
 
 }
 
 //returns true when successful
-bool SQLiteUtils::insertNewDataEntry(vector<dbDataPair> data, string &output)
+bool SQLiteUtils::InsertNewDataEntry(vector<dbDataPair> data, string &output)
 {
 	string querey = ("INSERT INTO " + curTableName + " (");
 	string values = "VALUES ( ";
@@ -498,7 +498,7 @@ bool SQLiteUtils::insertNewDataEntry(vector<dbDataPair> data, string &output)
 	querey += ")";
 	values += ");";
 
-	return executeSQL(querey + values, output);
+	return ExecuteSQL(querey + values, output);
 
 }
 
@@ -526,7 +526,7 @@ string SQLiteUtils::GetUpdateQuereyString(vector<dbDataPair> data, dbDataPair Wh
 bool SQLiteUtils::UpdateStringEntry(vector<dbDataPair> data, dbDataPair WhereClause, string &output)
 {
 	string querey = GetUpdateQuereyString( data,  WhereClause);
-	return executeSQL(querey, output);
+	return ExecuteSQL(querey, output);
 }
 
 bool SQLiteUtils::UpdateIntEntry(vector<dbDataPair> data, dbDataPair WhereClause, string &output)
@@ -538,7 +538,7 @@ bool SQLiteUtils::UpdateIntEntry(vector<dbDataPair> data, dbDataPair WhereClause
 		if (querey[i] == '\"')
 			querey[i] = ' ';
 	
-	return executeSQL(querey, output);
+	return ExecuteSQL(querey, output);
 }
 string SQLiteUtils::DataGrabber(string &word, size_t &curPos)
 {
@@ -591,7 +591,7 @@ int SQLiteUtils::GetLatestID()
 {
 	string output;
 	//get the id that was just created from the insert
-	executeSQL("SELECT last_insert_rowid()", output);
+	ExecuteSQL("SELECT last_insert_rowid()", output);
 	//othe ouput looks like: last_insert_rowid()|6
 
 	size_t found = output.find_last_of("|");
@@ -636,14 +636,14 @@ void SQLiteUtils::GetAllTablesInDB(std::vector<std::string> &retData)
 {
 	string output;
 	//string getTables = "SELECT name FROM sqlite_master WHERE type='table'ORDER BY name;";
-	executeSQL("SELECT name FROM sqlite_master WHERE type = \"table\"", output);
+	ExecuteSQL("SELECT name FROM sqlite_master WHERE type = \"table\"", output);
 	GetAllValuesFromCol(output, "name", retData);
 }
 
 void SQLiteUtils::GetAllColsInTable(string tableName,std::vector<std::string> &retData)
 {
 	string output;
-	executeSQL("PRAGMA table_info(\""+tableName+"\");", output);
+	ExecuteSQL("PRAGMA table_info(\""+tableName+"\");", output);
 	//vector<string> cols = { "cid","name","type","notnull","dflt_value","pk" };
 	GetAllValuesFromCol(output, "name", retData);
 

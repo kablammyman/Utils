@@ -47,7 +47,7 @@ bool DatabaseController::IsDBOpen()
 
 bool DatabaseController::ExecuteSQL(string command, string &output)
 {
-	return db->executeSQL(command, output);
+	return db->ExecuteSQL(command, output);
 	//curDBWindowData.clear();
 
 	//sendDataToEditWindow(g_hMDIDBView, output);
@@ -77,7 +77,7 @@ bool DatabaseController::CreateNewDB(string newDBName, string createCommand)
 
 	//create the table, if we have a create command
 	if(createCommand != "")
-		return db->executeSQL(createCommand, output);
+		return db->ExecuteSQL(createCommand, output);
 
 	return true;
 }
@@ -91,7 +91,7 @@ string DatabaseController::GetTable(string tableName)
 {
 	string returnString;
 	string command = ("SELECT * FROM " + tableName);
-	if (!db->executeSQL(command, returnString))
+	if (!db->ExecuteSQL(command, returnString))
 		return "";
 
 	return returnString;
@@ -99,19 +99,19 @@ string DatabaseController::GetTable(string tableName)
 
 bool DatabaseController::DoDBQuerey(string querey, string &output)
 {
-	return db->executeSQL(querey, output);
+	return db->ExecuteSQL(querey, output);
 }
 
 bool DatabaseController::DoDBQuerey(string table, string data, string &output)
 {
 	string querey = ("SELECT " + data + " FROM " + table + ";");
-	return db->executeSQL(querey, output);
+	return db->ExecuteSQL(querey, output);
 }
 
 bool DatabaseController::DoDBQuerey(string table, string data, dbDataPair fromWhere, string &output)
 {
 	string querey = ("SELECT " + data + " FROM " + table + " WHERE " + fromWhere.first + " = \"" + fromWhere.second + "\";");
-	return db->executeSQL(querey, output);
+	return db->ExecuteSQL(querey, output);
 }
 
 bool DatabaseController::DoDBQuerey(string table, vector<string> data, string &output)
@@ -125,7 +125,7 @@ bool DatabaseController::DoDBQuerey(string table, vector<string> data, string &o
 			querey += ",";
 	}
 	querey += (" FROM " + table + ";");
-	return db->executeSQL(querey, output);
+	return db->ExecuteSQL(querey, output);
 }
 //used for quereies like: SELECT path,CategoryID,WebsiteID FROM Gallery WHERE CategoryID = "3" AND WebsiteID = "16";
 bool DatabaseController::DoDBQuerey(string table, vector<dbDataPair> data, string &output)
@@ -158,7 +158,7 @@ bool DatabaseController::DoDBQuerey(string table, vector<dbDataPair> data, strin
 	}
 	whereString += ";";
 
-	return db->executeSQL(querey+ fromString+ whereString, output);
+	return db->ExecuteSQL(querey+ fromString+ whereString, output);
 }
 
 //used for quereies like: SELECT path FROM Gallery WHERE CategoryID = "3" AND WebsiteID = "16";
@@ -179,7 +179,7 @@ bool DatabaseController::DoDBQuerey(string table, string selectData, vector<dbDa
 	}
 	whereString += ";";
 
-	return db->executeSQL(querey + fromString + whereString, output);
+	return db->ExecuteSQL(querey + fromString + whereString, output);
 }
 
 bool DatabaseController::DoDBQuerey(string table, vector<string> selectData, dbDataPair whereData, string &output)
@@ -203,7 +203,7 @@ bool DatabaseController::DoDBQuerey(string table, vector<string> selectData, dbD
 	whereString += (whereData.first + " = \"" + whereData.second + "\"");
 	whereString += ";";
 
-	return db->executeSQL(querey + fromString + whereString, output);
+	return db->ExecuteSQL(querey + fromString + whereString, output);
 }
 
 bool DatabaseController::DoDBQuerey(string table, vector<string> selectData, string whereString, string &output)
@@ -225,7 +225,7 @@ bool DatabaseController::DoDBQuerey(string table, vector<string> selectData, str
 	
 	whereString += ";";
 
-	return db->executeSQL(querey + fromString + whereString, output);
+	return db->ExecuteSQL(querey + fromString + whereString, output);
 }
 
 
@@ -257,7 +257,7 @@ bool DatabaseController::DoDBQuerey(string table, vector<string> selectData, vec
 	}
 	whereString += ";";
 
-	return db->executeSQL(querey + fromString + whereString, output);
+	return db->ExecuteSQL(querey + fromString + whereString, output);
 }
 
 //returns true when successful
@@ -266,7 +266,7 @@ bool DatabaseController::InsertNewDataEntry(string table, dbDataPair data, strin
 	string querey = ("INSERT INTO " + table + " (" + data.first + ")");
 	string values = "VALUES ( \""+ data.second +  "\");";
 
-	return db->executeSQL(querey + values, output);
+	return db->ExecuteSQL(querey + values, output);
 
 }
 
@@ -289,7 +289,7 @@ bool DatabaseController::InsertNewDataEntry(string table, vector<dbDataPair> dat
 	querey += ")";
 	values += ");";
 
-	return db->executeSQL(querey + values, output);
+	return db->ExecuteSQL(querey + values, output);
 
 }
 bool DatabaseController::UpdateEntry(string table, dbDataPair data, dbDataPair WhereClause, string &output)
@@ -299,7 +299,7 @@ bool DatabaseController::UpdateEntry(string table, dbDataPair data, dbDataPair W
 
 	querey += (data.first + "= \""+ data.second +"\"");
 
-	return db->executeSQL(querey + whereClause, output);
+	return db->ExecuteSQL(querey + whereClause, output);
 }
 
 bool DatabaseController::UpdateEntry(string table, vector<dbDataPair> data, dbDataPair WhereClause, string &output)
@@ -318,7 +318,7 @@ bool DatabaseController::UpdateEntry(string table, vector<dbDataPair> data, dbDa
 		}
 	}
 
-	return db->executeSQL(querey + whereClause, output);
+	return db->ExecuteSQL(querey + whereClause, output);
 }
 void DatabaseController::ParseDBOutput(string &inputData, int numFields, vector<vector<string>> &returnData)
 {
