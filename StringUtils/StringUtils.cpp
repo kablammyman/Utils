@@ -392,3 +392,199 @@ std::string StringUtils::FindAndReplace(std::string orig, std::string findToken,
 	else
 		return orig;
 }
+
+void StringUtils::SanitizeJsonString(std::string& value)
+{
+	std::string ret = "";
+	//std::string correct = "lineone\\nline2";
+	for (size_t i = 0; i < value.size(); i++)
+	{
+		if (value[i] == '\n')
+		{
+			ret += "\\n";
+		}
+		else if (value[i] == '\r')
+		{
+			ret += "\\r";
+		}
+		else if (value[i] == '"')
+		{
+			ret += '\'';
+		}
+		else if (value[i] == '\\')
+		{
+			ret += "\\\\";
+		}
+		else
+			ret += value[i];
+
+	}
+	value = ret;
+}
+
+void StringUtils::DesanitizeJsonString(std::string& value)
+{
+	std::string ret = "";
+	size_t size = value.size();
+	size_t  i = 0;
+	while (i < size)
+	{
+		if (i < size - 2)
+		{
+			if (value[i] == '\\')
+			{
+				if (value[i + 1] == 'n')
+				{
+					ret += '\n';
+					i += 2;
+					continue;
+				}
+				else if (value[i + 1] == 'r')
+				{
+					ret += '\r';
+					i += 2;
+					continue;
+				}
+				else if (value[i + 1] == '"')
+				{
+					ret += '\'';
+					i += 2;
+					continue;
+				}
+			}
+		}
+		else if (i < size - 3)
+		{
+			if (value[i] == '\\' && value[i + 1] == '\\' && value[i + 2] == '\\')
+			{
+				ret += '\\';
+				ret += '\\';
+				i += 3;
+				continue;
+			}
+		}
+
+
+		ret += value[i];
+		i++;
+	}
+	value = ret;
+}
+std::string StringUtils::CreateJsonEntry(std::string name, std::string value, bool noQuotes)
+{
+	std::string ret = "\"";
+	ret += name + "\" : ";
+
+	if (noQuotes)
+		ret += value;
+	else
+	{
+		SanitizeJsonString(value);
+		ret += "\"" + value + "\"";
+	}
+	return ret;
+}
+
+std::string StringUtils::CreateJsonArrayEntry(std::string name, std::vector<std::string> value, bool noQuotes)
+{
+	std::string ret = "\"";
+	ret += name + "\" : [";
+	for (size_t i = 0; i < value.size(); i++)
+	{
+		if (noQuotes)
+			ret += value[i] + ",";
+		else
+		{
+			SanitizeJsonString(value[i]);
+			ret += "\"" + value[i] + "\",";
+		}
+	}
+	ret += "]";
+	//remove last comma
+	ret.pop_back();
+
+	return ret;
+}
+
+std::string StringUtils::CreateJsonArrayEntry(std::string name, std::vector<int> value)
+{
+	std::string ret = "\"";
+	ret += name + "\" : [";
+	for (size_t i = 0; i < value.size(); i++)
+	{
+		ret += std::to_string(value[i]) + ",";
+	}
+
+	ret += "]";
+	//remove last comma
+	if (ret.back() == ',')
+		ret.pop_back();
+
+	return ret;
+}
+
+std::string StringUtils::GetJsonEntryValue(std::string& json, std::string name)
+{
+	std::string ret;
+	char quoteType = '"';
+	std::string key = "\"" + name + "\"";
+	size_t start = json.find(key);
+
+
+	if (start == std::string::npos)
+	{
+		quoteType = '\'';
+		key = quoteType + name + quoteType;
+		start = json.find(key);
+
+		if (start == std::string::npos)
+			return ret;
+	}
+
+
+	//mopve the cursor off the key, and onto the value
+	start = json.find(":", start) + 1;
+	//first check if this is a std::string value
+	size_t quote = json.find("\"", start);
+	size_t comma = json.find(",", start);
+
+	size_t brace = json.find("}", start);
+	if (quote < comma)//we have a std::string valua, aka wrapped in quotes
+	{
+		//if this is true, then find the comma that singals the end of tis line int he json,a nd not a comma inside the quotes
+		size_t endQuote = json.find("\"", quote + 1);
+		comma = json.find(",", endQuote);
+	}
+
+	//prob bad json formatting
+	if (comma == std::string::npos && brace == std::string::npos)
+		return ret;
+
+	size_t end = (comma < brace) ? comma : brace;
+
+	//cop the chars to the output, fuck substr
+	for (size_t i = start; i < end; i++)
+	{
+		if (json[i] != quoteType)
+			ret += json[i];
+	}
+	StringUtils::TrimWhiteSpace(ret);
+	DesanitizeJsonString(ret);
+	return ret;
+}
+
+int StringUtils::GetJsonEntryIntValue(std::string& json, std::string name)
+{
+	std::string value = GetJsonEntryValue(json, name);
+	if (!value.empty())
+		return stoi(value);
+	return -1;
+}
+
+float StringUtils::GetJsonEntryFloatValue(std::string& json, std::string name)
+{
+	std::string value = GetJsonEntryValue(json, name);
+	if (!value.empty())
+		return stof(value);
+	return -1;
+}

@@ -29,4 +29,15 @@ public:
 	static std::string GetRandomString(int size);
 
 	static std::string FindAndReplace(std::string orig, std::string findToken, std::string replaceToken);
+
+	//this may go into its own file....
+	static void SanitizeJsonString(std::string& value);
+	static void DesanitizeJsonString(std::string& value);
+	static std::string CreateJsonEntry(std::string name, std::string value, bool noQuotes);
+	static std::string CreateJsonArrayEntry(std::string name, std::vector<std::string> value, bool noQuotes);
+	static std::string CreateJsonArrayEntry(std::string name, std::vector<int> value);
+	static std::string GetJsonEntryValue(std::string& json, std::string name);
+	static int GetJsonEntryIntValue(std::string& json, std::string name);
+	static float GetJsonEntryFloatValue(std::string& json, std::string name);
+
 };
