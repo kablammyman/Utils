@@ -169,6 +169,9 @@ int StringUtils::GetStandAloneWordInLineIndex(std::string line,std::string word)
 	while (index < line.size())
 	{
 		size_t start = line.find(word,index);
+		//the word is not even in here!
+		if (start == std::string::npos)
+			return -1;
 		index += start+1;
 		
 		size_t end = start + word.size()-1;
@@ -225,9 +228,11 @@ bool StringUtils::IsWordFromListInLine(std::vector<std::string> &wordList,std::s
 	return false;
 }
 
-std::string StringUtils::GetWordFromListInLine(std::vector<std::string> &wordList,std::string line)
+std::string StringUtils::GetWordFromListInLine(std::vector<std::string> &wordList,std::string line, bool isCaseSensitive)
 {
-	ToUpper(line);
+	if(!isCaseSensitive)
+		ToUpper(line);
+
 	for (size_t i = 0; i < wordList.size(); i++)
 	{
 		if(line.find( wordList[i] ) != std::string::npos )
@@ -392,6 +397,34 @@ std::string StringUtils::FindAndReplace(std::string orig, std::string findToken,
 	else
 		return orig;
 }
+
+std::string StringUtils::StringClean(std::string orig, bool includeNewLines = true)
+{
+	orig = FindAndReplace(orig, "&amp;", "&");
+	orig = FindAndReplace(orig, "&nbsp;", "");
+		//some names has a % in front...it NOT a typo or coding mistake they make, its short hand for "care of"
+	orig = FindAndReplace(orig, "%", "");
+	if (includeNewLines)
+	{
+		orig = FindAndReplace(orig, "\n", " ");
+		orig = FindAndReplace(orig, "\r", " ");
+	}
+	orig = FindAndReplace(orig, "\t", " ");
+
+	//now get rid of html tags
+	size_t found = orig.find("<");
+	while (found != std::string::npos)
+	{
+		std::string curTag = "<"+ CopyCharsBetweenTags(orig, '<', '>', found) + ">";
+		orig = FindAndReplace(orig, curTag, "");
+		found = orig.find("<",found);
+	}
+
+	TrimWhiteSpace(orig);
+	//print "done: " + line
+	return orig;
+}
+
 
 void StringUtils::SanitizeJsonString(std::string& value)
 {

@@ -87,7 +87,7 @@ bool CFGReader::ReadProfile(std::string file, char delim)
 			{
 				if(line[0] == '/' && line[1] == '/')//dont proccess comments
 					continue;
-				else if(line.find("//")) //we have a comment somewhere else
+				else if(line.find("//") && !line.find("http")) //we have a comment somewhere else AND ITS NOT A URL!
 				{
 					size_t index = line.find('/'); //this shoudl awlays work since we found it exists alrady with Contains
 					if(line[index+1] == '/') //if the next char after the first one is als a '/', ignore the rest

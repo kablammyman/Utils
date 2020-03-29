@@ -20,7 +20,7 @@ public:
 	static int GetStandAloneWordInLineIndex(std::string line,std::string word);
 	static std::string CopyCharsBetweenQuotes(std::string word, size_t index = 0);
 	static std::string CopyCharsBetweenTags(std::string word, char open,char closed,size_t index = 0);//this one has default value
-	static std::string GetWordFromListInLine(std::vector<std::string> &wordList,std::string line);
+	static std::string GetWordFromListInLine(std::vector<std::string> &wordList,std::string line, bool isCaseSensitive = true);
 	static int GetIndexOfWordFromListInLine(std::vector<std::string> &wordList,std::string line);
 	static bool IsPostCharNonAlpha(std::string line,std::string word);
 	static bool IsPrevCharNonAlpha(std::string line,std::string word);
@@ -29,6 +29,7 @@ public:
 	static std::string GetRandomString(int size);
 
 	static std::string FindAndReplace(std::string orig, std::string findToken, std::string replaceToken);
+	static std::string StringClean(std::string orig, bool includeNewLines);
 
 	//this may go into its own file....
 	static void SanitizeJsonString(std::string& value);
