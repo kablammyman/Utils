@@ -71,6 +71,7 @@ public:
 
 	static int GetRandomInt(int min, int max);
 
+	static bool CreateNewDir(string path);
 	static  int Test();
 		
 };

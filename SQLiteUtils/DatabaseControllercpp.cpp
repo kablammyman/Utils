@@ -571,12 +571,25 @@ void DatabaseController::GetAllColsInTable(string tableName,std::vector<std::str
 	db->GetAllColsInTable(tableName, retData);
 }
 
-///////////////////////////////////////////////////////////test methods
-void DatabaseController::createTable(string tableName, string fields)
+
+void DatabaseController::CreateTable(string tableName, string fields)
 {
 	db->createTable(tableName, fields);
 }
 
+bool DatabaseController::CreateTable(string tableName, vector<dbDataPair> fields, string& output)
+{
+	string querey = "CREATE TABLE IF NOT EXISTS " + tableName + " (";
+	for (size_t i = 0; i < fields.size(); i++)
+	{
+		if (i > 0)
+			querey += ", ";
+		querey += "'" + fields[i].first + "' " + fields[i].second;
+	}
+	querey += ")";
+	return db->ExecuteSQL(querey, output);
+}
+///////////////////////////////////////////////////////////test methods
 void DatabaseController::testGetTable()
 {
 	string result = GetTable("BodyPart");

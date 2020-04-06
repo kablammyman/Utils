@@ -160,8 +160,9 @@ public:
 	{
 		return db->GetLatestRowID();
 	}
+	void CreateTable(string tableName, string fields);
+	bool CreateTable(string tableName, vector<dbDataPair> fields, string& output);
 	//test methods
-	void createTable(string tableName, string fields);
 	void testGetTable();
 	void testDBEntry();
 	void testDBQuerey();

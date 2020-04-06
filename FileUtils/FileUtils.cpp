@@ -533,7 +533,28 @@ long long FileUtils::GetDirSize(string &path)
 {
 	return DirectoryTree::GetDirSize(path);
 }
+//--------------------------------------------------------------------------------------------------
 
+bool FileUtils::CreateNewDir(string path)
+{
+	string strCommand;
+#if _WIN32
+	strCommand = "if not exist \"" + path + "\" mkdir \"" + path +"\"";
+#else
+	strCommand = "mkdir - p \"" + path + "\"";
+#endif
+
+	
+	int iResult = system(strCommand.c_str());
+	if (iResult != 0)
+	{
+		//printf("Error: couldn't create directory (%s)\n", path);
+		return false;
+	}
+	return true;
+}
+
+//--------------------------------------------------------------------------------------------------
 int FileUtils::Test()
 {
 	//dirTree.dumpTreeToFile("G:\\programming\\my tools\\FileUtils\\testFile.txt");
