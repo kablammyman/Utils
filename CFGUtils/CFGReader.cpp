@@ -148,6 +148,11 @@ bool CFGReader::ReadProfile(std::string file, char delim)
 			{
 				cfgOption newOption;
 				std::vector<std::string> token = StringUtils::Tokenize(line, delimiter);
+				if (token.size() < 2)
+				{
+					//prob used the wrong delim on a line or something
+					return false;
+				}
 				newOption.optionName = token[0];
 				newOption.optionValue = token[1];//put that data in there
 				newOption.isList = false;

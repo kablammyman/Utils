@@ -13,7 +13,8 @@ class CSVHandler
 	std::vector<std::string> csvHeader;
 	std::vector<std::string> csvEntry;
 	//when reading in a csv, we want to quickly find the data wwe want without constant for loops
-	std::map<std::string, int> headerLookup;
+	std::map<std::string, size_t> headerLookup;
+	std::vector<std::string> CSVTokenize(std::string line);
 public:
 	~CSVHandler()
 	{
@@ -24,9 +25,9 @@ public:
 	}
 	void ReadCSVFile(std::string file, char d);
 	void CreateCSVFile(std::string outputFile, char d);
-	std::string GetColValue(std::string colName, int line);
+	std::string GetColValue(std::string colName, size_t line);
 
-	std::map<std::string, std::string> GetAllDataFromLine(int line);
+	std::map<std::string, std::string> GetAllDataFromLine(size_t line);
 	size_t GetCSVLength();
 
 	void AddCSVHeader(std::string header);

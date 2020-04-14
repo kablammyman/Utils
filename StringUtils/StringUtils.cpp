@@ -221,7 +221,7 @@ bool StringUtils::IsWordFromListInLine(std::vector<std::string> &wordList,std::s
 	ToUpper(line);
 	for(size_t i = 0; i < wordList.size(); i++)
 	{
-		if (wordList[i] == line)
+		if (line.find(wordList[i]) != std::string::npos)
 			if (GetStandAloneWordInLineIndex(line,wordList[i]) > -1)
 				return true;
 	}
@@ -256,6 +256,22 @@ int StringUtils::GetIndexOfWordFromListInLine(std::vector<std::string> &wordList
 	}
 	return -1;
 }
+
+int StringUtils::GetIndexOfWordFromList(std::vector<std::string>& wordList, std::string line)
+{
+	ToUpper(line);
+	for (size_t i = 0; i < wordList.size(); i++)
+	{
+		if (line.find(wordList[i]) != std::string::npos)
+		{
+			int index = GetStandAloneWordInLineIndex(line, wordList[i]);
+			if (index > -1)
+				return i;
+		}
+	}
+	return -1;
+}
+
 std::string StringUtils::CopyCharsBetweenQuotes(std::string word, size_t index)
 {
 	std::string retString;

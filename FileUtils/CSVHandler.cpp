@@ -30,18 +30,77 @@ void CSVHandler::ReadCSVFile(std::string file, char d)
 	}
 }
 
-string CSVHandler::GetColValue(std::string colName, int line)
+vector<string> CSVHandler::CSVTokenize(string line)
 {
-	vector<string> tokens = StringUtils::Tokenize(csvEntry[line], inputDelim);
-	int i = headerLookup[colName];
+	vector<string> tokens;
+	bool usesQuotes = false;
+	bool insideData = true;
+
+
+	string curToken = "";
+	for (size_t i = 0; i < line.size(); i++)
+	{
+		if (curToken.size() == 0 && line[i] == '"')
+		{
+			usesQuotes = true;
+			insideData = false;
+			continue;
+		}
+
+
+		if (usesQuotes)
+		{
+			if (line[i] == '"')
+			{
+				if (!insideData)//start of data
+					insideData = true;
+			}
+			else
+			{
+				if (line[i] != inputDelim)
+					curToken += line[i];
+				else
+				{
+					tokens.push_back(curToken);
+					curToken.clear();
+					usesQuotes = false;
+					insideData = false;
+				}
+			}
+		}
+//---------------------
+		else
+		{
+			if (line[i] != inputDelim)
+				curToken += line[i];
+			else
+			{
+				tokens.push_back(curToken);
+				curToken.clear();
+			}
+		}	
+	}
+	
+	if(!curToken.empty())
+		tokens.push_back(curToken);
+
+	return tokens;
+}
+
+string CSVHandler::GetColValue(std::string colName, size_t line)
+{
+	//vector<string> tokens = StringUtils::Tokenize(csvEntry[line], inputDelim);
+	vector<string> tokens = CSVTokenize(csvEntry[line]);
+	size_t i = headerLookup[colName];
 	return tokens[i];
 }
 
-map<string, string> CSVHandler::GetAllDataFromLine(int line)
+map<string, string> CSVHandler::GetAllDataFromLine(size_t line)
 {
 	map<string, string> ret;
-	vector<string> tokens = StringUtils::Tokenize(csvEntry[line], inputDelim);
-	map<string, int>::iterator it;
+	//vector<string> tokens = StringUtils::Tokenize(csvEntry[line], inputDelim);
+	vector<string> tokens = CSVTokenize(csvEntry[line]);
+	map<string, size_t>::iterator it;
 
 	for (it = headerLookup.begin(); it != headerLookup.end(); it++)
 	{

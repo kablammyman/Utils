@@ -22,6 +22,7 @@ public:
 	static std::string CopyCharsBetweenTags(std::string word, char open,char closed,size_t index = 0);//this one has default value
 	static std::string GetWordFromListInLine(std::vector<std::string> &wordList,std::string line, bool isCaseSensitive = true);
 	static int GetIndexOfWordFromListInLine(std::vector<std::string> &wordList,std::string line);
+	static int GetIndexOfWordFromList(std::vector<std::string>& wordList, std::string line);
 	static bool IsPostCharNonAlpha(std::string line,std::string word);
 	static bool IsPrevCharNonAlpha(std::string line,std::string word);
 	static std::string GetAlphaNumericString(std::string line,int index, std::string bonusChars = "");
