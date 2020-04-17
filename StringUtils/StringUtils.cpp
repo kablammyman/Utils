@@ -634,6 +634,17 @@ float StringUtils::GetJsonEntryFloatValue(std::string& json, std::string name)
 {
 	std::string value = GetJsonEntryValue(json, name);
 	if (!value.empty())
-		return stof(value);
+		return GetFloatFromString(value);
 	return -1;
+}
+
+float StringUtils::GetFloatFromString(std::string str)
+{
+	size_t f = str.find(",");
+	if (f != std::string::npos)
+		str.erase(f, 1);
+	f = str.find("$");
+	if (f != std::string::npos)
+		str.erase(f, 1);
+	return stof(str);
 }

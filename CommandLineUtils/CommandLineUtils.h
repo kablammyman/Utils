@@ -32,4 +32,10 @@ class CommandLineUtils
 public:
 	static std::string GetFilePath(std::string path);
 	static std::string GetFileName(std::string path);
+	static std::string GetStringInput(std::string inputMessage);
+	static int GetIntInput(std::string inputMessage);
+	static int SelectFromList(std::string inputMessage, std::vector<int> list);
+	static int SelectFromList(std::string inputMessage, std::vector<std::string> list);
+	static float GetFloatInput(std::string inputMessage);
+	static bool PressYTOContinue(std::string inputMessage);
 };

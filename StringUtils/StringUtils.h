@@ -41,5 +41,5 @@ public:
 	static std::string GetJsonEntryValue(std::string& json, std::string name);
 	static int GetJsonEntryIntValue(std::string& json, std::string name);
 	static float GetJsonEntryFloatValue(std::string& json, std::string name);
-
+	static float GetFloatFromString(std::string str);
 };
