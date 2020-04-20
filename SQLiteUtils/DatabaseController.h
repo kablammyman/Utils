@@ -110,6 +110,11 @@ public:
 	};
 	DatabaseController();
 	~DatabaseController();
+	struct Error
+	{
+		int errorCode;
+		std::string errorMessage;
+	};
 
 	bool OpenDB(string path);
 	bool IsDBOpen();

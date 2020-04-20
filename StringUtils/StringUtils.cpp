@@ -221,8 +221,10 @@ bool StringUtils::IsWordFromListInLine(std::vector<std::string> &wordList,std::s
 	ToUpper(line);
 	for(size_t i = 0; i < wordList.size(); i++)
 	{
-		if (line.find(wordList[i]) != std::string::npos)
-			if (GetStandAloneWordInLineIndex(line,wordList[i]) > -1)
+		std::string upperWord = wordList[i];
+		ToUpper(upperWord);
+		if (line.find(upperWord) != std::string::npos)
+			if (GetStandAloneWordInLineIndex(line, upperWord) > -1)
 				return true;
 	}
 	return false;
