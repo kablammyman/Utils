@@ -4,6 +4,8 @@
 #include <utility>      // std::pair
 #include <vector>
 #include "SQLiteUtils.h"
+#include "DateTime.h"
+
 using namespace std;
 
 class DatabaseController
@@ -157,6 +159,12 @@ public:
 	static void GetAllValuesFromCol(string &inputData, string colName, vector<string> &returnData);
 	//specify your fields with a vector, and turn it into a csv, good for easily making long SELECT quereies
 	
+	static void AddStringDataToQuerey(vector<dbDataPair> & data, string colName, string valValue);
+	static void AddFloatDataToQuerey(vector<dbDataPair> & data, string colName, float valValue);
+	static void AddIntDataToQuerey(vector<dbDataPair> & data, string colName, int valValue);
+	static void AddBoolDataToQuerey(vector<dbDataPair> & data, string colName, bool valValue);
+	static void AddDateDataToQuerey(vector<dbDataPair> & data, string colName, DateTime colValue);
+
 	static string GetCSVFromVector(vector<string> &fields);
 	void GetAllTablesInDB(std::vector<std::string> &retData);
 	void GetAllColsInTable(string tableName, std::vector<std::string> &retData);

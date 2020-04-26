@@ -1,6 +1,7 @@
 #include "DatabaseController.h"
 #include "StringUtils.h"
 
+
 DatabaseController::DatabaseController()
 {
 	db = NULL;
@@ -589,6 +590,33 @@ bool DatabaseController::CreateTable(string tableName, vector<dbDataPair> fields
 	querey += ")";
 	return db->ExecuteSQL(querey, output);
 }
+
+void DatabaseController::AddStringDataToQuerey(vector<dbDataPair> & data, string colName, string colValue)
+{
+	data.push_back(make_pair(colName,colValue));
+}
+void DatabaseController::AddFloatDataToQuerey(vector<dbDataPair> & data, string colName, float colValue)
+{
+	data.push_back(make_pair(colName,to_string(colValue)));
+}
+void DatabaseController::AddIntDataToQuerey(vector<dbDataPair> & data, string colName, int colValue)
+{
+	data.push_back(make_pair(colName,to_string(colValue)));
+}
+void DatabaseController::AddBoolDataToQuerey(vector<dbDataPair> & data, string colName, bool colValue)
+{
+	int val = 1;
+	if(colValue == false)
+		val = 0;
+	AddIntDataToQuerey(data,  colName,  val);
+}
+
+void DatabaseController::AddDateDataToQuerey(vector<dbDataPair> & data, string colName, DateTime colValue)
+{
+	AddStringDataToQuerey(data,  colName, colValue.ToString());
+}
+
+
 ///////////////////////////////////////////////////////////test methods
 void DatabaseController::testGetTable()
 {
