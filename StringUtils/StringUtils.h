@@ -42,4 +42,5 @@ public:
 	static int GetJsonEntryIntValue(std::string& json, std::string name);
 	static float GetJsonEntryFloatValue(std::string& json, std::string name);
 	static float GetFloatFromString(std::string str);
+	static std::string ToMoneyString(float amount);
 };

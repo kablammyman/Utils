@@ -650,3 +650,10 @@ float StringUtils::GetFloatFromString(std::string str)
 		str.erase(f, 1);
 	return stof(str);
 }
+
+std::string StringUtils::ToMoneyString(float amount)
+{
+	char temp[10];
+	sprintf(temp,"%.2f",amount);
+	return temp;
+}
