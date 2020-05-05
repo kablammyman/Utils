@@ -38,6 +38,11 @@ public:
 	void DecDay(int amt);
 	void IncMonth(int amt);
 	void DecMonth(int amt);
-
+	std::string GetMonthAbrv(); //Jan
+	std::string GetMonthWord(); //January
+	std::string GetDayOfMonthWord();//1st,2nd, etc
+	static std::string GetMonthWord(int month);
+	static std::string GetMonthAbrv(int month);
+	static std::string GetDayOfMonthWord(int day);
 	static int GetDaysInMonth(int month);
 };
