@@ -9,6 +9,7 @@ echo "MY_COMMANDLINE_UTILS="$DIR"/CommandLineUtils">>/etc/environment
 echo "MY_TCP_UTILS="$DIR"/TCPUtils">>/etc/environment
 echo "MY_SQLITE3_UTILS="$DIR"/SQLiteUtils">>/etc/environment
 echo "MY_GAME_UTILS="$DIR"/GameUtils">>/etc/environment
+echo "MY_TAGGING_UTILS="$DIR"/TaggingUtils">>/etc/environment
 
 echo "MY_X86_DEBUG_LIBS="$DIR"/Debug">>/etc/environment
 echo "MY_X64_DEBUG_LIBS="$DIR"/x64/Debug">>/etc/environment
