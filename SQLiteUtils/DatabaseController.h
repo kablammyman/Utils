@@ -173,6 +173,8 @@ public:
 	{
 		return db->GetLatestRowID();
 	}
+	//when i need to get an id froma  quere, i do this all the time, so i made this method
+	int GetIdFromQuereyResult(std::string input);
 	void CreateTable(string tableName, string fields);
 	bool CreateTable(string tableName, vector<dbDataPair> fields, string& output);
 	//test methods

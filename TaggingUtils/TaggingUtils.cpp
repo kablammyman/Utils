@@ -7,11 +7,27 @@ const std::string TaggingUtils::TAGS_TABLE = "Tags";
 const std::string TaggingUtils::ITEMS_TABLE = "Items";
 const std::string TaggingUtils::ITEM_TAGS_TABLE = "ItemTags";
 
-void TaggingUtils::CreateTagTables(DatabaseController* dbCtrl,vector<DatabaseController::dbDataPair> &extraInfo)
+void TaggingUtils::CreateTagTables()
+{
+	vector<DatabaseController::dbDataPair> extraInfo;
+	CreateTagTables(extraInfo);
+}
+
+void TaggingUtils::CreateTagTables(vector<DatabaseController::dbDataPair> &extraInfo)
 {
 	
 	string output;
 	vector<DatabaseController::dbDataPair> fields;
+	std::vector<std::string> currentTables;
+	dbController->GetAllTablesInDB(currentTables);
+	
+	//if we already made TAGS_TABLE then we prob have the other 2...and that menas no need to create anything
+	for(size_t i = 0; i < currentTables.size(); i++)
+	{
+		if(currentTables[i] == TAGS_TABLE)
+			return;
+	}
+
 	fields.push_back(make_pair("ID", "INTEGER PRIMARY KEY AUTOINCREMENT"));
 	fields.push_back(make_pair("Name", "TEXT"));
 
@@ -29,7 +45,7 @@ void TaggingUtils::CreateTagTables(DatabaseController* dbCtrl,vector<DatabaseCon
 	//liek cars, emais, files, bookmarks, etc
 	//the extraInfo are the different fields we may want to ad
 	//otherwise, we hae a stock column of "content" to give more data about the item
-	dbCtrl->CreateTable(ITEMS_TABLE, fields, output);
+	dbController->CreateTable(ITEMS_TABLE, fields, output);
 
 
 	fields.clear();
@@ -42,14 +58,14 @@ void TaggingUtils::CreateTagTables(DatabaseController* dbCtrl,vector<DatabaseCon
 	//ex item1 can be a car, and the tags can be red,sedan,fast,
 	//item 2 can be a truck and the tags can be red, slow, pickup
 	//notice red is tagged with both the truck and car
-	dbCtrl->CreateTable(ITEM_TAGS_TABLE, fields, output);
+	dbController->CreateTable(ITEM_TAGS_TABLE, fields, output);
 
 	fields.clear();
 	fields.push_back(make_pair("ID", "INTEGER PRIMARY KEY AUTOINCREMENT"));
 	fields.push_back(make_pair("Name", "TEXT"));
 	//these are teh actual tags\words that we can use
 	//ex: red, sedan,truck, slow, fast, etc
-	dbCtrl->CreateTable(TAGS_TABLE, fields, output);
+	dbController->CreateTable(TAGS_TABLE, fields, output);
 }
 //---------------------------------------------------------------------------------------------------------------
 int TaggingUtils::AddTag(std::string tagName )
@@ -69,11 +85,13 @@ int TaggingUtils::AddTag(std::string tagName )
 	return dbController->GetLatestRowID();
 }
 //---------------------------------------------------------------------------------------------------------------
-int TaggingUtils::AddNewItem(std::string itemName,vector<DatabaseController::dbDataPair> &extraInfo )
+int TaggingUtils::AddNewItem(std::string itemName,vector<DatabaseController::dbDataPair> &extraInfo, int id )
 {
 	
 	string output;
 	vector<DatabaseController::dbDataPair> data;
+	if(id > -1)
+		DatabaseController::AddIntDataToQuerey(data, "ID",id);
 	DatabaseController::AddStringDataToQuerey(data, "Name",itemName);
 	for(size_t i = 0; i < extraInfo.size(); i++)
 	{
@@ -91,10 +109,12 @@ int TaggingUtils::AddNewItem(std::string itemName,vector<DatabaseController::dbD
 	return dbController->GetLatestRowID();
 }
 //---------------------------------------------------------------------------------------------------------------
-int TaggingUtils::AddNewItem(std::string itemName,std::string content )
+int TaggingUtils::AddNewItem(std::string itemName,std::string content, int id )
 {
 	string output;
 	vector<DatabaseController::dbDataPair> data;
+	if(id > -1)
+		DatabaseController::AddIntDataToQuerey(data, "ID",id);
 	DatabaseController::AddStringDataToQuerey(data, "Name",itemName);
 	DatabaseController::AddStringDataToQuerey(data, "Content", content);
 
@@ -117,7 +137,7 @@ int TaggingUtils::AddItemTagsEntry(int itemID,int tagID)
 	DatabaseController::AddIntDataToQuerey(data, "ItemID",itemID);
 	DatabaseController::AddIntDataToQuerey(data, "TagID", tagID);
 
-	if (!dbController->InsertNewDataEntry("ItemTags",data ,output))
+	if (!dbController->InsertNewDataEntry(ITEM_TAGS_TABLE,data ,output))
 	{
 		if(dbController->GetLastError() != "")
 		{
@@ -170,6 +190,41 @@ int TaggingUtils::TagItem(std::string itemName, std::vector<std::string> tags)
 	return dbController->GetLatestRowID();
 }
 //---------------------------------------------------------------------------------------------------------------
+int TaggingUtils::TagItem(int itemID, std::string tagName)
+{
+	
+	int tagID =  GetTagId(tagName);
+	if(tagID < 1)
+	{
+		//we CAN add the tag if it doesnt exist yet since tags are simple to add
+		tagID = AddTag(tagName );
+	}
+	//only add if the link between these 2 dont exist
+	int ret = GetItemTagId(itemID,tagID);
+	if(ret == -1)
+		return AddItemTagsEntry( itemID, tagID);
+	return ret;
+}
+//---------------------------------------------------------------------------------------------------------------
+int TaggingUtils::TagItem(int itemID, std::vector<std::string> tags)
+{
+	for(size_t i = 0; i < tags.size(); i++)
+	{
+		int tagID =  GetTagId(tags[i]);
+		if(tagID < 1)
+		{
+			//we CAN add the tag if it doesnt exist yet since tags are simple to add
+			tagID = AddTag(tags[i] );
+		}
+
+		//only add if the link between these 2 dont exist
+		if(GetItemTagId(itemID,tagID) == -1)
+			AddItemTagsEntry( itemID, tagID);
+	}
+
+	return dbController->GetLatestRowID();
+}
+//---------------------------------------------------------------------------------------------------------------
 //this will work for any of the 3 tables, since they all have an ID and a name
 int TaggingUtils::GetId(string table, string itemName)
 {
@@ -185,8 +240,7 @@ int TaggingUtils::GetId(string table, string itemName)
 		}
 	}
 
-	dbController->RemoveTableNameFromOutput(output);
-	int itemID =  stoi(output);
+	int itemID = dbController->GetIdFromQuereyResult(output);
 
 	if(itemID < 1)
 	{
@@ -204,4 +258,19 @@ int TaggingUtils::GetTagId(std::string tagName)
 int TaggingUtils::GetItemId(std::string tagName)
 {
 	return GetId(ITEMS_TABLE, tagName);
+}
+//---------------------------------------------------------------------------------------------------------------
+int TaggingUtils::GetItemTagId(int itemID,int tagID)
+{
+	string output;
+	string querey = "SELECT ID FROM "+ ITEM_TAGS_TABLE+" WHERE ItemID = "+ to_string(itemID) + " AND TagID = " + to_string(tagID);
+	if (!dbController->DoDBQuerey(querey,output))
+	{
+		if(dbController->GetLastError() != "")
+		{
+			lastError.errorMessage= "GetItemTagsEntry error: " + dbController->GetLastError();
+		}
+	}
+
+	return dbController->GetIdFromQuereyResult(output);
 }

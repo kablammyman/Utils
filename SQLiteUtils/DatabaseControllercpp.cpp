@@ -616,6 +616,14 @@ void DatabaseController::AddDateDataToQuerey(vector<dbDataPair> & data, string c
 	AddStringDataToQuerey(data,  colName, colValue.ToString());
 }
 
+int DatabaseController::GetIdFromQuereyResult(std::string input)
+{
+	if(input.empty())
+		return -1;
+
+	RemoveTableNameFromOutput(input);
+	return stoi(input);
+}
 
 ///////////////////////////////////////////////////////////test methods
 void DatabaseController::testGetTable()
