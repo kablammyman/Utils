@@ -274,3 +274,36 @@ int TaggingUtils::GetItemTagId(int itemID,int tagID)
 
 	return dbController->GetIdFromQuereyResult(output);
 }
+//---------------------------------------------------------------------------------------------------------------
+vector<string> TaggingUtils::GetAllTagsForItem(int itemID)
+{
+	string output;
+	vector<string> ret;
+	string querey = "SELECT t.Name FROM "+ITEM_TAGS_TABLE+" it, "+ITEMS_TABLE +" i, "+TAGS_TABLE+" t WHERE ";
+	querey += " it.ItemID = "+to_string(itemID)+" AND it.TagID = t.ID AND it.ItemID = i.ID";
+
+	if (!dbController->DoDBQuerey(querey,output))
+	{
+		if(dbController->GetLastError() != "")
+		{
+			lastError.errorMessage= "GetAllTagsForItem error: " + dbController->GetLastError();
+			return ret;
+		}
+	}
+
+	vector <DatabaseController::DBResult>  dbResults;
+	//notice the differnte PArseDBOutput method (i think this was original one)
+	DatabaseController::ParseDBOutput(output,1, dbResults);
+	
+
+	if(!dbResults.empty())
+	{
+		//notice we have to crack open the 1 dbResult oject to get to the sweet meat of the tags
+		for (int i = 0; i < dbResults[0].data.size(); i++)
+		{
+			string tag = dbResults[0].data[i].second;
+			ret.push_back(tag);
+		}
+	}
+	return ret;
+}

@@ -35,4 +35,5 @@ public:
 	int GetItemId(std::string itemName);
 	int GetTagId(std::string tagName);
 	int GetItemTagId(int itemID,int tagID);
+	std::vector<std::string> GetAllTagsForItem(int itemID);
 };
