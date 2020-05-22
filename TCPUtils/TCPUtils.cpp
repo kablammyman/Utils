@@ -2,7 +2,7 @@
 #include <string>
 #include "TCPUtils.h"
 
-int TCPUtils::connectToServer(string ip, int port, int socketType)
+int TCPUtils::ConnectToServer(string ip, int port, SOCKET_TYPE socketType)
 {
 	tv.tv_sec = 1;
 	tv.tv_usec = 0;
@@ -68,7 +68,7 @@ void TCPUtils::ReportError(int errorCode, std::string  whichFunc)
 	//MessageBox(0, errorMsg, "socketIndication", MB_OK);
 }
 //------------------------------------------------------------------------------
-int TCPUtils::fillTheirInfo(SOCKADDR_IN *who, SOCKET daSocket)
+int TCPUtils::FillTheirInfo(SOCKADDR_IN *who, SOCKET daSocket)
 {
 	// Fill a SOCKADDR_IN struct with address information of comp trying to conenct to
 	int length = sizeof(struct sockaddr);
@@ -87,7 +87,7 @@ int TCPUtils::fillTheirInfo(SOCKADDR_IN *who, SOCKET daSocket)
 	who->sin_port;*/
 }
 //------------------------------------------------------------------------------
-int TCPUtils::startServer(int numConnections, int port, int socketType)
+int TCPUtils::StartServer(int numConnections, int port, SOCKET_TYPE socketType)
 {
 	tv.tv_sec = 1;
 	tv.tv_usec = 0;
@@ -113,7 +113,8 @@ int TCPUtils::startServer(int numConnections, int port, int socketType)
 		setsockopt(remoteConn.theSocket, SOL_SOCKET, SO_REUSEADDR, (char*)&yes, sizeof(int)); // lose the pesky "address already in use" error message
 	}
 
-	if (listeningSocket == INVALID_SOCKET) {
+	if (listeningSocket == INVALID_SOCKET) 
+	{
 		ReportError(WSAGetLastError(), "socket()");		// Report the error with our custom function
 		WSACleanup();				// Shutdown Winsock
 		return NETWORK_ERROR;			// Return an error value
@@ -137,12 +138,8 @@ int TCPUtils::startServer(int numConnections, int port, int socketType)
 	}
 
 	if (socketType == STREAM_SOCKET)// add the listener to the master set
-		FD_SET(listeningSocket, &master);
-	else
-		FD_SET(remoteConn.theSocket, &master);
-
-	if (socketType == STREAM_SOCKET)// Make the socket listen if we are a stream socket
 	{
+		FD_SET(listeningSocket, &master);
 		nret = listen(listeningSocket, numListeningConnections);// Up to 10 connections may wait at any one time to be accept()'ed
 
 		if (nret == SOCKET_ERROR) 
@@ -151,17 +148,18 @@ int TCPUtils::startServer(int numConnections, int port, int socketType)
 			WSACleanup();
 			return NETWORK_ERROR;
 		}
-
 	}
 	else
+	{
+		FD_SET(remoteConn.theSocket, &master);
 		remoteConnections.push_back(remoteConn);
-
+	}
 
 	waitingForClients = true;
 	return NETWORK_OK;
 }
 //------------------------------------------------------------------------------
-int TCPUtils::waitForFirstClientConnect()
+int TCPUtils::WaitForFirstClientConnect()
 {
 	int yes = 1;
 
@@ -177,7 +175,7 @@ int TCPUtils::waitForFirstClientConnect()
 		return NETWORK_ERROR;
 	}
 
-	fillTheirInfo(&remoteConn.remoteInfo, remoteConn.theSocket);
+	FillTheirInfo(&remoteConn.remoteInfo, remoteConn.theSocket);
 
 	remoteConnections.push_back(remoteConn);
 	/*
@@ -197,7 +195,7 @@ int TCPUtils::waitForFirstClientConnect()
 	// MessageBox(0, message, "Server message", MB_OK);
 	return NETWORK_OK;
 }
-int TCPUtils::waitForClientAsync()
+int TCPUtils::WaitForClientAsync()
 {
 	// See if connection pending
 	fd_set readSet;
@@ -222,7 +220,7 @@ int TCPUtils::waitForClientAsync()
 			return NETWORK_ERROR;
 		}
 
-		fillTheirInfo(&remoteConn.remoteInfo, remoteConn.theSocket);
+		FillTheirInfo(&remoteConn.remoteInfo, remoteConn.theSocket);
 
 		remoteConnections.push_back(remoteConn);
 	}
@@ -242,7 +240,7 @@ int TCPUtils::ServerBroadcast(const char *msg)//for stream sockets
 	return howManySent;
 }
 //------------------------------------------------------------------------------
-void TCPUtils::shutdown()
+void TCPUtils::Shutdown()
 {
 
 	for (size_t x = 0; x < remoteConnections.size(); x++)
@@ -253,7 +251,7 @@ void TCPUtils::shutdown()
 	WSACleanup();
 }
 //------------------------------------------------------------------------------ 
-int TCPUtils::sendData(int socketIndex, const char *msg)//for stream sockets
+int TCPUtils::SendData(int socketIndex, const char *msg)//for stream sockets
 {
 	if(socketIndex >= remoteConnections.size())
 		return NETWORK_ERROR;
@@ -271,7 +269,7 @@ int TCPUtils::sendData(int socketIndex, const char *msg)//for stream sockets
 }
 
 //------------------------------------------------------------------------------
-int TCPUtils::getData(int socketIndex, char *msg, int dataSize)//for stream sockets
+int TCPUtils::GetData(int socketIndex, char *msg, int dataSize)//for stream sockets
 {
 	if (socketIndex >= remoteConnections.size())
 		return NETWORK_ERROR;
@@ -288,7 +286,7 @@ int TCPUtils::getData(int socketIndex, char *msg, int dataSize)//for stream sock
 }
 
 //------------------------------------------------------------------------------   
-int TCPUtils::sendData(SOCKET daSocket, const char *msg, SOCKADDR_IN whomToSend)//for datagram sockets
+int TCPUtils::SendData(SOCKET daSocket, const char *msg, SOCKADDR_IN whomToSend)//for datagram sockets
 {
 	int structLength = sizeof(struct sockaddr);
 	int nret = sendto(daSocket, msg, (int)strlen(msg), 0, (LPSOCKADDR)&whomToSend, structLength);
@@ -303,7 +301,7 @@ int TCPUtils::sendData(SOCKET daSocket, const char *msg, SOCKADDR_IN whomToSend)
 
 }
 //------------------------------------------------------------------------------
-int TCPUtils::getData(SOCKET daSocket, char *msg, SOCKADDR_IN whosSendingMeStuff)//for datagram sockets
+int TCPUtils::GetData(SOCKET daSocket, char *msg, SOCKADDR_IN whosSendingMeStuff)//for datagram sockets
 {
 	int structLength = sizeof(struct sockaddr);
 	int MAX_STRING_LENGTH = 256;
@@ -320,7 +318,7 @@ int TCPUtils::getData(SOCKET daSocket, char *msg, SOCKADDR_IN whosSendingMeStuff
 	return nret;// nret contains the number of bytes received
 }
 //------------------------------------------------------------------------------   
-int TCPUtils::changeToNonBlocking(SOCKET daSocket)// Change the socket mode on the listening socket from blocking to non-block 
+int TCPUtils::ChangeToNonBlocking(SOCKET daSocket)// Change the socket mode on the listening socket from blocking to non-block 
 {
 	ULONG NonBlock = 1;
 	if (ioctlsocket(daSocket, FIONBIO, &NonBlock) == SOCKET_ERROR)
@@ -328,7 +326,7 @@ int TCPUtils::changeToNonBlocking(SOCKET daSocket)// Change the socket mode on t
 	return 0;
 }
 //------------------------------------------------------------------------------
-bool TCPUtils::hasRecivedData(int index)
+bool TCPUtils::HasRecivedData(int index)
 {
 	FD_ZERO(&read_fds);
 	FD_SET(remoteConnections[index].theSocket, &read_fds,0);
@@ -343,7 +341,7 @@ bool TCPUtils::hasRecivedData(int index)
 
 }
 //------------------------------------------------------------------------------
-void TCPUtils::closeConnection(int index)
+void TCPUtils::CloseConnection(int index)
 {
 	closesocket(remoteConnections[index].theSocket);
 	// erase the 6th element: myvector.erase(myvector.begin() + 5);

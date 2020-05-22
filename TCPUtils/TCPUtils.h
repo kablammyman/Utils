@@ -39,12 +39,6 @@ struct RemoteComputerConnection
 
 class TCPUtils
 {
-	enum SOCKET_TYPE
-	{
-		DATAGRAM_SOCKET = 0,
-		STREAM_SOCKET 
-	};
-
 	LPHOSTENT hostEntry;
 	SOCKADDR_IN myInfo;
 	
@@ -63,33 +57,39 @@ class TCPUtils
 	vector<RemoteComputerConnection> remoteConnections;
 
 public:
-	void ReportError(int errorCode, std::string  whichFunc);
-	int fillTheirInfo(SOCKADDR_IN *who, SOCKET daSocket);
-	
-	int waitForFirstClientConnect();
-	int waitForClientAsync();
+	enum SOCKET_TYPE
+	{
+		DATAGRAM_SOCKET = 0,
+		STREAM_SOCKET 
+	};
 
-	int startServer(int numConnections, int port, int socketType = STREAM_SOCKET);
-	int connectToServer(string ip, int port, int socketType = STREAM_SOCKET);
-	void shutdown();
+	void ReportError(int errorCode, std::string  whichFunc);
+	int FillTheirInfo(SOCKADDR_IN *who, SOCKET daSocket);
+	
+	int WaitForFirstClientConnect();
+	int WaitForClientAsync();
+
+	int StartServer(int numConnections, int port, SOCKET_TYPE socketType = STREAM_SOCKET);
+	int ConnectToServer(string ip, int port, SOCKET_TYPE socketType = STREAM_SOCKET);
+	void Shutdown();
 	
 	
 	//for stream sockets
 	int ServerBroadcast(const char *msg);
 
-	int sendData(int socketIndex, const char *msg);
-	int getData(int socketIndex, char *msg, int dataSize);
+	int SendData(int socketIndex, const char *msg);
+	int GetData(int socketIndex, char *msg, int dataSize);
 	
 
 	//for datagram sockets
-	int sendData(SOCKET daSocket, const char *msg, SOCKADDR_IN whomToSend);
-	int getData(SOCKET daSocket, char *msg, SOCKADDR_IN whosSendingMeStuff);
+	int SendData(SOCKET daSocket, const char *msg, SOCKADDR_IN whomToSend);
+	int GetData(SOCKET daSocket, char *msg, SOCKADDR_IN whosSendingMeStuff);
 
-	int changeToNonBlocking(SOCKET daSocket);
-	size_t getNumConnections() {return remoteConnections.size();}
-	SOCKET getSocket(int index) { return remoteConnections[index].theSocket; }
-	bool hasRecivedData(int index);
-	void closeConnection(int index);
+	int ChangeToNonBlocking(SOCKET daSocket);
+	size_t GetNumConnections() {return remoteConnections.size();}
+	SOCKET GetSocket(int index) { return remoteConnections[index].theSocket; }
+	bool HasRecivedData(int index);
+	void CloseConnection(int index);
 };
 
 

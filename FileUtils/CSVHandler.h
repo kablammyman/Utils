@@ -23,14 +23,16 @@ public:
 		if (outputCSV.is_open())
 			outputCSV.close();
 	}
+	std::vector<std::string> GetCSVHeader();
 	void ReadCSVFile(std::string file, char d);
-	void CreateCSVFile(std::string outputFile, char d);
+	void CreateCSVFile(std::string outputFile,std::vector<std::string> header, char d);
 	std::string GetColValue(std::string colName, size_t line);
 
 	std::map<std::string, std::string> GetAllDataFromLine(size_t line);
 	size_t GetCSVLength();
 
-	void AddCSVHeader(std::string header);
-	void WriteCSVEntry(std::map<std::string, std::string>& dict, std::vector<std::string>& list);
-	
+	void AddCSVHeaderEntry(std::string header);
+	void WriteCSVEntry(std::map<std::string, std::string>& dict);
+	void WriteCSVEntryRaw(std::string entry);
+	void CreateCSVHeader(std::vector<std::string> headerList);
 };

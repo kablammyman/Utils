@@ -30,6 +30,17 @@ void CSVHandler::ReadCSVFile(std::string file, char d)
 	}
 }
 
+vector<string> CSVHandler::GetCSVHeader()
+{
+	map<string, size_t>::iterator it;
+	vector<string> ret;
+	for ( it = headerLookup.begin(); it != headerLookup.end(); it++ )
+	{
+		ret.push_back( it->first);
+	}
+	return ret;
+}
+
 vector<string> CSVHandler::CSVTokenize(string line)
 {
 	vector<string> tokens;
@@ -116,11 +127,12 @@ size_t CSVHandler::GetCSVLength()
 	return csvEntry.size();
 }
 ///////////////////writing csv files//////////////////////////////
-void CSVHandler::CreateCSVFile(std::string outputFile, char d)
+void CSVHandler::CreateCSVFile(std::string outputFile,vector<string> header, char d)
 {
 	outputDelim = d;
 	outputCSV.open(outputFile, std::ios_base::app);
 	string entry = "";
+	CreateCSVHeader(header);
 	//create the header for the first line
 	for (size_t i = 0; i < csvHeader.size(); i++)
 	{
@@ -130,8 +142,9 @@ void CSVHandler::CreateCSVFile(std::string outputFile, char d)
 	outputCSV << entry + "\n";
 }
 
-void CSVHandler::AddCSVHeader(std::string header)
+void CSVHandler::AddCSVHeaderEntry(std::string header)
 {
+	//make sure this header isnt already int eh list before adding it
 	for (size_t i = 0; i < csvHeader.size(); i++)
 		if (csvHeader[i] == header)
 			return;
@@ -139,17 +152,38 @@ void CSVHandler::AddCSVHeader(std::string header)
 	csvHeader.push_back(header);
 }
 
-void CSVHandler::WriteCSVEntry(map<string, string>& dict, vector<string>& list)
+void CSVHandler::CreateCSVHeader(vector<string> headerList)
+{
+	csvHeader.clear();
+	for(size_t i = 0; i <  headerList.size(); i++)
+		AddCSVHeaderEntry(headerList[i]);
+}
+
+void CSVHandler::WriteCSVEntry(map<string, string>& dict)
 {
 	string entry;
 	string token;
-	for (size_t i = 0; i < list.size(); i++)
+	//this loop will take the header values we have
+	//and a map that has a value for each entry.
+	//since we may collect these values for the entry in any order, we use the loop to put the reight value under the right header
+	for (size_t i = 0; i < csvHeader.size(); i++)
 	{
-		token = list[i];//easier to read code
-		entry += dict[token] + outputDelim;
+		token = csvHeader[i];//easier to read code
+		//make sure the map we passed in actually has the header entry we want right now
+		if(dict.count(token) == 1)
+			entry += dict[token] + outputDelim;
+		else
+		{
+			entry += " " + outputDelim;
+		}
 	}
 
 	entry.pop_back();
 
+	WriteCSVEntryRaw(entry);
+}
+
+void CSVHandler::WriteCSVEntryRaw(std::string entry)
+{
 	outputCSV << entry << endl;
 }

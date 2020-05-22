@@ -9,5 +9,5 @@ ipch/
 *debug*/
 *release*/
 *.db
-build_vs2015/
+build_vs20*
 build_linux/
