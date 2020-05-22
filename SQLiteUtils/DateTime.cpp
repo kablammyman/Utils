@@ -115,6 +115,14 @@ std::string DateTime::Now()
 	return temp.ToString();
 }
 
+std::string DateTime::PrettyPrintNow()
+{
+	DateTime temp;
+	temp.SetCurrentDateTime();
+
+	return temp.PrettyPrint();
+}
+
 DateTime DateTime::operator=(const DateTime& d)
 {
 	this->year = d.year;
@@ -343,4 +351,9 @@ std::string DateTime::GetDayOfMonthWord(int day)
 		return word + "rd";
 	else
 		return word + "th";
+}
+
+std::string DateTime::PrettyPrint()
+{
+	return GetMonthWord() + " " + GetDayOfMonthWord() + " " + std::to_string(year);
 }

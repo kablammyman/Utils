@@ -23,6 +23,7 @@ public:
 	static std::string ConvertSlashDate(std::string slashDate);
 
 	static std::string Now();
+	static std::string PrettyPrintNow();
 
 	DateTime operator=(const DateTime& d);
 	bool operator==(const DateTime& d);
@@ -41,6 +42,7 @@ public:
 	std::string GetMonthAbrv(); //Jan
 	std::string GetMonthWord(); //January
 	std::string GetDayOfMonthWord();//1st,2nd, etc
+	std::string PrettyPrint();
 	static std::string GetMonthWord(int month);
 	static std::string GetMonthAbrv(int month);
 	static std::string GetDayOfMonthWord(int day);
