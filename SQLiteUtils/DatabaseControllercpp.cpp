@@ -372,7 +372,7 @@ void DatabaseController::ParseDBOutput(string &inputData, int numFields, vector<
 	}
 }
 //this was needed so i can deal with data that has new lines within it
-void DatabaseController::ParseDBOutput(string &inputData, vector<string>fields, vector<DBResult> &returnData)
+void DatabaseController::ParseDBOutputOLD(string &inputData, vector<string>fields, vector<DBResult> &returnData)
 {
 	returnData.clear();
 
@@ -423,7 +423,90 @@ void DatabaseController::ParseDBOutput(string &inputData, vector<string>fields, 
 		returnData.push_back(curRow);
 	}
 }
+//this was needed so i can deal with data that has new lines within it
+void DatabaseController::ParseDBOutput(string &inputData, vector<string>fields, vector<DBResult> &returnData)
+{
+	returnData.clear();
+	size_t found = 0,j = 0;
 
+	//the first is the field name, the second is the value we want
+
+	DBResult curRow;
+	//this will makr where we see each 'feild|'
+	vector<size_t> dataMarkers;
+
+	//first find alldb cols in the massive string
+	//sine the feilds and the data returned could be in any order, we have to do this first pass
+		
+	int numMarkersFound = 0;
+	size_t fileldIndex = 0;
+
+	while(found != string::npos)
+	{
+		//becasue we have some colNames that are similar to others (OwnerID vs ID) we have to move the cursor passed each found colName
+		//but if for wahtever reason a colName is BEHIND where we are now, we wont find it....
+		//so, make sure the order you do a querey is the order you have the col names until i figure out a differnt solition
+		found = inputData.find(fields[fileldIndex]+"|",found);
+		if(found != string::npos)
+		{
+			dataMarkers.push_back(found);
+			numMarkersFound++;
+			found += fields[fileldIndex].size();
+			if(fileldIndex < fields.size()-1)
+				fileldIndex++;
+			else
+				fileldIndex = 0;
+		}
+	}
+
+	/*if(numMarkersFound != fields.size())
+	{
+		//if something went arway, skip passed this section of the data and keep moving on
+		if(dataMarkers.empty())
+			break;
+		else
+		{
+			j = dataMarkers.back();
+			continue;
+		}
+	}*/
+
+	size_t curMarker = 0,end = 0;
+	
+	//after we have the locations of each data marker, lets march thru the string and get the data!
+
+	for(size_t i = 0; i < dataMarkers.size();i++)
+	{
+		j = dataMarkers[i];
+		//move the cursor past colName|
+		j += fields[curMarker].size()+1; 
+		if(i < dataMarkers.size()-1)
+			end = dataMarkers[i+1];
+		else
+			end = inputData.size();
+
+		string curValue = inputData.substr(j,end-j);
+		if(curValue.back() =='\n')
+			curValue.pop_back();
+		curRow.insert(fields[curMarker],curValue);
+			
+		if(curMarker < fields.size()-1)
+			curMarker++;
+		else
+		{
+			returnData.push_back(curRow);
+			curRow.clear();
+			curMarker = 0;
+		}
+	}
+
+
+	if (curRow.data.size() > 0)
+	{
+		returnData.push_back(curRow);
+	}
+	
+}
 string DatabaseController::DataGrabber(string &word, size_t &curPos)
 {
 	string curWord;

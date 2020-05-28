@@ -147,6 +147,7 @@ public:
 	
 	static void ParseDBOutput(string &inputData, int numFields, vector <vector<string>> &returnData);
 	static void ParseDBOutput(string &inputData, int numFields, vector<DBResult> &returnData);
+	static void ParseDBOutputOLD(string &inputData, vector<string>fields, vector<DBResult> &returnData);
 	static void ParseDBOutput(string &inputData, vector<string>fields, vector<DBResult> &returnData);
 
 	//num cols is hopw many cols were truthned from the querey, and the colToUse is the data we want to put in the vector
