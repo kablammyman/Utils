@@ -255,9 +255,9 @@ int TaggingUtils::GetTagId(std::string tagName)
 	return GetId(TAGS_TABLE, tagName);
 }
 //---------------------------------------------------------------------------------------------------------------
-int TaggingUtils::GetItemId(std::string tagName)
+int TaggingUtils::GetItemId(std::string itemName)
 {
-	return GetId(ITEMS_TABLE, tagName);
+	return GetId(ITEMS_TABLE, itemName);
 }
 //---------------------------------------------------------------------------------------------------------------
 int TaggingUtils::GetItemTagId(int itemID,int tagID)
@@ -305,5 +305,161 @@ vector<string> TaggingUtils::GetAllTagsForItem(int itemID)
 			ret.push_back(tag);
 		}
 	}
+	return ret;
+}
+//---------------------------------------------------------------------------------------------------------------
+TaggingUtils::TaggedItem TaggingUtils::GetItemFromID(int id)
+{
+	TaggedItem ret;
+	string output;
+	vector<string> itemFields = {"ID","Name","Content"};
+	string fields = StringUtils::FlattenVector(itemFields);
+	string querey = "SELECT " + fields +" FROM " + ITEMS_TABLE + " WHERE ID = " + to_string(id);
+	
+	if (!dbController->DoDBQuerey(querey,output))
+	{
+		if(dbController->GetLastError() != "")
+		{
+			lastError.errorMessage= "GetItemFromID error: " + dbController->GetLastError();
+			return ret;
+		}
+	}
+
+	if(output.empty())
+		return ret;
+
+	vector <DatabaseController::DBResult>  dbResults;
+	DatabaseController::ParseDBOutput(output,itemFields, dbResults);
+
+	ret.id = id;
+	ret.content = dbResults[0].GetValueFromKey("Content");
+	ret.name = dbResults[0].GetValueFromKey("Name");
+
+	return ret;
+}
+//---------------------------------------------------------------------------------------------------------------
+vector<TaggingUtils::TaggedItem> TaggingUtils::GetAllItemsWithTag(string tag)
+{
+	vector<TaggedItem> ret;
+	//vector<string> itemFields = {"ID","Name","Content"};
+	int tagID = GetTagId(tag);
+	string output;
+	string querey = "SELECT ItemID FROM " + ITEM_TAGS_TABLE + " WHERE TagID = " + to_string(tagID);
+	if (!dbController->DoDBQuerey(querey,output))
+	{
+		if(dbController->GetLastError() != "")
+		{
+			lastError.errorMessage= "GetAllItemsWithTag error: " + dbController->GetLastError();
+			return ret;
+		}
+	}
+
+	vector <DatabaseController::DBResult>  dbResults;
+	//notice the differnte PArseDBOutput method (i think this was original one)
+	DatabaseController::ParseDBOutput(output,1, dbResults);
+
+	if(dbResults.empty())
+		return ret;
+	
+	//notice we have to crack open the 1 dbResult oject to get to the sweet meat of the tags
+	for (size_t i = 0; i < dbResults[0].data.size(); i++)
+	{
+		//TaggedItem nextItem = GetItemFromID( dbResults[i].GetIntValueFromKey("ItemID") );
+		TaggedItem nextItem = GetItemFromID( stoi(dbResults[0].data[i].second ) );
+		ret.push_back(nextItem);
+	}
+	
+
+	return ret;
+}
+
+//---------------------------------------------------------------------------------------------------------------
+vector<TaggingUtils::TaggedItem> TaggingUtils::GetAllItemsWithAnyOfTheseTags(vector<string> tags)
+{
+	vector<TaggedItem> ret;
+	//vfirst get all of the tag ids
+	string output;
+	//string tagsString = StringUtils::FlattenVector(tags);
+	string querey = "SELECT ID FROM " + TAGS_TABLE + " WHERE ";
+	for(size_t i = 0; i < tags.size(); i++)
+	{
+		if(i == 0)
+			querey += "Name = '" + tags[i] + "'";
+		else
+			querey += " OR Name = '" + tags[i] + "'";
+
+	}
+	
+	if (!dbController->DoDBQuerey(querey,output))
+	{
+		if(dbController->GetLastError() != "")
+		{
+			lastError.errorMessage= "GetAllItemsWithAnyOfTheseTags error: " + dbController->GetLastError();
+			return ret;
+		}
+	}
+
+	vector <DatabaseController::DBResult>  dbResults;
+	//notice the differnte PArseDBOutput method (i think this was original one)
+	DatabaseController::ParseDBOutput(output,1, dbResults);
+
+	if(dbResults.empty())
+		return ret;
+
+	//notice we have to crack open the 1 dbResult oject to get to the sweet meat of the tags
+	for (size_t i = 0; i < dbResults[0].data.size(); i++)
+	{
+		//TaggedItem nextItem = GetItemFromID( dbResults[i].GetIntValueFromKey("ItemID") );
+		TaggedItem nextItem = GetItemFromID( stoi(dbResults[0].data[i].second ) );
+		ret.push_back(nextItem);
+	}
+
+	return ret;
+}
+//---------------------------------------------------------------------------------------------------------------
+vector<TaggingUtils::TaggedItem> TaggingUtils::GetAllItemsWithALLOfTheseTags(vector<string> tags)
+{
+	vector<TaggedItem> ret;
+	vector<string> itemFields = {"ID","Name","Content"};
+	string output;
+	string tagsString;
+	//cant use regular flatten becasue we need to surround each keyword with quotes
+	for(size_t i =0; i < tags.size(); i++)
+	{
+		tagsString += "'" + tags[i] + "',";
+	}
+	tagsString.pop_back();//remove last instance of comma
+
+	string querey = "SELECT b.* FROM ItemTags bt, Items b, Tags t WHERE bt.TagID = t.ID ";
+	querey += " AND (t.name IN ( " + tagsString + ")) AND b.ID = bt.ItemID GROUP BY b.ID HAVING COUNT( b.ID )= "+ to_string(tags.size());
+	
+
+	if (!dbController->DoDBQuerey(querey,output))
+	{
+		if(dbController->GetLastError() != "")
+		{
+			lastError.errorMessage= "GetAllItemsWithALLOfTheseTags error: " + dbController->GetLastError();
+			return ret;
+		}
+	}
+
+	vector <DatabaseController::DBResult>  dbResults;
+	//notice the differnte PArseDBOutput method (i think this was original one)
+	DatabaseController::ParseDBOutput(output,itemFields, dbResults);
+
+	if(dbResults.empty())
+		return ret;
+
+	//this fancy querey already returns Item stuff
+	for (size_t i = 0; i < dbResults.size(); i++)
+	{
+		//TaggedItem nextItem = GetItemFromID( dbResults[i].GetIntValueFromKey("ItemID") );
+		TaggedItem nextItem;
+		nextItem.id = dbResults[i].GetIntValueFromKey("ID");
+		nextItem.content = dbResults[i].GetValueFromKey("Content");
+		nextItem.name = dbResults[i].GetValueFromKey("Name");
+		ret.push_back(nextItem);
+	}
+
 	return ret;
 }

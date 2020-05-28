@@ -17,6 +17,13 @@ class TaggingUtils : public BaseDBInterface
 	static const std::string ITEM_TAGS_TABLE;
 	//bool hasCustomItemFields;
 public:
+	//inherit from me if you use a custom item table (meaning you have more than a content field)
+	struct TaggedItem
+	{
+		std::string name;
+		int id;
+		std::string content;
+	};
 	using BaseDBInterface::BaseDBInterface;
 	std::string dbName;
 	void CreateTagTables();
@@ -35,5 +42,12 @@ public:
 	int GetItemId(std::string itemName);
 	int GetTagId(std::string tagName);
 	int GetItemTagId(int itemID,int tagID);
+	
 	std::vector<std::string> GetAllTagsForItem(int itemID);
+	std::vector<TaggedItem> GetAllItemsWithAnyOfTheseTags(std::vector<std::string> tags);
+	std::vector<TaggedItem> GetAllItemsWithALLOfTheseTags(std::vector<std::string> tags);
+	
+	//how cani do this when i inherit without creating a all this all over again?
+	TaggedItem GetItemFromID(int id /*, std::vector<std::string> itemFields*/);
+	std::vector<TaggedItem> GetAllItemsWithTag(std::string tag /*,std::vector<std::string> itemFields*/);
 };
