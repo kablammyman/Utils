@@ -20,7 +20,7 @@
 #define DEFAULT_BUFLEN 512
 #define NETWORK_ERROR -1
 #define NETWORK_OK     0
-
+#define GOT_CONNECTION 1
 using namespace std;
 /*
 change it so that each "connection" (aka server or client) has its own
@@ -39,9 +39,8 @@ struct RemoteComputerConnection
 
 class TCPUtils
 {
-	LPHOSTENT hostEntry;
+protected:
 	SOCKADDR_IN myInfo;
-	
 	WORD sockVersion;
 	WSADATA wsaData;
 	
@@ -51,11 +50,6 @@ class TCPUtils
 	fd_set master;   // master file descriptor list
 	fd_set read_fds; // temp file descriptor list for select()
 	
-	bool waitingForClients = false;
-	SOCKET listeningSocket;
-	int numListeningConnections;
-	vector<RemoteComputerConnection> remoteConnections;
-
 public:
 	enum SOCKET_TYPE
 	{
@@ -66,31 +60,19 @@ public:
 	void ReportError(int errorCode, std::string  whichFunc);
 	int FillTheirInfo(SOCKADDR_IN *who, SOCKET daSocket);
 	
-	int WaitForFirstClientConnect();
-	int WaitForClientAsync();
-
-	int StartServer(int numConnections, int port, SOCKET_TYPE socketType = STREAM_SOCKET);
-	int ConnectToServer(string ip, int port, SOCKET_TYPE socketType = STREAM_SOCKET);
-	void Shutdown();
 	
 	
-	//for stream sockets
-	int ServerBroadcast(const char *msg);
-
-	int SendData(int socketIndex, const char *msg);
-	int GetData(int socketIndex, char *msg, int dataSize);
+	int SendDataTCP(SOCKET daSocket, const char *msg);
+	int GetDataTCP(SOCKET daSocket, char *msg, int dataSize);
 	
 
 	//for datagram sockets
-	int SendData(SOCKET daSocket, const char *msg, SOCKADDR_IN whomToSend);
-	int GetData(SOCKET daSocket, char *msg, SOCKADDR_IN whosSendingMeStuff);
+	int SendDataUDP(SOCKET daSocket, const char *msg, SOCKADDR_IN whomToSend);
+	int GetDataUDP(SOCKET daSocket, char *msg, SOCKADDR_IN whosSendingMeStuff);
 
-	int ChangeToNonBlocking(SOCKET daSocket);
-	size_t GetNumConnections() {return remoteConnections.size();}
-	SOCKET GetSocket(int index) { return remoteConnections[index].theSocket; }
-	bool HasRecivedData(int index);
-	void CloseConnection(int index);
+	
+	bool HasRecivedData(SOCKET daSocket);
+	void CloseConnection(SOCKET daSocket);
 };
-
 
 #endif //INC_NETWORKCONNECTION_H
