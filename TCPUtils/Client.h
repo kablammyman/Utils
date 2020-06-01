@@ -6,7 +6,7 @@ class Client: public TCPUtils
 	RemoteComputerConnection serverConnection;
 	LPHOSTENT hostEntry;
 public:
-	int ConnectToServer(string ip, int port, SOCKET_TYPE socketType = STREAM_SOCKET);
+	int ConnectToServer(const char *ip, const char* port, SOCKET_TYPE socketType = STREAM_SOCKET);
 	int SendDataTCP(const char *msg);//for stream sockets
 	int GetDataTCP(char *msg, int dataSize);//for stream sockets
 

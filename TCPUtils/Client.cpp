@@ -1,19 +1,34 @@
 #include "Client.h"
 
-int Client::ConnectToServer(string ip, int port, SOCKET_TYPE socketType)
+int Client::ConnectToServer(const char* ip, const char* port, SOCKET_TYPE socketType)
 {
 	tv.tv_sec = 1;
 	tv.tv_usec = 0;
-
-	sockVersion = MAKEWORD(1, 1);
+	int nret;
+	sockVersion = MAKEWORD(2, 2);
 	WSAStartup(sockVersion, &wsaData);
 	FD_ZERO(&master);    // clear the master and temp sets
 	FD_ZERO(&read_fds);
 	int yes = 1;
+	
+	// Fill a SOCKADDR_IN struct with address information of host trying to conenct to
+	memset(&myInfo, 0, sizeof(myInfo)); // zero the rest of the struct 
+	myInfo.ai_family = AF_INET;
+	if (socketType == STREAM_SOCKET)
+		myInfo.ai_socktype = SOCK_STREAM;
+	else
+		myInfo.ai_socktype = SOCK_DGRAM;
+	
+	nret = getaddrinfo(ip, port, &myInfo, &servinfo);
+	if (nret!= 0) 
+	{
+		//fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
+		ReportError(WSAGetLastError(), "socket()");
+		WSACleanup();
+		return NETWORK_ERROR;
+	}
+		
 
-
-	serverConnection.portNumber = port;
-	serverConnection.ipAddy = ip;
 	if (socketType == STREAM_SOCKET)
 	{
 		serverConnection.theSocket = socket(PF_INET, SOCK_STREAM, 0);
@@ -21,8 +36,21 @@ int Client::ConnectToServer(string ip, int port, SOCKET_TYPE socketType)
 	}
 	else
 	{
-		serverConnection.theSocket = socket(PF_INET, SOCK_DGRAM, 0);
-		setsockopt(serverConnection.theSocket, SOL_SOCKET, SO_REUSEADDR, (char*)&yes, sizeof(int)); // lose the pesky "address already in use" error message
+		
+		//serverConnection.theSocket = socket(PF_INET, SOCK_DGRAM, 0);
+		//setsockopt(serverConnection.theSocket, SOL_SOCKET, SO_REUSEADDR, (char*)&yes, sizeof(int)); // lose the pesky "address already in use" error message
+		// loop through all the results and make a socket
+
+		for(serverConnection.remoteInfo = servinfo; serverConnection.remoteInfo != NULL; serverConnection.remoteInfo = serverConnection.remoteInfo->ai_next) 
+		{
+			serverConnection.theSocket = socket(serverConnection.remoteInfo->ai_family, SOCK_DGRAM,serverConnection.remoteInfo ->ai_protocol);
+			if (serverConnection.theSocket == -1) 
+			{
+				//perror("talker: socket");
+				continue;
+			}
+			break;
+		}
 	}
 
 	if (serverConnection.theSocket == INVALID_SOCKET)
@@ -32,17 +60,10 @@ int Client::ConnectToServer(string ip, int port, SOCKET_TYPE socketType)
 		return NETWORK_ERROR;
 	}
 
-	// Fill a SOCKADDR_IN struct with address information of host trying to conenct to
-	serverConnection.remoteInfo.sin_family = AF_INET;
-	serverConnection.remoteInfo.sin_addr.s_addr = inet_addr(serverConnection.ipAddy.c_str());
-	serverConnection.remoteInfo.sin_port = htons(serverConnection.portNumber);// Change to network-byte order and insert into port field THIS HAS TO BE SET TO WHAT THE SERVER PORT IS LISTENING ON FOR DATAGRAM    
-	memset(&(serverConnection.remoteInfo.sin_zero), '\0', 8); // zero the rest of the struct
 
-	FD_SET(serverConnection.theSocket, &master);//for use with select()
-
-										  // Connect to the server
 	if (socketType == STREAM_SOCKET)//if we use this with datagram sokcets, we dont need to senttoand recvFrom...we use send and recv
 	{
+		FD_SET(serverConnection.theSocket, &master);//for use with select()
 		int nret = connect(serverConnection.theSocket, (LPSOCKADDR)&serverConnection.remoteInfo, sizeof(struct sockaddr));
 		//nret = connect(sockfd, (struct sockaddr *)&dest_addr, sizeof(struct sockaddr));
 
@@ -52,6 +73,11 @@ int Client::ConnectToServer(string ip, int port, SOCKET_TYPE socketType)
 			WSACleanup();
 			return NETWORK_ERROR;
 		}
+	}
+	else
+	{
+		//int numbytes = sendto(sockfd, argv[2], strlen(argv[2]), 0,p->ai_addr, p->ai_addrlen)
+		SendDataUDP("let me in");
 	}
 
 	// Successfully connected!
@@ -81,11 +107,12 @@ int Client::SendDataUDP( const char *msg)//for datagram sockets
 int Client::GetDataUDP( char *msg)//for datagram sockets
 {
 
-	return TCPUtils::GetDataUDP(serverConnection.theSocket, msg, serverConnection.remoteInfo);
+	return TCPUtils::GetDataUDP(serverConnection.theSocket, msg);
 }
 //------------------------------------------------------------------------------
 void Client::DisconnectFromServer()
 {
+	freeaddrinfo(servinfo);
 	TCPUtils::CloseConnection(serverConnection.theSocket);
 }
 //------------------------------------------------------------------------------

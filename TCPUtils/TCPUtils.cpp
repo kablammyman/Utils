@@ -1,4 +1,4 @@
-#include <windows.h>
+
 #include <string>
 #include "TCPUtils.h"
 
@@ -10,7 +10,7 @@ void TCPUtils::ReportError(int errorCode, std::string  whichFunc)
 	//MessageBox(0, errorMsg, "socketIndication", MB_OK);
 }
 //------------------------------------------------------------------------------
-int TCPUtils::FillTheirInfo(SOCKADDR_IN *who, SOCKET daSocket)
+int TCPUtils::FillTheirInfo(addrinfo *who, SOCKET daSocket)
 {
 	// Fill a SOCKADDR_IN struct with address information of comp trying to conenct to
 	int length = sizeof(struct sockaddr);
@@ -58,10 +58,9 @@ int TCPUtils::GetDataTCP(SOCKET daSocket, char *msg, int dataSize)//for stream s
 }
 
 //------------------------------------------------------------------------------   
-int TCPUtils::SendDataUDP(SOCKET daSocket, const char *msg, SOCKADDR_IN whomToSend)//for datagram sockets
+int TCPUtils::SendDataUDP(SOCKET daSocket, const char *msg, addrinfo *whomToSend)//for datagram sockets
 {
-	int structLength = sizeof(struct sockaddr);
-	int nret = sendto(daSocket, msg, (int)strlen(msg), 0, (LPSOCKADDR)&whomToSend, structLength);
+	int nret = sendto(daSocket, msg, (int)strlen(msg), 0, whomToSend->ai_addr, whomToSend->ai_addrlen);
 
 	if (nret == SOCKET_ERROR) 
 	{
@@ -73,20 +72,18 @@ int TCPUtils::SendDataUDP(SOCKET daSocket, const char *msg, SOCKADDR_IN whomToSe
 
 }
 //------------------------------------------------------------------------------
-int TCPUtils::GetDataUDP(SOCKET daSocket, char *msg, SOCKADDR_IN whosSendingMeStuff)//for datagram sockets
+int TCPUtils::GetDataUDP(SOCKET daSocket, char *msg)//for datagram sockets
 {
-	int structLength = sizeof(struct sockaddr);
-	int MAX_STRING_LENGTH = 256;
-
-	//nret = recvfrom(daSocket,string,MAX_STRING_LENGTH,0,(struct sockaddr *)&whosSendingMeStuff,&structLength);
-	int nret = recvfrom(daSocket, msg, MAX_STRING_LENGTH, 0, (LPSOCKADDR)&whosSendingMeStuff, &structLength);
+	sockaddr_storage whosSendingMeStuff;
+	socklen_t addr_len = sizeof whosSendingMeStuff;
+	int nret = recvfrom(daSocket, msg, MAX_STRING_LENGTH-1, 0, (struct sockaddr *)&whosSendingMeStuff, &addr_len);
 
 	if (nret == SOCKET_ERROR) 
 	{
 		ReportError(WSAGetLastError(), "recv()");
 		return NETWORK_ERROR;
 	}
-
+//	printf("listener: got packet from %s\n",inet_ntop(their_addr.ss_family,get_in_addr((struct sockaddr *)&their_addr),s, sizeof s));
 	return nret;// nret contains the number of bytes received
 }
 //------------------------------------------------------------------------------

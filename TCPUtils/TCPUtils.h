@@ -2,8 +2,12 @@
 #define INC_NETWORKCONNECTION_H
 
 #if _WIN32
+#define _WIN32_WINNT 0x501
+
+#include <winsock2.h>
+#include <ws2tcpip.h>
 #include <Windows.h>
-#include <winsock.h>
+
 #else
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -21,6 +25,8 @@
 #define NETWORK_ERROR -1
 #define NETWORK_OK     0
 #define GOT_CONNECTION 1
+#define MAX_STRING_LENGTH 256
+
 using namespace std;
 /*
 change it so that each "connection" (aka server or client) has its own
@@ -32,7 +38,7 @@ struct RemoteComputerConnection
 	SOCKET theSocket;
 	int portNumber = 0;
 	string ipAddy;
-	SOCKADDR_IN remoteInfo;
+	struct addrinfo *remoteInfo;
 	//if needed, we can set an id for who or what this is connected to
 	int id = 0;
 };
@@ -40,7 +46,8 @@ struct RemoteComputerConnection
 class TCPUtils
 {
 protected:
-	SOCKADDR_IN myInfo;
+	struct addrinfo *servinfo;
+	struct addrinfo myInfo;
 	WORD sockVersion;
 	WSADATA wsaData;
 	
@@ -58,7 +65,7 @@ public:
 	};
 
 	void ReportError(int errorCode, std::string  whichFunc);
-	int FillTheirInfo(SOCKADDR_IN *who, SOCKET daSocket);
+	int FillTheirInfo(addrinfo *who, SOCKET daSocket);
 	
 	
 	
@@ -67,8 +74,8 @@ public:
 	
 
 	//for datagram sockets
-	int SendDataUDP(SOCKET daSocket, const char *msg, SOCKADDR_IN whomToSend);
-	int GetDataUDP(SOCKET daSocket, char *msg, SOCKADDR_IN whosSendingMeStuff);
+	int SendDataUDP(SOCKET daSocket, const char *msg, addrinfo *whomToSend);
+	int GetDataUDP(SOCKET daSocket, char *msg);
 
 	
 	bool HasRecivedData(SOCKET daSocket);

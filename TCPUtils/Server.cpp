@@ -1,7 +1,9 @@
-#include <windows.h>
 #include <string>
 #include "Server.h"
 
+
+
+#define MAXBUFLEN 256
 
 
 //------------------------------------------------------------------------------ 
@@ -37,55 +39,95 @@ int Server::GetDataUDP(int socketIndex, char *msg)//for datagram sockets
 	if (socketIndex >= remoteConnections.size())
 		return NETWORK_ERROR;
 
-	return TCPUtils::GetDataUDP(remoteConnections[socketIndex].theSocket, msg, remoteConnections[socketIndex].remoteInfo);
+	return TCPUtils::GetDataUDP(remoteConnections[socketIndex].theSocket, msg);
 }
 //------------------------------------------------------------------------------
-int Server::StartServer(int numConnections, int port, SOCKET_TYPE socketType)
+
+
+int Server::StartServer(int numConnections, char* port, SOCKET_TYPE socketType)
 {
 	tv.tv_sec = 1;
 	tv.tv_usec = 0;
 
 	RemoteComputerConnection remoteConn;
-	sockVersion = MAKEWORD(1, 1);			// We'd like Winsock version 1.1
+#ifdef _WIN32
+	sockVersion = MAKEWORD(2, 2);			// We'd like Winsock version 1.1
 	WSAStartup(sockVersion, &wsaData);
+#endif
 	FD_ZERO(&master);    // clear the master and temp sets
 	FD_ZERO(&read_fds);
 	int yes = 1;
-	int nret;
+	int nret = SOCKET_ERROR;
 
 	numListeningConnections = numConnections;
+	memset(&myInfo, 0, sizeof(myInfo)); // zero the rest of the struct 
+	myInfo.ai_family = AF_INET;
+	myInfo.ai_flags = AI_PASSIVE; 				                   
+	//myInfo.sin_port = htons(port);		// Convert integer to network-byte order and insert into the port field		
+
+	if (socketType == STREAM_SOCKET)
+		myInfo.ai_socktype = SOCK_STREAM;
+	else
+		myInfo.ai_socktype = SOCK_DGRAM;
+
+	if(getaddrinfo(NULL, port, &myInfo, &servinfo) != 0)
+	{
+		ReportError(WSAGetLastError(), "getaddrinfo()");		// Report the error with our custom function
+		WSACleanup();				// Shutdown Winsock
+		return NETWORK_ERROR;
+	}
+
 
 	if (socketType == STREAM_SOCKET)
 	{
-		listeningSocket = socket(AF_INET, SOCK_STREAM, 0);
+		listeningSocket = socket(PF_INET, SOCK_STREAM, 0);
+		if (listeningSocket == INVALID_SOCKET) 
+		{
+			ReportError(WSAGetLastError(), "socket()");		// Report the error with our custom function
+			WSACleanup();				// Shutdown Winsock
+			return NETWORK_ERROR;			// Return an error value
+		}
+		
+		nret = bind(listeningSocket, (LPSOCKADDR)&myInfo, sizeof(struct sockaddr));
 		setsockopt(listeningSocket, SOL_SOCKET, SO_REUSEADDR, (char*)&yes, sizeof(int)); // lose the pesky "address already in use" error message
 	}
 	else
 	{
-		remoteConn.theSocket = socket(AF_INET, SOCK_DGRAM, 0);
-		setsockopt(remoteConn.theSocket, SOL_SOCKET, SO_REUSEADDR, (char*)&yes, sizeof(int)); // lose the pesky "address already in use" error message
+		remoteConn.theSocket = socket(PF_INET, SOCK_DGRAM, 0);
+		if (remoteConn.theSocket == INVALID_SOCKET) 
+		{
+			ReportError(WSAGetLastError(), "socket()");		// Report the error with our custom function
+			WSACleanup();				// Shutdown Winsock
+			return NETWORK_ERROR;			// Return an error value
+		}
+		
+		//nret = bind(remoteConn.theSocket, (LPSOCKADDR)&myInfo, sizeof(struct sockaddr));
+		//setsockopt(remoteConn.theSocket, SOL_SOCKET, SO_REUSEADDR, (char*)&yes, sizeof(int)); // lose the pesky "address already in use" error message
+		for(remoteConn.remoteInfo = servinfo; remoteConn.remoteInfo != NULL; remoteConn.remoteInfo = remoteConn.remoteInfo->ai_next) 
+		{
+			remoteConn.theSocket = socket(remoteConn.remoteInfo->ai_family, SOCK_DGRAM, remoteConn.remoteInfo->ai_protocol);
+			if (remoteConn.theSocket == -1) 
+			{
+				//perror("listener: socket");
+				continue;
+			}
+			nret = bind(remoteConn.theSocket, remoteConn.remoteInfo->ai_addr, remoteConn.remoteInfo->ai_addrlen);
+			if (nret == -1) 
+			{
+				closesocket(remoteConn.theSocket);
+				//perror("listener: bind");
+				continue;
+			}
+			else
+				break;
+		}
 	}
 
-	if (listeningSocket == INVALID_SOCKET) 
-	{
-		ReportError(WSAGetLastError(), "socket()");		// Report the error with our custom function
-		WSACleanup();				// Shutdown Winsock
-		return NETWORK_ERROR;			// Return an error value
-	}
 
-	myInfo.sin_family = AF_INET;
-	myInfo.sin_addr.s_addr = INADDR_ANY;	// Since this socket is listening for connections, any local address will do						                   
-	myInfo.sin_port = htons(port);		// Convert integer to network-byte order and insert into the port field		
-	memset(&(myInfo.sin_zero), '\0', 8); // zero the rest of the struct 
-
-	if (socketType == STREAM_SOCKET)// Bind the socket to our local server address
-		nret = bind(listeningSocket, (LPSOCKADDR)&myInfo, sizeof(struct sockaddr));
-	else
-		nret = bind(remoteConn.theSocket, (LPSOCKADDR)&myInfo, sizeof(struct sockaddr));
 
 	if (nret == SOCKET_ERROR) 
 	{
-		ReportError(WSAGetLastError(), "bind()");
+		ReportError(WSAGetLastError(), "listener socket: failed to bind() socket\n");
 		WSACleanup();
 		return NETWORK_ERROR;
 	}
@@ -104,7 +146,7 @@ int Server::StartServer(int numConnections, int port, SOCKET_TYPE socketType)
 	}
 	else
 	{
-		FD_SET(remoteConn.theSocket, &master);
+		//FD_SET(remoteConn.theSocket, &master);
 		remoteConnections.push_back(remoteConn);
 	}
 
@@ -121,7 +163,7 @@ void Server::CloseConnectionToAClient(int index)
 //------------------------------------------------------------------------------
 void Server::ShutdownServer()
 {
-
+	freeaddrinfo(servinfo);
 	for (size_t x = 0; x < remoteConnections.size(); x++)
 		closesocket(remoteConnections[x].theSocket);
 	closesocket(listeningSocket);
@@ -130,7 +172,7 @@ void Server::ShutdownServer()
 	WSACleanup();
 }
 //------------------------------------------------------------------------------
-int Server::WaitForFirstClientConnect()
+int Server::WaitForFirstTCPClientConnect()
 {
 	int yes = 1;
 
@@ -146,24 +188,22 @@ int Server::WaitForFirstClientConnect()
 		return NETWORK_ERROR;
 	}
 
-	FillTheirInfo(&remoteConn.remoteInfo, remoteConn.theSocket);
+	FillTheirInfo(remoteConn.remoteInfo, remoteConn.theSocket);
 
 	remoteConnections.push_back(remoteConn);
-	/*
-	clientConnection = INVALID_SOCKET;
+	
+	/*clientConnection = INVALID_SOCKET;
 	while (clientConnection == INVALID_SOCKET)
 	{
-	clientConnection = accept(listeningSocket, 0, 0);
-	//clientConnection = accept(listeningSocket,  (struct sockaddr *)&theirInfo ,&sin_size);
+		clientConnection = accept(listeningSocket, 0, 0);
+		//clientConnection = accept(listeningSocket,  (struct sockaddr *)&theirInfo ,&sin_size);
 	}
 	clientConnection = listeningSocket; 
 
 	int sin_size = sizeof(struct sockaddr_in);
 	//Address of a sockaddr structure...Address of a variable containing size of sockaddr struct
-	clientConnection = accept(listeningSocket,  (struct sockaddr *)&theirInfo ,&sin_size);
-	*/
-	//sprintf(message,"we started a server listening on port %d",portNumber);
-	// MessageBox(0, message, "Server message", MB_OK);
+	clientConnection = accept(listeningSocket,  (struct sockaddr *)&theirInfo ,&sin_size);*/
+	
 	return NETWORK_OK;
 }
 //------------------------------------------------------------------------------   
@@ -175,7 +215,7 @@ int Server::ChangeToNonBlocking(SOCKET daSocket)// Change the socket mode on the
 	return 0;
 }
 //------------------------------------------------------------------------------   
-int Server::WaitForClientAsync()
+int Server::WaitForTCPClientAsync()
 {
 	// See if connection pending
 	fd_set readSet;
@@ -200,7 +240,7 @@ int Server::WaitForClientAsync()
 			return NETWORK_ERROR;
 		}
 
-		FillTheirInfo(&remoteConn.remoteInfo, remoteConn.theSocket);
+		FillTheirInfo(remoteConn.remoteInfo, remoteConn.theSocket);
 
 		remoteConnections.push_back(remoteConn);
 
