@@ -655,7 +655,7 @@ float StringUtils::GetFloatFromString(std::string str)
 
 std::string StringUtils::ToMoneyString(float amount)
 {
-	char temp[10];
+	char temp[15];
 	sprintf(temp,"%.2f",amount);
 	return temp;
 }
