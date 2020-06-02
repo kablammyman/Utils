@@ -3,5 +3,5 @@
 void TCPOutput::WriteMessage(int severity, string message)
 {
 	string msg = (AddPrefixes(severity) + message + "\n");
-	conn->SendData(socket, msg.c_str());
+	conn->SendDataTCP(socket, msg.c_str());
 }
