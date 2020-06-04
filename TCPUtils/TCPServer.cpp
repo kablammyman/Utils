@@ -1,13 +1,10 @@
 #include <string>
-#include "Server.h"
+#include "TCPServer.h"
 
-
-
-#define MAXBUFLEN 256
 
 
 //------------------------------------------------------------------------------ 
-int Server::SendDataTCP(int socketIndex, const char *msg)//for stream sockets
+int TCPServer::SendData(int socketIndex, const char *msg)//for stream sockets
 {
 	if(socketIndex >= remoteConnections.size())
 		return NETWORK_ERROR;
@@ -16,35 +13,17 @@ int Server::SendDataTCP(int socketIndex, const char *msg)//for stream sockets
 }
 
 //------------------------------------------------------------------------------
-int Server::GetDataTCP(int socketIndex, char *msg, int dataSize)//for stream sockets
+int TCPServer::GetData(int socketIndex, char *msg, int dataSize)//for stream sockets
 {
 	if (socketIndex >= remoteConnections.size())
 		return NETWORK_ERROR;
 
 	return TCPUtils::GetDataTCP(remoteConnections[socketIndex].theSocket,msg,dataSize);
 }
-
-//------------------------------------------------------------------------------   
-int Server::SendDataUDP(int socketIndex, const char *msg)//for datagram sockets
-{
-	if (socketIndex >= remoteConnections.size())
-		return NETWORK_ERROR;
-	
-	return TCPUtils::SendDataUDP(remoteConnections[socketIndex].theSocket, msg, remoteConnections[socketIndex].remoteInfo);
-
-}
-//------------------------------------------------------------------------------
-int Server::GetDataUDP(int socketIndex, char *msg)//for datagram sockets
-{
-	if (socketIndex >= remoteConnections.size())
-		return NETWORK_ERROR;
-
-	return TCPUtils::GetDataUDP(remoteConnections[socketIndex].theSocket, msg);
-}
 //------------------------------------------------------------------------------
 
 
-int Server::StartServer(int numConnections, char* port, SOCKET_TYPE socketType)
+int TCPServer::StartServer(int numConnections, char* port)
 {
 	tv.tv_sec = 1;
 	tv.tv_usec = 0;
@@ -64,11 +43,8 @@ int Server::StartServer(int numConnections, char* port, SOCKET_TYPE socketType)
 	myInfo.ai_family = AF_INET;
 	myInfo.ai_flags = AI_PASSIVE; 				                   
 	//myInfo.sin_port = htons(port);		// Convert integer to network-byte order and insert into the port field		
-
-	if (socketType == STREAM_SOCKET)
-		myInfo.ai_socktype = SOCK_STREAM;
-	else
-		myInfo.ai_socktype = SOCK_DGRAM;
+	myInfo.ai_socktype = SOCK_STREAM;
+	
 
 	if(getaddrinfo(NULL, port, &myInfo, &servinfo) != 0)
 	{
@@ -78,53 +54,18 @@ int Server::StartServer(int numConnections, char* port, SOCKET_TYPE socketType)
 	}
 
 
-	if (socketType == STREAM_SOCKET)
+	listeningSocket = socket(PF_INET, SOCK_STREAM, 0);
+	if (listeningSocket == INVALID_SOCKET) 
 	{
-		listeningSocket = socket(PF_INET, SOCK_STREAM, 0);
-		if (listeningSocket == INVALID_SOCKET) 
-		{
-			ReportError(WSAGetLastError(), "socket()");		// Report the error with our custom function
-			WSACleanup();				// Shutdown Winsock
-			return NETWORK_ERROR;			// Return an error value
-		}
-		
-		nret = bind(listeningSocket, (LPSOCKADDR)&myInfo, sizeof(struct sockaddr));
-		setsockopt(listeningSocket, SOL_SOCKET, SO_REUSEADDR, (char*)&yes, sizeof(int)); // lose the pesky "address already in use" error message
+		ReportError(WSAGetLastError(), "socket()");		// Report the error with our custom function
+		WSACleanup();				// Shutdown Winsock
+		return NETWORK_ERROR;			// Return an error value
 	}
-	else
-	{
-		remoteConn.theSocket = socket(PF_INET, SOCK_DGRAM, 0);
-		if (remoteConn.theSocket == INVALID_SOCKET) 
-		{
-			ReportError(WSAGetLastError(), "socket()");		// Report the error with our custom function
-			WSACleanup();				// Shutdown Winsock
-			return NETWORK_ERROR;			// Return an error value
-		}
 		
-		//nret = bind(remoteConn.theSocket, (LPSOCKADDR)&myInfo, sizeof(struct sockaddr));
-		//setsockopt(remoteConn.theSocket, SOL_SOCKET, SO_REUSEADDR, (char*)&yes, sizeof(int)); // lose the pesky "address already in use" error message
-		for(remoteConn.remoteInfo = servinfo; remoteConn.remoteInfo != NULL; remoteConn.remoteInfo = remoteConn.remoteInfo->ai_next) 
-		{
-			remoteConn.theSocket = socket(remoteConn.remoteInfo->ai_family, SOCK_DGRAM, remoteConn.remoteInfo->ai_protocol);
-			if (remoteConn.theSocket == -1) 
-			{
-				//perror("listener: socket");
-				continue;
-			}
-			nret = bind(remoteConn.theSocket, remoteConn.remoteInfo->ai_addr, remoteConn.remoteInfo->ai_addrlen);
-			if (nret == -1) 
-			{
-				closesocket(remoteConn.theSocket);
-				//perror("listener: bind");
-				continue;
-			}
-			else
-				break;
-		}
-	}
+	nret = bind(listeningSocket, (LPSOCKADDR)&myInfo, sizeof(struct sockaddr));
+	setsockopt(listeningSocket, SOL_SOCKET, SO_REUSEADDR, (char*)&yes, sizeof(int)); // lose the pesky "address already in use" error message
 
-
-
+	
 	if (nret == SOCKET_ERROR) 
 	{
 		ReportError(WSAGetLastError(), "listener socket: failed to bind() socket\n");
@@ -132,36 +73,30 @@ int Server::StartServer(int numConnections, char* port, SOCKET_TYPE socketType)
 		return NETWORK_ERROR;
 	}
 
-	if (socketType == STREAM_SOCKET)// add the listener to the master set
-	{
-		FD_SET(listeningSocket, &master);
-		nret = listen(listeningSocket, numListeningConnections);// Up to 10 connections may wait at any one time to be accept()'ed
 
-		if (nret == SOCKET_ERROR) 
-		{
-			ReportError(WSAGetLastError(), "listen()");
-			WSACleanup();
-			return NETWORK_ERROR;
-		}
-	}
-	else
+	FD_SET(listeningSocket, &master);
+	nret = listen(listeningSocket, numListeningConnections);// Up to 10 connections may wait at any one time to be accept()'ed
+
+	if (nret == SOCKET_ERROR) 
 	{
-		//FD_SET(remoteConn.theSocket, &master);
-		remoteConnections.push_back(remoteConn);
+		ReportError(WSAGetLastError(), "listen()");
+		WSACleanup();
+		return NETWORK_ERROR;
 	}
 
+	
 	waitingForClients = true;
 	return NETWORK_OK;
 }
 //------------------------------------------------------------------------------
-void Server::CloseConnectionToAClient(int index)
+void TCPServer::CloseConnectionToAClient(int index)
 {
 	TCPUtils::CloseConnection(remoteConnections[index].theSocket);
 	// erase the 6th element: myvector.erase(myvector.begin() + 5);
 	remoteConnections.erase(remoteConnections.begin()+index);
 }
 //------------------------------------------------------------------------------
-void Server::ShutdownServer()
+void TCPServer::ShutdownServer()
 {
 	freeaddrinfo(servinfo);
 	for (size_t x = 0; x < remoteConnections.size(); x++)
@@ -172,7 +107,7 @@ void Server::ShutdownServer()
 	WSACleanup();
 }
 //------------------------------------------------------------------------------
-int Server::WaitForFirstTCPClientConnect()
+int TCPServer::WaitForFirstClientConnect()
 {
 	int yes = 1;
 
@@ -207,7 +142,7 @@ int Server::WaitForFirstTCPClientConnect()
 	return NETWORK_OK;
 }
 //------------------------------------------------------------------------------   
-int Server::ChangeToNonBlocking(SOCKET daSocket)// Change the socket mode on the listening socket from blocking to non-block 
+int TCPServer::ChangeToNonBlocking(SOCKET daSocket)// Change the socket mode on the listening socket from blocking to non-block 
 {
 	ULONG NonBlock = 1;
 	if (ioctlsocket(daSocket, FIONBIO, &NonBlock) == SOCKET_ERROR)
@@ -215,7 +150,7 @@ int Server::ChangeToNonBlocking(SOCKET daSocket)// Change the socket mode on the
 	return 0;
 }
 //------------------------------------------------------------------------------   
-int Server::WaitForTCPClientAsync()
+int TCPServer::WaitForClientAsync()
 {
 	// See if connection pending
 	fd_set readSet;
@@ -249,7 +184,7 @@ int Server::WaitForTCPClientAsync()
 	return NETWORK_OK;
 }
 //------------------------------------------------------------------------------ 
-int Server::ServerBroadcast(const char *msg)//for stream sockets
+int TCPServer::ServerBroadcast(const char *msg)//for stream sockets
 {
 	int howManySent = 0;
 	for (size_t n = 0; n < remoteConnections.size(); n++)
@@ -261,22 +196,11 @@ int Server::ServerBroadcast(const char *msg)//for stream sockets
 
 	return howManySent;
 }
-
-
 //------------------------------------------------------------------------------
-int Server::HasRecivedData()
+int TCPServer::HasRecivedData()
 {
 	for( size_t i =0; i < remoteConnections.size(); i++)
 		if(TCPUtils::HasRecivedData(remoteConnections[i].theSocket))
 			return i;
 	return -1;
 }
-
-/*std::string getServerInfo()
-{
-int length =sizeof(struct sockaddr);
-int otherCompInfo = getpeername(theSocket,(LPSOCKADDR)&hostInfo,&length);
-return 
-} */
-
-

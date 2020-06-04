@@ -463,3 +463,10 @@ vector<TaggingUtils::TaggedItem> TaggingUtils::GetAllItemsWithALLOfTheseTags(vec
 
 	return ret;
 }
+
+void TaggingUtils::RunAutoTagger(std::string text)
+{
+	//go thru the text, and finx any key words we want to use
+	//eitehr find repeasted words (execpt for and,or, the, etc)
+	//if a reapeated word appears more than X times, add a tag
+}

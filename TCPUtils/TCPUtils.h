@@ -21,6 +21,7 @@
 #include <vector>
 #include <string>
 
+#define MAXBUFLEN 256
 #define DEFAULT_BUFLEN 512
 #define NETWORK_ERROR -1
 #define NETWORK_OK     0
@@ -33,15 +34,7 @@ change it so that each "connection" (aka server or client) has its own
 params including port num
 
 have an array of that class*/
-struct RemoteComputerConnection
-{
-	SOCKET theSocket;
-	int portNumber = 0;
-	string ipAddy;
-	struct addrinfo *remoteInfo;
-	//if needed, we can set an id for who or what this is connected to
-	int id = 0;
-};
+
 
 class TCPUtils
 {

@@ -36,7 +36,6 @@ int Client::ConnectToServer(const char* ip, const char* port, SOCKET_TYPE socket
 	}
 	else
 	{
-		
 		//serverConnection.theSocket = socket(PF_INET, SOCK_DGRAM, 0);
 		//setsockopt(serverConnection.theSocket, SOL_SOCKET, SO_REUSEADDR, (char*)&yes, sizeof(int)); // lose the pesky "address already in use" error message
 		// loop through all the results and make a socket
@@ -120,3 +119,9 @@ bool Client::HasRecivedData()
 {
 	return TCPUtils::HasRecivedData(serverConnection.theSocket);
 }
+/*std::string getServerInfo()
+{
+int length =sizeof(struct sockaddr);
+int otherCompInfo = getpeername(theSocket,(LPSOCKADDR)&hostInfo,&length);
+return 
+} */

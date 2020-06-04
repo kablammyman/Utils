@@ -50,4 +50,7 @@ public:
 	//how cani do this when i inherit without creating a all this all over again?
 	TaggedItem GetItemFromID(int id /*, std::vector<std::string> itemFields*/);
 	std::vector<TaggedItem> GetAllItemsWithTag(std::string tag /*,std::vector<std::string> itemFields*/);
+
+	//not sure if this will be a thing...
+	void RunAutoTagger(std::string text);
 };
