@@ -8,20 +8,28 @@ int UDPServer::SendData(int index, const char *msg)//for datagram sockets
 	return TCPUtils::SendDataUDP(theSocket, msg, remoteConnections[index].remoteInfo);
 
 }
+//------------------------------------------------------------------------------   
+//useful fro telling people who arent connected stuff...like "server is full" or "you're in" etc
+int UDPServer::SendRespnoseData(const char *msg,addrinfo *whomToSend)
+{
+	return TCPUtils::SendDataUDP(theSocket, msg, whomToSend);
+}
 //------------------------------------------------------------------------------
-int UDPServer::GetData(char *msg)//for datagram sockets
+UDPServer::RemoteDataInfo UDPServer::GetData()//for datagram sockets
 {
 	//return TCPUtils::GetDataUDP(remoteConnections.theSocket, msg);
 
+	UDPServer::RemoteDataInfo ret;
+	socklen_t addr_len = sizeof ret.clientInfo;
 
-	sockaddr_in whosSendingMeStuff;
-	socklen_t addr_len = sizeof whosSendingMeStuff;
-	int nret = recvfrom(theSocket, msg, MAX_STRING_LENGTH-1, 0, (struct sockaddr *)&whosSendingMeStuff, &addr_len);
-
-	if (nret == SOCKET_ERROR) 
+	ret.numBytes = recvfrom(theSocket, ret.rawData, MAX_STRING_LENGTH-1, 0, (struct sockaddr *)&ret.clientInfo, &addr_len);
+	ret.id = -1;
+	if (ret.numBytes == SOCKET_ERROR) 
 	{
 		ReportError(WSAGetLastError(), "recv()");
-		return NETWORK_ERROR;
+		sprintf(ret.rawData,"recvfrom error: %s",WSAGetLastError());
+		ret.numBytes = NETWORK_ERROR;
+		return ret;
 	}
 	//	printf("listener: got packet from %s\n",inet_ntop(whosSendingMeStuff.ss_family,get_in_addr((struct sockaddr *)&whosSendingMeStuff),s, sizeof s));
 	/*
@@ -30,20 +38,23 @@ int UDPServer::GetData(char *msg)//for datagram sockets
 	,s, //where to place teh string
 	sizeof s)//te size of the string
 	*/
-	addrinfo *remote;
-	remote->ai_addr = (struct sockaddr *)&whosSendingMeStuff;
-	remote->ai_addrlen = sizeof(whosSendingMeStuff);
+	//addrinfo *remote;
+	//remote->ai_addr = (struct sockaddr *)&whosSendingMeStuff;
+	//remote->ai_addrlen = sizeof(whosSendingMeStuff);
 
+	struct sockaddr_in servaddr;
 	//ill clean this up later
 	for(size_t i = 0; i < remoteConnections.size(); i++)
 	{
-		if(remoteConnections[i].remoteInfo->ai_addr == remote->ai_addr)
+		//check to see if we have this client address stored in our list of clients,if so, which index
+		if(remoteConnections[i].remoteInfo->ai_addr == (struct sockaddr *)&ret.clientInfo)
 		{
 			//this is a connected person sending us something
+			cout << "got something from a connected person\n";
+			ret.id = i;
 		}
 	}
-	return nret;// nret contains the number of bytes received
-
+	return ret;// nret contains the number of bytes received
 }
 //------------------------------------------------------------------------------
 
@@ -120,6 +131,18 @@ int UDPServer::StartServer(int numConnections, char* port)
 
 	waitingForClients = true;
 	return NETWORK_OK;
+}
+//------------------------------------------------------------------------------
+bool UDPServer::AddClientToList(addrinfo *newClient)
+{
+	RemoteConnection newremote;
+	newremote.isActive = true;
+	newremote.remoteInfo = newClient;
+	
+	remoteConnections.push_back(newremote);
+	//later check to see if this person already exists itnhe lsit
+
+	return true;
 }
 //------------------------------------------------------------------------------
 void UDPServer::CloseConnectionToAClient(int index)

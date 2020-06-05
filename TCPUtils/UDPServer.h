@@ -10,9 +10,17 @@ public:
 		bool isActive;
 		struct addrinfo *remoteInfo;
 	};
-
+	struct RemoteDataInfo
+	{
+		int numBytes;
+		char rawData[MAX_STRING_LENGTH];
+		int id;
+		sockaddr_in clientInfo;
+		//struct sockaddr_in clientAdd; 
+	};
 	int SendData(int index, const char *msg);//for datagram sockets
-	int GetData(char *msg);//for datagram sockets
+	int SendRespnoseData(const char *msg,addrinfo *whomToSend);//for datagram sockets
+	RemoteDataInfo GetData();//for datagram sockets
 
 	int ServerBroadcast(const char *msg);
 	int StartServer(int numConnections, char* port);
@@ -23,7 +31,7 @@ public:
 
 	void CloseConnectionToAClient(int index);
 	void ShutdownServer();
-
+	bool AddClientToList(addrinfo *newClient);
 private:
 	
 	bool waitingForClients = false;

@@ -73,11 +73,11 @@ int Client::ConnectToServer(const char* ip, const char* port, SOCKET_TYPE socket
 			return NETWORK_ERROR;
 		}
 	}
-	else
+	/*else
 	{
 		//int numbytes = sendto(sockfd, argv[2], strlen(argv[2]), 0,p->ai_addr, p->ai_addrlen)
 		SendDataUDP("let me in");
-	}
+	}*/
 
 	// Successfully connected!
 	return NETWORK_OK;
