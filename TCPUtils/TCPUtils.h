@@ -73,6 +73,16 @@ public:
 	
 	bool HasRecivedData(SOCKET daSocket);
 	void CloseConnection(SOCKET daSocket);
+
+	static int ReadIntFromBuffer(unsigned char *buffer, size_t &index);
+	static float ReadFloatFromBuffer(unsigned char *buffer, size_t &index);
+	static char * ReadHeaderFromBuffer(unsigned char *buffer);
+	static char * ReadStringFromBuffer(unsigned char *buffer,size_t size,size_t &index);
+
+	static void WriteIntToBuffer(int x, unsigned char *buffer, size_t &index);
+	static void WriteFloatToBuffer(float x,unsigned char *buffer, size_t &index);
+	static void WriteHeaderToBuffer(unsigned char *header, unsigned char *buffer);
+	static void WriteStringToBuffer(unsigned char *stringInput, unsigned char *buffer,size_t size,size_t &index);
 };
 
 #endif //INC_NETWORKCONNECTION_H
