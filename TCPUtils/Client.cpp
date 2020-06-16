@@ -97,13 +97,13 @@ int Client::GetDataTCP(char *msg, int dataSize)//for stream sockets
 }
 
 //------------------------------------------------------------------------------   
-int Client::SendDataUDP( const char *msg)//for datagram sockets
+int Client::SendDataUDP( const char *msg, int dataSize)//for datagram sockets
 {
-	return TCPUtils::SendDataUDP(serverConnection.theSocket, msg, serverConnection.remoteInfo);
+	return TCPUtils::SendDataUDP(serverConnection.theSocket, msg, dataSize, serverConnection.remoteInfo);
 
 }
 //------------------------------------------------------------------------------
-int Client::GetDataUDP( char *msg)//for datagram sockets
+int Client::GetDataUDP(char *msg)//for datagram sockets
 {
 
 	return TCPUtils::GetDataUDP(serverConnection.theSocket, msg);
@@ -118,6 +118,11 @@ void Client::DisconnectFromServer()
 bool Client::HasRecivedData()
 {
 	return TCPUtils::HasRecivedData(serverConnection.theSocket);
+}
+//-----------------------
+int Client::ChangeToNonBlocking()
+{
+	return TCPUtils::ChangeToNonBlocking(serverConnection.theSocket);
 }
 /*std::string getServerInfo()
 {

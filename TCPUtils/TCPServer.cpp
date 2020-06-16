@@ -142,14 +142,6 @@ int TCPServer::WaitForFirstClientConnect()
 	return NETWORK_OK;
 }
 //------------------------------------------------------------------------------   
-int TCPServer::ChangeToNonBlocking(SOCKET daSocket)// Change the socket mode on the listening socket from blocking to non-block 
-{
-	ULONG NonBlock = 1;
-	if (ioctlsocket(daSocket, FIONBIO, &NonBlock) == SOCKET_ERROR)
-		return -1;
-	return 0;
-}
-//------------------------------------------------------------------------------   
 int TCPServer::WaitForClientAsync()
 {
 	// See if connection pending

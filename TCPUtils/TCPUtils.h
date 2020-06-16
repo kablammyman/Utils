@@ -26,7 +26,7 @@
 #define NETWORK_ERROR -1
 #define NETWORK_OK     0
 #define GOT_CONNECTION 1
-#define MAX_STRING_LENGTH 256
+#define MAX_BUFFFER_SIZE 1400
 
 using namespace std;
 /*
@@ -51,6 +51,7 @@ protected:
 	fd_set read_fds; // temp file descriptor list for select()
 	
 public:
+	char recvBuffer[MAX_BUFFFER_SIZE];
 	enum SOCKET_TYPE
 	{
 		DATAGRAM_SOCKET = 0,
@@ -64,10 +65,10 @@ public:
 	
 	int SendDataTCP(SOCKET daSocket, const char *msg);
 	int GetDataTCP(SOCKET daSocket, char *msg, int dataSize);
-	
+	int ChangeToNonBlocking(SOCKET daSocket);
 
 	//for datagram sockets
-	int SendDataUDP(SOCKET daSocket, const char *msg, addrinfo *whomToSend);
+	int SendDataUDP(SOCKET daSocket, const char *msg, int dataLen,addrinfo *whomToSend);
 	int GetDataUDP(SOCKET daSocket, char *msg);
 
 	
@@ -76,13 +77,13 @@ public:
 
 	static int ReadIntFromBuffer(unsigned char *buffer, size_t &index);
 	static float ReadFloatFromBuffer(unsigned char *buffer, size_t &index);
-	static char * ReadHeaderFromBuffer(unsigned char *buffer);
-	static char * ReadStringFromBuffer(unsigned char *buffer,size_t size,size_t &index);
+	static void ReadHeaderFromBuffer(unsigned char *buffer,unsigned char header[5]);
+	static unsigned char * ReadStringFromBuffer(unsigned char *buffer,size_t size,size_t &index);
 
 	static void WriteIntToBuffer(int x, unsigned char *buffer, size_t &index);
 	static void WriteFloatToBuffer(float x,unsigned char *buffer, size_t &index);
-	static void WriteHeaderToBuffer(unsigned char *header, unsigned char *buffer);
-	static void WriteStringToBuffer(unsigned char *stringInput, unsigned char *buffer,size_t size,size_t &index);
+	static void WriteHeaderToBuffer(unsigned char *header,unsigned  char *buffer);
+	static void WriteStringToBuffer(char *stringInput, unsigned char *buffer,size_t size,size_t &index);
 };
 
 #endif //INC_NETWORKCONNECTION_H

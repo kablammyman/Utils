@@ -36,7 +36,7 @@ public:
 	int WaitForClientAsync();
 	//for stream sockets
 	
-	int ChangeToNonBlocking(SOCKET daSocket);
+	
 	size_t GetNumConnections() {return remoteConnections.size();}
 	SOCKET GetSocket(int index) { return remoteConnections[index].theSocket; }
 	void CloseConnectionToAClient(int index);

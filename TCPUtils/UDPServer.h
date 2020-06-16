@@ -3,7 +3,6 @@
 
 class UDPServer : public TCPUtils
 {
-
 public:
 	struct RemoteConnection
 	{
@@ -13,27 +12,12 @@ public:
 	struct RemoteDataInfo
 	{
 		int numBytes;
-		char rawData[MAX_STRING_LENGTH];
+		unsigned char rawData[MAX_BUFFFER_SIZE];
 		int id;
 		sockaddr_in clientInfo;
 		//struct sockaddr_in clientAdd; 
 	};
-	int SendData(int index, const char *msg);//for datagram sockets
-	int SendRespnoseData(const char *msg,addrinfo *whomToSend);//for datagram sockets
-	RemoteDataInfo GetData();//for datagram sockets
-
-	int ServerBroadcast(const char *msg);
-	int StartServer(int numConnections, char* port);
-
-
-	int ChangeToNonBlocking();
-	size_t GetNumConnections() {return remoteConnections.size();}
-
-	void CloseConnectionToAClient(int index);
-	void ShutdownServer();
-	bool AddClientToList(addrinfo *newClient);
 private:
-	
 	bool waitingForClients = false;
 	struct addrinfo  *clientAddr; 
 	SOCKET theSocket;
@@ -43,4 +27,25 @@ private:
 	//it will lsiten on one socket, and send out messages to all peopel with one sicket
 	//but you still need to keep track of the ips we are dealing with
 	vector<RemoteConnection> remoteConnections;
+
+public:
+	int SendData(int index, const char *msg, int dataSize);//for datagram sockets
+	int SendRespnoseData(const char *msg, int dataSize,addrinfo *whomToSend);//for datagram sockets
+	RemoteDataInfo GetData();//for datagram sockets
+
+	int ServerBroadcast(const char *msg, int dataSize);
+	int StartServer(int numConnections, char* port);
+
+
+	int ChangeToNonBlocking();
+	size_t GetNumConnections() {return remoteConnections.size();}
+
+	void CloseConnectionToAClient(int index);
+	void ShutdownServer();
+	int AddClientToList(addrinfo *newClient);
+	bool IsCLientInList(addrinfo *newClient);
+	bool IsCLientInList(int id);
+	int GetNumActiveUsers();
+	int GetNumAvailConn();
+	bool HasRecivedData(){ return TCPUtils::HasRecivedData(theSocket);  }
 };

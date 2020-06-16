@@ -58,9 +58,10 @@ int TCPUtils::GetDataTCP(SOCKET daSocket, char *msg, int dataSize)//for stream s
 }
 
 //------------------------------------------------------------------------------   
-int TCPUtils::SendDataUDP(SOCKET daSocket, const char *msg, addrinfo *whomToSend)//for datagram sockets
+int TCPUtils::SendDataUDP(SOCKET daSocket, const char *msg, int dataLen, addrinfo *whomToSend)//for datagram sockets
 {
-	int nret = sendto(daSocket, msg, (int)strlen(msg), 0, whomToSend->ai_addr, whomToSend->ai_addrlen);
+	//this is a problem! we cant just use strlen since we dont always just send strings!
+	int nret = sendto(daSocket, msg, dataLen, 0, whomToSend->ai_addr, whomToSend->ai_addrlen);
 
 	if (nret == SOCKET_ERROR) 
 	{
@@ -76,22 +77,29 @@ int TCPUtils::GetDataUDP(SOCKET daSocket, char *msg)//for datagram sockets
 {
 	sockaddr_storage whosSendingMeStuff;
 	socklen_t addr_len = sizeof whosSendingMeStuff;
-	int nret = recvfrom(daSocket, msg, MAX_STRING_LENGTH-1, 0, (struct sockaddr *)&whosSendingMeStuff, &addr_len);
-
-	if (nret == SOCKET_ERROR) 
+	int numBytes = recvfrom(daSocket, msg, MAX_BUFFFER_SIZE-1, 0, (struct sockaddr *)&whosSendingMeStuff, &addr_len);
+	
+	if (numBytes == SOCKET_ERROR) 
 	{
 		ReportError(WSAGetLastError(), "recv()");
 		return NETWORK_ERROR;
 	}
-//	printf("listener: got packet from %s\n",inet_ntop(their_addr.ss_family,get_in_addr((struct sockaddr *)&their_addr),s, sizeof s));
-	return nret;// nret contains the number of bytes received
+	//printf("listener: got packet from %s\n",inet_ntop(their_addr.ss_family,get_in_addr((struct sockaddr *)&their_addr),s, sizeof s));
+	return numBytes;
 }
 //------------------------------------------------------------------------------
 void TCPUtils::CloseConnection(SOCKET daSocket)
 {
 	closesocket(daSocket);
 }
-
+//------------------------------------------------------------------------------   
+int TCPUtils::ChangeToNonBlocking(SOCKET daSocket)// Change the socket mode on the listening socket from blocking to non-block 
+{
+	ULONG NonBlock = 1;
+	if (ioctlsocket(daSocket, FIONBIO, &NonBlock) == SOCKET_ERROR)
+		return -1;
+	return 0;
+}
 //------------------------------------------------------------------------------
 bool TCPUtils::HasRecivedData(SOCKET daSocket)
 {
@@ -112,18 +120,18 @@ bool TCPUtils::HasRecivedData(SOCKET daSocket)
 //we def should do some array checking, but ill worry about that later
 int TCPUtils::ReadIntFromBuffer(unsigned char* buffer, size_t &index)
 {
-	char intBuffer[4];
+	unsigned char intBuffer[4];
 	intBuffer[0] = buffer[index];
 	intBuffer[1] = buffer[index+1];
 	intBuffer[2] = buffer[index+2];
 	intBuffer[3] = buffer[index+3];
-	int retVal = int((unsigned char)(buffer[0]) << 24 |(unsigned char)(buffer[1]) << 16 |(unsigned char)(buffer[2]) << 8 |(unsigned char)(buffer[3]));
+	int retVal = int((unsigned char)(intBuffer[0]) << 24 |(unsigned char)(intBuffer[1]) << 16 |(unsigned char)(intBuffer[2]) << 8 |(unsigned char)(intBuffer[3]));
 	index += 4;
 	return retVal;	
 }
 float TCPUtils::ReadFloatFromBuffer(unsigned char* buffer, size_t &index)
 {
-	char floatBuffer[4];
+	unsigned char floatBuffer[4];
 	floatBuffer[0] = buffer[index];
 	floatBuffer[1] = buffer[index+1];
 	floatBuffer[2] = buffer[index+2];
@@ -133,18 +141,17 @@ float TCPUtils::ReadFloatFromBuffer(unsigned char* buffer, size_t &index)
 	index +=4;
 	return x;
 }
-char* TCPUtils::ReadHeaderFromBuffer(unsigned char* buffer)
+void TCPUtils::ReadHeaderFromBuffer(unsigned char* buffer, unsigned char header[5])
 {
-	char header[4];
 	header[0] = buffer[0];
 	header[1] = buffer[1];
 	header[2] = buffer[2];
 	header[3] = buffer[3];
-	return header;
+	header[4] = '\0';
 }
-char* TCPUtils::ReadStringFromBuffer(unsigned char* buffer, size_t size, size_t &index)
+unsigned char* TCPUtils::ReadStringFromBuffer(unsigned char* buffer, size_t size, size_t &index)
 {
-	char * retString = new char[size];
+	unsigned char * retString = new unsigned char[size];
 	
 	for(size_t i = index; i < (index+size); i++)
 		retString[i-index] = buffer[i];
@@ -153,7 +160,7 @@ char* TCPUtils::ReadStringFromBuffer(unsigned char* buffer, size_t size, size_t 
 	return retString;
 }
 
-void TCPUtils::WriteIntToBuffer(int x, unsigned  char* buffer, size_t &index)
+void TCPUtils::WriteIntToBuffer(int x,  unsigned char* buffer, size_t &index)
 {
 	buffer[index] = (x >> 24) & 0xFF;
 	buffer[index+1] = (x >> 16) & 0xFF;
@@ -163,12 +170,16 @@ void TCPUtils::WriteIntToBuffer(int x, unsigned  char* buffer, size_t &index)
 }
 void TCPUtils::WriteFloatToBuffer(float x, unsigned  char* buffer, size_t &index)
 {
-	int length = sizeof(float);
+	/*int length = sizeof(float);
 
 	for(int i = 0; i < length; i++)
 	{
-		buffer[index+i] = ((byte*)&x)[i];
-	}
+		buffer[index+i] = ((unsigned char*)&x)[i];
+	}*/
+	buffer[index] = ((unsigned char*)&x)[0];
+	buffer[index+1] = ((unsigned char*)&x)[1];
+	buffer[index+2] = ((unsigned char*)&x)[2];
+	buffer[index+3] = ((unsigned char*)&x)[3];
 	index += 4;
 }
 void TCPUtils::WriteHeaderToBuffer(unsigned char* header, unsigned char* buffer)
@@ -178,7 +189,7 @@ void TCPUtils::WriteHeaderToBuffer(unsigned char* header, unsigned char* buffer)
 	buffer[2] = header[2];
 	buffer[3] = header[3];
 }
-void TCPUtils::WriteStringToBuffer(unsigned char* stringInput, unsigned char* buffer, size_t size, size_t &index)
+void TCPUtils::WriteStringToBuffer(char* stringInput, unsigned char* buffer, size_t size, size_t &index)
 {
 	for(size_t i = index; i < (index+size); i++)
 		buffer[index+i] = stringInput[i];
