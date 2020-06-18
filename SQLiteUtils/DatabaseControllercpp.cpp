@@ -423,7 +423,78 @@ void DatabaseController::ParseDBOutputOLD(string &inputData, vector<string>field
 		returnData.push_back(curRow);
 	}
 }
-//this was needed so i can deal with data that has new lines within it
+/*
+void DatabaseController::ParseDBOutput(string &inputData, vector<string>fields, vector<DBResult> &returnData)
+{
+	returnData.clear();
+	size_t found = 0,dataEnd = 0;
+	size_t i;
+	
+	//the first is the field name, the second is the value we want
+	DBResult curRow;
+	string curColName;
+	string curData;
+	bool usesCurColName = false;
+
+	while(found != string::npos)
+	{
+		found = inputData.find("|",found);
+		if(found == string::npos)
+			break;
+		//once we have '|' work backward to see what the col name is
+		//we cant rely on the names we passed in since we may only want a fraction of what we got
+		
+		
+		//work backward to find whole col name
+		//we also know a col name wont have a new line in it
+		i = found;
+		while(inputData[i] != '\n' && i != 0)
+			i--;
+		//ugh, until i make this better, i just gotta move the cursor off the new line
+		if(inputData[i] == '\n')
+			i++;
+
+		curColName = inputData.substr(i,found-i);
+		usesCurColName = false;
+		for(size_t k = 0; k < fields.size(); k++)
+			if(fields[k] == curColName)
+			{
+				usesCurColName = true;
+				//get teh cursor off of the pipe
+				found++;
+				//now get the data for this col by finding the next pipe
+				dataEnd = inputData.find("|",found);
+				if(dataEnd == string::npos)
+					dataEnd = inputData.size();
+
+				//get "off" this current col name to find the data we want
+				i = dataEnd;
+				while(inputData[i] != '\n')
+					i--;
+				//now i is at the end of the data we want
+				//and found+1 is at teh start, so we can take the data and put it in a string 
+				curData = inputData.substr(found,i-found);
+				
+				//if(curData.size() > 0 && curData.back() =='\n')
+				//	curData.pop_back();
+
+				//now enter our results into the output vector
+				curRow.insert(curColName,curData);
+				break;
+			}
+		//if we are skipping the token we got back, then we need to advance the cursor by 1 so we can move on
+		if(!usesCurColName)
+			found++;
+
+		//okay, we got all the items for this row, lets start this agian for the next one
+		if(curRow.data.size() == fields.size())
+		{
+			returnData.push_back(curRow);
+			curRow.clear();
+		}
+	}	
+}
+*/
 void DatabaseController::ParseDBOutput(string &inputData, vector<string>fields, vector<DBResult> &returnData)
 {
 	returnData.clear();
@@ -437,7 +508,7 @@ void DatabaseController::ParseDBOutput(string &inputData, vector<string>fields, 
 
 	//first find alldb cols in the massive string
 	//sine the feilds and the data returned could be in any order, we have to do this first pass
-		
+
 	int numMarkersFound = 0;
 	size_t fileldIndex = 0;
 
@@ -461,18 +532,18 @@ void DatabaseController::ParseDBOutput(string &inputData, vector<string>fields, 
 
 	/*if(numMarkersFound != fields.size())
 	{
-		//if something went arway, skip passed this section of the data and keep moving on
-		if(dataMarkers.empty())
-			break;
-		else
-		{
-			j = dataMarkers.back();
-			continue;
-		}
+	//if something went arway, skip passed this section of the data and keep moving on
+	if(dataMarkers.empty())
+	break;
+	else
+	{
+	j = dataMarkers.back();
+	continue;
+	}
 	}*/
 
 	size_t curMarker = 0,end = 0;
-	
+
 	//after we have the locations of each data marker, lets march thru the string and get the data!
 
 	for(size_t i = 0; i < dataMarkers.size();i++)
@@ -489,7 +560,7 @@ void DatabaseController::ParseDBOutput(string &inputData, vector<string>fields, 
 		if(curValue.back() =='\n')
 			curValue.pop_back();
 		curRow.insert(fields[curMarker],curValue);
-			
+
 		if(curMarker < fields.size()-1)
 			curMarker++;
 		else
@@ -505,7 +576,7 @@ void DatabaseController::ParseDBOutput(string &inputData, vector<string>fields, 
 	{
 		returnData.push_back(curRow);
 	}
-	
+
 }
 string DatabaseController::DataGrabber(string &word, size_t &curPos)
 {

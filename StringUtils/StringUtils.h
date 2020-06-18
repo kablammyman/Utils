@@ -36,6 +36,10 @@ public:
 	static void SanitizeJsonString(std::string& value);
 	static void DesanitizeJsonString(std::string& value);
 	static std::string CreateJsonEntry(std::string name, std::string value, bool noQuotes);
+	static std::string CreateJsonEntry(std::string name, int val);
+	static std::string CreateJsonEntry(std::string name, float val);
+	static std::string CreateJsonEntry(std::string name, bool val);
+	static std::string CreateJsonEntry(std::string name, std::string val);
 	static std::string CreateJsonArrayEntry(std::string name, std::vector<std::string> value, bool noQuotes);
 	static std::string CreateJsonArrayEntry(std::string name, std::vector<int> value);
 	static std::string GetJsonEntryValue(std::string& json, std::string name);
@@ -43,4 +47,5 @@ public:
 	static float GetJsonEntryFloatValue(std::string& json, std::string name);
 	static float GetFloatFromString(std::string str);
 	static std::string ToMoneyString(float amount);
+	
 };

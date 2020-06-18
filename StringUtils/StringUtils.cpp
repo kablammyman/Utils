@@ -536,6 +536,27 @@ std::string StringUtils::CreateJsonEntry(std::string name, std::string value, bo
 	return ret;
 }
 
+std::string StringUtils::CreateJsonEntry(std::string name, int val)
+{
+	return CreateJsonEntry( name, std::to_string(val),true);
+}
+
+std::string StringUtils::CreateJsonEntry(std::string name, float val)
+{
+	return CreateJsonEntry( name, std::to_string(val),true);
+}
+
+std::string StringUtils::CreateJsonEntry(std::string name, bool val)
+{
+	std::string t = "true";
+	if(!val)
+		t = "false";
+	return CreateJsonEntry( name, t,true);
+}
+std::string StringUtils::CreateJsonEntry(std::string name, std::string val)
+{
+	return CreateJsonEntry( name, val,false);
+}
 std::string StringUtils::CreateJsonArrayEntry(std::string name, std::vector<std::string> value, bool noQuotes)
 {
 	std::string ret = "\"";
