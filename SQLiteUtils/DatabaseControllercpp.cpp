@@ -352,7 +352,7 @@ void DatabaseController::ParseDBOutput(string &inputData, int numFields, vector<
 	DBResult curRow;
 	while ( i < tokens.size())
 	{
-		if (numFields == 1 || curField < numFields - 1)
+		if (numFields == 1 || curField < tokens.size() -1 )
 		{
 			curRow.insert(tokens[i], tokens[i + 1]);
 			curField++;

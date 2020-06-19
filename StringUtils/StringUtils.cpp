@@ -533,7 +533,7 @@ std::string StringUtils::CreateJsonEntry(std::string name, std::string value, bo
 		SanitizeJsonString(value);
 		ret += "\"" + value + "\"";
 	}
-	return ret;
+	return ret +",\n";
 }
 
 std::string StringUtils::CreateJsonEntry(std::string name, int val)
