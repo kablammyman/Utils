@@ -163,7 +163,7 @@ bool DatabaseController::DoDBQuerey(string table, vector<dbDataPair> data, strin
 }
 
 //used for quereies like: SELECT path FROM Gallery WHERE CategoryID = "3" AND WebsiteID = "16";
-bool DatabaseController::DoDBQuerey(string table, string selectData, vector<dbDataPair> whereData, string &output)
+bool DatabaseController::DoDBQuerey(string table, string selectData, vector<dbDataPair> whereData, string &output, bool useAnd)
 {
 	string querey = "SELECT ";
 	string whereString = " WHERE ";
@@ -175,7 +175,12 @@ bool DatabaseController::DoDBQuerey(string table, string selectData, vector<dbDa
 	for (size_t i = 0; i < whereData.size(); i++)
 	{
 		if (i > 0)
-			whereString += " AND ";
+		{
+			if(useAnd)
+				whereString += " AND ";
+			else
+				whereString += " OR ";
+		}
 		whereString += (whereData[i].first + " = \"" + whereData[i].second + "\"");
 	}
 	whereString += ";";
@@ -230,7 +235,7 @@ bool DatabaseController::DoDBQuerey(string table, vector<string> selectData, str
 }
 
 
-bool DatabaseController::DoDBQuerey(string table, vector<string> selectData, vector<dbDataPair> whereData, string &output)
+bool DatabaseController::DoDBQuerey(string table, vector<string> selectData, vector<dbDataPair> whereData, string &output, bool useAnd)
 {
 	string querey = "SELECT ";
 	string whereString = " WHERE ";
@@ -253,7 +258,12 @@ bool DatabaseController::DoDBQuerey(string table, vector<string> selectData, vec
 	for (size_t i = 0; i < whereData.size(); i++)
 	{
 		if (i > 0)
-			whereString += " AND ";
+		{
+			if(useAnd)
+				whereString += " AND ";
+			else
+				whereString += " OR ";
+		}
 		whereString += (whereData[i].first + " = \"" + whereData[i].second + "\"");
 	}
 	whereString += ";";
@@ -352,7 +362,13 @@ void DatabaseController::ParseDBOutput(string &inputData, int numFields, vector<
 	DBResult curRow;
 	while ( i < tokens.size())
 	{
-		if (numFields == 1 || curField < tokens.size() -1 )
+		if (numFields == 1)
+		{
+			curRow.insert(tokens[i], tokens[i + 1]);
+			returnData.push_back(curRow);
+			curRow.clear();
+		}
+		else if (curField < tokens.size() -1 )
 		{
 			curRow.insert(tokens[i], tokens[i + 1]);
 			curField++;

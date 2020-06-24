@@ -49,8 +49,8 @@ public:
 	bool DoDBQuerey(std::string data, dbDataPair fromWhere, std::string &output);
 	bool DoDBQuerey(std::vector<std::string> data, std::string &output);
 	bool DoDBQuerey(std::vector<dbDataPair> data, std::string &output);
-	bool DoDBQuerey(std::string selectData, std::vector<dbDataPair> whereData, std::string &output);
-	bool DoDBQuerey(std::vector<std::string> selectData, std::vector<dbDataPair> whereData, std::string &output);
+	bool DoDBQuerey(std::string selectData, std::vector<dbDataPair> whereData, std::string &output, bool useAnd = true);
+	bool DoDBQuerey(std::vector<std::string> selectData, std::vector<dbDataPair> whereData, std::string &output, bool useAnd = true);
 	bool UpdateStringEntry(std::vector<dbDataPair> data, dbDataPair WhereClause, std::string &output);
 	bool UpdateIntEntry(std::vector<dbDataPair> data, dbDataPair WhereClause, std::string &output);
 	void GetDataPairFromOutput(std::string &inputData, std::string colName1, std::string colName2, std::vector<dbDataPair> &returnData);

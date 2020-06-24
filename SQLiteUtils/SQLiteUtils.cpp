@@ -417,7 +417,7 @@ bool SQLiteUtils::DoDBQuerey( vector<dbDataPair> data, string &output)
 }
 
 //used for quereies like: SELECT path FROM Gallery WHERE CategoryID = "3" AND WebsiteID = "16";
-bool SQLiteUtils::DoDBQuerey(string selectData, vector<dbDataPair> whereData, string &output)
+bool SQLiteUtils::DoDBQuerey(string selectData, vector<dbDataPair> whereData, string &output, bool useAnd)
 {
 	string querey = "SELECT ";
 	string whereString = " WHERE ";
@@ -429,7 +429,12 @@ bool SQLiteUtils::DoDBQuerey(string selectData, vector<dbDataPair> whereData, st
 	for (size_t i = 0; i < whereData.size(); i++)
 	{
 		if (i > 0)
-			whereString += " AND ";
+		{
+			if(useAnd)
+				whereString += " AND ";
+			else
+				whereString += " OR ";
+		}
 		whereString += (whereData[i].first + " = \"" + whereData[i].second + "\"");
 	}
 	whereString += ";";
@@ -438,7 +443,7 @@ bool SQLiteUtils::DoDBQuerey(string selectData, vector<dbDataPair> whereData, st
 }
 
 //used for quereies like: SELECT ID,path FROM Gallery WHERE CategoryID = "3" AND WebsiteID = "16";
-bool SQLiteUtils::DoDBQuerey(vector<string> selectData, vector<dbDataPair> whereData, string &output)
+bool SQLiteUtils::DoDBQuerey(vector<string> selectData, vector<dbDataPair> whereData, string &output, bool useAnd)
 {
 	string querey = "SELECT ";
 	string whereString = " WHERE ";
@@ -461,7 +466,12 @@ bool SQLiteUtils::DoDBQuerey(vector<string> selectData, vector<dbDataPair> where
 	for (size_t i = 0; i < whereData.size(); i++)
 	{
 		if (i > 0)
-			whereString += " AND ";
+		{
+			if(useAnd)
+				whereString += " AND ";
+			else
+				whereString += " OR ";
+		}
 		whereString += (whereData[i].first + " = \"" + whereData[i].second + "\"");
 	}
 	whereString += ";";
