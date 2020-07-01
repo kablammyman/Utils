@@ -35,6 +35,7 @@ public:
 	bool operator>=(const DateTime& d);
 	bool operator<=(const DateTime& d);
 
+	int GetDayOfYear();
 	void IncDay(int amt);
 	void DecDay(int amt);
 	void IncMonth(int amt);

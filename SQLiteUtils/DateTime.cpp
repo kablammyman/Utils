@@ -88,18 +88,31 @@ int DateTime::TimeDiff(DateTime& otherDate)
 	{
 		return abs(day - otherDate.day);
 	}
-	else
+
+	//convert dates into days
+	int otherNumDays = otherDate.GetDayOfYear();
+	int myNumDays = GetDayOfYear();
+		
+	if(year != otherDate.year)
 	{
-		int yr = abs(year - otherDate.year);
-		int mon = abs(month - otherDate.month);
-		int days = abs(day - otherDate.day);
-
-		//this is innaccurate, since this doesnt account for leap years, or how many days are in each month
-		//for now, each month has 30 days, and eyach year has 365 days
-		return (yr * 365) + (mon * 30) + days;
+		//get the difference in days from the years
+		int yearDiff = abs(otherDate.year - year) * 365; 
+		otherNumDays += yearDiff;
 	}
-}
 
+	return abs(otherNumDays - myNumDays);
+
+}
+int DateTime::GetDayOfYear()
+{
+	int numDays = 0;
+	for(int i = 1; i < month; i++)
+		numDays += GetDaysInMonth(i);
+
+	numDays += day;
+
+	return numDays;
+}
 //convert a date string that looks like mon/day/year to my format
 std::string DateTime::ConvertSlashDate(std::string slashDate)
 {
