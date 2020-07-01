@@ -25,7 +25,7 @@ int TCPServer::GetData(int socketIndex, char *msg, int dataSize)//for stream soc
 
 int TCPServer::StartServer(int numConnections, char* port)
 {
-	tv.tv_sec = 1;
+	tv.tv_sec = 0;
 	tv.tv_usec = 0;
 
 	RemoteComputerConnection remoteConn;

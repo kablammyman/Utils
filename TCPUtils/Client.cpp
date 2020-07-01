@@ -2,7 +2,7 @@
 
 int Client::ConnectToServer(const char* ip, const char* port, SOCKET_TYPE socketType)
 {
-	tv.tv_sec = 1;
+	tv.tv_sec = 0;
 	tv.tv_usec = 0;
 	int nret;
 	sockVersion = MAKEWORD(2, 2);
