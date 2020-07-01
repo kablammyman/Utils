@@ -572,8 +572,8 @@ std::string StringUtils::CreateJsonArrayEntry(std::string name, std::vector<std:
 		}
 	}
 	ret += "]";
-	//remove last comma
-	ret.pop_back();
+	size_t found = ret.find_last_of(",");
+	ret.replace(found,1,""); 
 
 	return ret;
 }
@@ -589,8 +589,8 @@ std::string StringUtils::CreateJsonArrayEntry(std::string name, std::vector<int>
 
 	ret += "]";
 	//remove last comma
-	if (ret.back() == ',')
-		ret.pop_back();
+	size_t found = ret.find_last_of(",");
+	ret.replace(found,1,""); 
 
 	return ret;
 }
