@@ -15,51 +15,37 @@ int UDPServer::SendRespnoseData(const char *msg,int dataSize, addrinfo *whomToSe
 	return TCPUtils::SendDataUDP(theSocket, msg, dataSize,whomToSend);
 }
 //------------------------------------------------------------------------------
-UDPServer::RemoteDataInfo UDPServer::GetData()//for datagram sockets
+void UDPServer::GetData(UDPServer::RemoteDataInfo &ret)
 {
-	//return TCPUtils::GetDataUDP(remoteConnections.theSocket, msg);
-
-	UDPServer::RemoteDataInfo ret;
+	
 	socklen_t addr_len = sizeof ret.clientInfo;
 
 	ret.numBytes = recvfrom(theSocket, (char *)ret.rawData, MAX_BUFFFER_SIZE-1, 0, (struct sockaddr *)&ret.clientInfo, &addr_len);
 	ret.id = -1;
 	if (ret.numBytes == SOCKET_ERROR) 
 	{
-		ReportError(WSAGetLastError(), "recv()");
-		sprintf((char *)ret.rawData,"recvfrom error: %s",WSAGetLastError());
-		ret.numBytes = NETWORK_ERROR;
-		return ret;
+		ReportError(WSAGetLastError(), "recvfrom()");
+		return;
 	}
-	//	printf("listener: got packet from %s\n",inet_ntop(whosSendingMeStuff.ss_family,get_in_addr((struct sockaddr *)&whosSendingMeStuff),s, sizeof s));
-	/*
-	whosSendingMeStuff.ss_family, //AF_INET
-	get_in_addr((struct sockaddr *)&whosSendingMeStuff)// the ip address
-	,s, //where to place teh string
-	sizeof s)//te size of the string
-	*/
-	//addrinfo *remote;
-	//remote->ai_addr = (struct sockaddr *)&whosSendingMeStuff;
-	//remote->ai_addrlen = sizeof(whosSendingMeStuff);
-
-	struct sockaddr_in servaddr;
-	//ill clean this up later
+	
+	struct sockaddr_in *addr4 = (struct sockaddr_in *)&ret.clientInfo;
+	char * clientIP = inet_ntoa(ret.clientInfo.sin_addr);
+	struct sockaddr_in * connectionIP = nullptr;
 	for(size_t i = 0; i < remoteConnections.size(); i++)
 	{
 		//check to see if we have this client address stored in our list of clients,if so, which index
-		if(remoteConnections[i].remoteInfo->ai_addr == (struct sockaddr *)&ret.clientInfo)
+		connectionIP = (struct sockaddr_in *)(remoteConnections[i].remoteInfo->ai_addr);
+
+		if(strcmp(inet_ntoa(connectionIP->sin_addr),clientIP) ==0)
 		{
-			//this is a connected person sending us something
-			//cout << "got something from a connected person\n";
-			ret.id = i;
+			ret.id = i+1;
 		}
 	}
-	return ret;// nret contains the number of bytes received
 }
 //------------------------------------------------------------------------------
 
 
-int UDPServer::StartServer(int numConnections, char* port)
+int UDPServer::StartServer(/*int numConnections,*/ char* port)
 {
 	tv.tv_sec = 0;
 	tv.tv_usec = 0;
@@ -74,7 +60,7 @@ int UDPServer::StartServer(int numConnections, char* port)
 	int nret = SOCKET_ERROR;
 	
 	numCurConnections = 0;
-	maxConnections = numConnections;
+	//maxConnections = numConnections;
 	memset(&myInfo, 0, sizeof(myInfo)); // zero the rest of the struct 
 	myInfo.ai_family = AF_INET;
 	myInfo.ai_flags = AI_PASSIVE; 				                   
@@ -154,10 +140,10 @@ int UDPServer::AddClientToList(addrinfo *newClient)
 	if(!usedOldSpot)
 	{
 		remoteConnections.push_back(newremote);
-		i = remoteConnections.size();
+		return remoteConnections.size();
 	}
 
-	return (int)i;
+	return (int)i+1;
 }
 //------------------------------------------------------------------------------
 //returns the index...mostly used to send client thier info
@@ -177,15 +163,11 @@ bool UDPServer::IsCLientInList(addrinfo *newClient)
 //returns the index...mostly used to send client thier info
 bool UDPServer::IsCLientInList(int id)
 {
-	if (id <= 0)
+	if (id <= 0 || id > remoteConnections.size())
 		return false;
-	for(size_t i = 0; i < remoteConnections.size(); i++)
-	{
-		if(remoteConnections[id-1].isActive)
-		{
-			return true;
-		}
-	}
+	
+	if(remoteConnections[id-1].isActive)
+		return true;
 
 	return false;
 }
@@ -218,18 +200,22 @@ int UDPServer::GetNumActiveUsers()
 
 
 //------------------------------------------------------------------------------
-void UDPServer::CloseConnectionToAClient(int index)
+void UDPServer::CloseConnectionToAClient(int id)
 {
 	//udp sockets dont haev a connecction to close...so, clear the data of the clients entry we had
+	if (id <= 0 || id > remoteConnections.size())
+		return;
+
+	int index  = id-1;
 	remoteConnections[index].isActive = false;
-	freeaddrinfo(remoteConnections[index].remoteInfo);
+	//freeaddrinfo(remoteConnections[index].remoteInfo);
 }
 //------------------------------------------------------------------------------
 void UDPServer::ShutdownServer()
 {
 	freeaddrinfo(servinfo);
-	for (size_t x = 0; x < remoteConnections.size(); x++)
-		freeaddrinfo(remoteConnections[x].remoteInfo);
+	//for (size_t x = 0; x < remoteConnections.size(); x++)
+	//	freeaddrinfo(remoteConnections[x].remoteInfo);
 	closesocket(theSocket);
 
 	// Shutdown Winsock

@@ -22,7 +22,8 @@ private:
 	struct addrinfo  *clientAddr; 
 	SOCKET theSocket;
 	int numCurConnections;
-	int maxConnections;
+	//int maxConnections;//we didnt even do anything with this. let the lib user decide on max connections
+
 	//we dont need multiple sockets with udp
 	//it will lsiten on one socket, and send out messages to all peopel with one sicket
 	//but you still need to keep track of the ips we are dealing with
@@ -31,10 +32,10 @@ private:
 public:
 	int SendData(int index, const char *msg, int dataSize);//for datagram sockets
 	int SendRespnoseData(const char *msg, int dataSize,addrinfo *whomToSend);//for datagram sockets
-	RemoteDataInfo GetData();//for datagram sockets
+	void GetData(RemoteDataInfo &ret);//for datagram sockets
 
 	int ServerBroadcast(const char *msg, int dataSize);
-	int StartServer(int numConnections, char* port);
+	int StartServer(/*int numConnections,*/ char* port);
 
 
 	int ChangeToNonBlocking();
