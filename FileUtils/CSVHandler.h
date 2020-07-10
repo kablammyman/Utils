@@ -35,4 +35,7 @@ public:
 	void WriteCSVEntry(std::map<std::string, std::string>& dict);
 	void WriteCSVEntryRaw(std::string entry);
 	void CreateCSVHeader(std::vector<std::string> headerList);
+	std::string GetCsvEntryString(std::map<std::string, std::string>& dict);
+	std::string GetCsvHeaderString();
+	void SetDelimeter(char delim);
 };

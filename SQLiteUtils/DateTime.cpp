@@ -163,7 +163,7 @@ bool DateTime::operator>(const DateTime& d)
 
 	if (this->month > d.month)
 		return true;
-	else if (this->month > d.month)
+	else if (this->month < d.month)
 		return false;
 	//else the year and the month is the same
 

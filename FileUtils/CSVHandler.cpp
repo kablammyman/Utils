@@ -41,6 +41,8 @@ vector<string> CSVHandler::GetCSVHeader()
 	return ret;
 }
 
+
+
 vector<string> CSVHandler::CSVTokenize(string line)
 {
 	vector<string> tokens;
@@ -133,13 +135,7 @@ void CSVHandler::CreateCSVFile(std::string outputFile,vector<string> header, cha
 	outputCSV.open(outputFile, std::ios_base::app);
 	string entry = "";
 	CreateCSVHeader(header);
-	//create the header for the first line
-	for (size_t i = 0; i < csvHeader.size(); i++)
-	{
-		entry += csvHeader[i] + outputDelim;
-	}
-	entry.pop_back();//remove last instance of the delimiter
-	outputCSV << entry + "\n";
+	
 }
 
 void CSVHandler::AddCSVHeaderEntry(std::string header)
@@ -161,6 +157,12 @@ void CSVHandler::CreateCSVHeader(vector<string> headerList)
 
 void CSVHandler::WriteCSVEntry(map<string, string>& dict)
 {
+	string entry = GetCsvEntryString(dict);
+	WriteCSVEntryRaw(entry);
+}
+
+std::string CSVHandler::GetCsvEntryString(std::map<std::string, std::string>& dict)
+{
 	string entry;
 	string token;
 	//this loop will take the header values we have
@@ -169,7 +171,7 @@ void CSVHandler::WriteCSVEntry(map<string, string>& dict)
 	for (size_t i = 0; i < csvHeader.size(); i++)
 	{
 		token = csvHeader[i];//easier to read code
-		//make sure the map we passed in actually has the header entry we want right now
+							 //make sure the map we passed in actually has the header entry we want right now
 		if(dict.count(token) == 1)
 			entry += dict[token] + outputDelim;
 		else
@@ -179,11 +181,29 @@ void CSVHandler::WriteCSVEntry(map<string, string>& dict)
 	}
 
 	entry.pop_back();
-
-	WriteCSVEntryRaw(entry);
+	return entry;
 }
 
 void CSVHandler::WriteCSVEntryRaw(std::string entry)
 {
 	outputCSV << entry << endl;
+}
+
+std::string CSVHandler::GetCsvHeaderString()
+{
+	string entry;
+	//create the header for the first line
+	for (size_t i = 0; i < csvHeader.size(); i++)
+	{
+		entry += csvHeader[i] + outputDelim;
+	}
+	entry.pop_back();//remove last instance of the delimiter
+	entry += "\n";
+
+	return entry;
+}
+
+void CSVHandler::SetDelimeter(char delim)
+{
+	outputDelim = delim;
 }
