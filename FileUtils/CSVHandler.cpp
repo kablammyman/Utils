@@ -5,7 +5,7 @@
 
 using namespace std;
 
-void CSVHandler::ReadCSVFile(std::string file, char d)
+bool CSVHandler::ReadCSVFile(std::string file, char d)
 {
 	inputDelim = d;
 	inputCSV.open(file);
@@ -27,7 +27,9 @@ void CSVHandler::ReadCSVFile(std::string file, char d)
 				csvEntry.push_back(line);
 		}
 		inputCSV.close();
+		return true;
 	}
+	return false;
 }
 
 vector<string> CSVHandler::GetCSVHeader()
@@ -129,13 +131,15 @@ size_t CSVHandler::GetCSVLength()
 	return csvEntry.size();
 }
 ///////////////////writing csv files//////////////////////////////
-void CSVHandler::CreateCSVFile(std::string outputFile,vector<string> header, char d)
+bool CSVHandler::CreateCSVFile(std::string outputFile,vector<string> header, char d)
 {
 	outputDelim = d;
 	outputCSV.open(outputFile, std::ios_base::app);
+	if(!outputCSV.is_open())
+		return false;
 	string entry = "";
 	CreateCSVHeader(header);
-	
+	return true;
 }
 
 void CSVHandler::AddCSVHeaderEntry(std::string header)

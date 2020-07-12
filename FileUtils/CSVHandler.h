@@ -24,8 +24,8 @@ public:
 			outputCSV.close();
 	}
 	std::vector<std::string> GetCSVHeader();
-	void ReadCSVFile(std::string file, char d);
-	void CreateCSVFile(std::string outputFile,std::vector<std::string> header, char d);
+	bool ReadCSVFile(std::string file, char d);
+	bool CreateCSVFile(std::string outputFile,std::vector<std::string> header, char d);
 	std::string GetColValue(std::string colName, size_t line);
 
 	std::map<std::string, std::string> GetAllDataFromLine(size_t line);
