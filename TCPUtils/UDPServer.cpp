@@ -24,7 +24,7 @@ void UDPServer::GetData(UDPServer::RemoteDataInfo &ret)
 	ret.id = -1;
 	if (ret.numBytes == SOCKET_ERROR) 
 	{
-		ReportError(WSAGetLastError(), "recvfrom()");
+		ReportError("recvfrom()");
 		return;
 	}
 	
@@ -69,8 +69,8 @@ int UDPServer::StartServer(/*int numConnections,*/ char* port)
 
 	if(getaddrinfo(NULL, port, &myInfo, &servinfo) != 0)
 	{
-		ReportError(WSAGetLastError(), "getaddrinfo()");		// Report the error with our custom function
-		WSACleanup();				// Shutdown Winsock
+		ReportError("getaddrinfo()");		// Report the error with our custom function
+		Shutdown();				// Shutdown Winsock
 		return NETWORK_ERROR;
 	}
 
@@ -80,8 +80,8 @@ int UDPServer::StartServer(/*int numConnections,*/ char* port)
 	theSocket = socket(PF_INET, SOCK_DGRAM, 0);
 	if (theSocket == INVALID_SOCKET) 
 	{
-		ReportError(WSAGetLastError(), "socket()");		// Report the error with our custom function
-		WSACleanup();				// Shutdown Winsock
+		ReportError("socket()");		// Report the error with our custom function
+		Shutdown();				// Shutdown Winsock
 		return NETWORK_ERROR;			// Return an error value
 	}
 
@@ -102,19 +102,19 @@ int UDPServer::StartServer(/*int numConnections,*/ char* port)
 			//perror("listener: bind");
 			continue;
 		}
-		else
-			break;
+		break;
 	}
 
 
 
 	if (nret == SOCKET_ERROR) 
 	{
-		ReportError(WSAGetLastError(), "listener socket: failed to bind() socket\n");
-		WSACleanup();
+		ReportError("listener socket: failed to bind() socket\n");
+		Shutdown();
 		return NETWORK_ERROR;
 	}
 
+	//now cerate a sending socket
 	waitingForClients = true;
 	return NETWORK_OK;
 }
@@ -218,8 +218,9 @@ void UDPServer::ShutdownServer()
 	//	freeaddrinfo(remoteConnections[x].remoteInfo);
 	closesocket(theSocket);
 
+
 	// Shutdown Winsock
-	WSACleanup();
+	Shutdown();
 }
 //------------------------------------------------------------------------------   
 int UDPServer::ChangeToNonBlocking()// Change the socket mode on the listening socket from blocking to non-block 

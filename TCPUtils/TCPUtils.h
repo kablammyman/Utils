@@ -39,7 +39,7 @@ have an array of that class*/
 class TCPUtils
 {
 protected:
-	struct addrinfo *servinfo;
+	struct addrinfo *servinfo, *listenInfo;
 	struct addrinfo myInfo;
 	WORD sockVersion;
 	WSADATA wsaData;
@@ -58,7 +58,7 @@ public:
 		STREAM_SOCKET 
 	};
 
-	void ReportError(int errorCode, std::string  whichFunc);
+	void ReportError(std::string  whichFunc);
 	int FillTheirInfo(addrinfo *who, SOCKET daSocket);
 	
 	
@@ -74,6 +74,7 @@ public:
 	
 	bool HasRecivedData(SOCKET daSocket);
 	void CloseConnection(SOCKET daSocket);
+	void Shutdown();
 
 	static int ReadIntFromBuffer(unsigned char *buffer, size_t &index);
 	static float ReadFloatFromBuffer(unsigned char *buffer, size_t &index);

@@ -1,6 +1,6 @@
 #include "Client.h"
 
-int Client::ConnectToServer(const char* ip, const char* port, SOCKET_TYPE socketType)
+int Client::ConnectToServer(const char* ip, const char* serverPort,const char* listenPort, SOCKET_TYPE socketType)
 {
 	tv.tv_sec = 0;
 	tv.tv_usec = 0;
@@ -19,57 +19,67 @@ int Client::ConnectToServer(const char* ip, const char* port, SOCKET_TYPE socket
 	else
 		myInfo.ai_socktype = SOCK_DGRAM;
 	
-	nret = getaddrinfo(ip, port, &myInfo, &servinfo);
+	nret = getaddrinfo(ip, serverPort, &myInfo, &servinfo);
 	if (nret!= 0) 
 	{
 		//fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
-		ReportError(WSAGetLastError(), "socket()");
-		WSACleanup();
+		ReportError("ConnectToServer ->getaddrinfo server port()");
+		Shutdown();
 		return NETWORK_ERROR;
 	}
 		
+	nret = getaddrinfo(ip, listenPort, &myInfo, &listenInfo);
+	if (nret!= 0) 
+	{
+		//fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
+		ReportError("ConnectToServer ->getaddrinfo listen port()");
+		Shutdown();
+		return NETWORK_ERROR;
+	}
 
 	if (socketType == STREAM_SOCKET)
 	{
-		serverConnection.theSocket = socket(PF_INET, SOCK_STREAM, 0);
-		setsockopt(serverConnection.theSocket, SOL_SOCKET, SO_REUSEADDR, (char*)&yes, sizeof(int)); // lose the pesky "address already in use" error message
+		serverConnection.sendSocket = socket(PF_INET, SOCK_STREAM, 0);
+		setsockopt(serverConnection.sendSocket, SOL_SOCKET, SO_REUSEADDR, (char*)&yes, sizeof(int)); // lose the pesky "address already in use" error message
 	}
 	else
 	{
-		//serverConnection.theSocket = socket(PF_INET, SOCK_DGRAM, 0);
-		//setsockopt(serverConnection.theSocket, SOL_SOCKET, SO_REUSEADDR, (char*)&yes, sizeof(int)); // lose the pesky "address already in use" error message
+		//serverConnection.sendSocket = socket(PF_INET, SOCK_DGRAM, 0);
+		//setsockopt(serverConnection.sendSocket, SOL_SOCKET, SO_REUSEADDR, (char*)&yes, sizeof(int)); // lose the pesky "address already in use" error message
 		// loop through all the results and make a socket
 
+		//find send socket
 		for(serverConnection.remoteInfo = servinfo; serverConnection.remoteInfo != NULL; serverConnection.remoteInfo = serverConnection.remoteInfo->ai_next) 
 		{
-			serverConnection.theSocket = socket(serverConnection.remoteInfo->ai_family, SOCK_DGRAM,serverConnection.remoteInfo ->ai_protocol);
-			if (serverConnection.theSocket == -1) 
+			serverConnection.sendSocket = socket(serverConnection.remoteInfo->ai_family, SOCK_DGRAM,serverConnection.remoteInfo ->ai_protocol);
+			if (serverConnection.sendSocket == -1) 
 			{
 				//perror("talker: socket");
 				continue;
 			}
 			break;
 		}
+		
 	}
 
-	if (serverConnection.theSocket == INVALID_SOCKET)
+	if (serverConnection.sendSocket == INVALID_SOCKET)
 	{
-		ReportError(WSAGetLastError(), "socket()");
-		WSACleanup();
+		ReportError("socket()");
+		Shutdown();
 		return NETWORK_ERROR;
 	}
 
 
 	if (socketType == STREAM_SOCKET)//if we use this with datagram sokcets, we dont need to senttoand recvFrom...we use send and recv
 	{
-		FD_SET(serverConnection.theSocket, &master);//for use with select()
-		int nret = connect(serverConnection.theSocket, (LPSOCKADDR)&serverConnection.remoteInfo, sizeof(struct sockaddr));
+		FD_SET(serverConnection.sendSocket, &master);//for use with select()
+		int nret = connect(serverConnection.sendSocket, (LPSOCKADDR)&serverConnection.remoteInfo, sizeof(struct sockaddr));
 		//nret = connect(sockfd, (struct sockaddr *)&dest_addr, sizeof(struct sockaddr));
 
 		if (nret == SOCKET_ERROR)
 		{
-			ReportError(WSAGetLastError(), "connect()");
-			WSACleanup();
+			ReportError("connect()");
+			Shutdown();
 			return NETWORK_ERROR;
 		}
 	}
@@ -86,43 +96,45 @@ int Client::ConnectToServer(const char* ip, const char* port, SOCKET_TYPE socket
 int Client::SendDataTCP(const char *msg)//for stream sockets
 {
 
-	return TCPUtils::SendDataTCP(serverConnection.theSocket, msg);
+	return TCPUtils::SendDataTCP(serverConnection.sendSocket, msg);
 }
 
 //------------------------------------------------------------------------------
 int Client::GetDataTCP(char *msg, int dataSize)//for stream sockets
 {
-
-	return TCPUtils::GetDataTCP(serverConnection.theSocket,msg,dataSize);
+	//return TCPUtils::GetDataTCP(serverConnection.recvSocket,msg,dataSize);
+	return TCPUtils::GetDataTCP(serverConnection.sendSocket,msg,dataSize);
 }
 
 //------------------------------------------------------------------------------   
 int Client::SendDataUDP( const char *msg, int dataSize)//for datagram sockets
 {
-	return TCPUtils::SendDataUDP(serverConnection.theSocket, msg, dataSize, serverConnection.remoteInfo);
+	return TCPUtils::SendDataUDP(serverConnection.sendSocket, msg, dataSize, serverConnection.remoteInfo);
 
 }
 //------------------------------------------------------------------------------
 int Client::GetDataUDP(char *msg)//for datagram sockets
 {
-
-	return TCPUtils::GetDataUDP(serverConnection.theSocket, msg);
+	//return TCPUtils::GetDataUDP(serverConnection.recvSocket, msg);
+	return TCPUtils::GetDataUDP(serverConnection.sendSocket, msg);
 }
 //------------------------------------------------------------------------------
 void Client::DisconnectFromServer()
 {
 	freeaddrinfo(servinfo);
-	TCPUtils::CloseConnection(serverConnection.theSocket);
+	TCPUtils::CloseConnection(serverConnection.sendSocket);
 }
 //------------------------------------------------------------------------------
 bool Client::HasRecivedData()
 {
-	return TCPUtils::HasRecivedData(serverConnection.theSocket);
+	//return TCPUtils::HasRecivedData(serverConnection.recvSocket);
+	return TCPUtils::HasRecivedData(serverConnection.sendSocket);
 }
 //-----------------------
 int Client::ChangeToNonBlocking()
 {
-	return TCPUtils::ChangeToNonBlocking(serverConnection.theSocket);
+	//return TCPUtils::ChangeToNonBlocking(serverConnection.recvSocket);
+	return TCPUtils::ChangeToNonBlocking(serverConnection.sendSocket);
 }
 /*std::string getServerInfo()
 {

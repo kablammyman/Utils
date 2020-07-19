@@ -48,8 +48,8 @@ int TCPServer::StartServer(int numConnections, char* port)
 
 	if(getaddrinfo(NULL, port, &myInfo, &servinfo) != 0)
 	{
-		ReportError(WSAGetLastError(), "getaddrinfo()");		// Report the error with our custom function
-		WSACleanup();				// Shutdown Winsock
+		ReportError("getaddrinfo()");		// Report the error with our custom function
+		Shutdown();				// Shutdown Winsock
 		return NETWORK_ERROR;
 	}
 
@@ -57,8 +57,8 @@ int TCPServer::StartServer(int numConnections, char* port)
 	listeningSocket = socket(PF_INET, SOCK_STREAM, 0);
 	if (listeningSocket == INVALID_SOCKET) 
 	{
-		ReportError(WSAGetLastError(), "socket()");		// Report the error with our custom function
-		WSACleanup();				// Shutdown Winsock
+		ReportError("socket()");		// Report the error with our custom function
+		Shutdown();				// Shutdown Winsock
 		return NETWORK_ERROR;			// Return an error value
 	}
 		
@@ -68,8 +68,8 @@ int TCPServer::StartServer(int numConnections, char* port)
 	
 	if (nret == SOCKET_ERROR) 
 	{
-		ReportError(WSAGetLastError(), "listener socket: failed to bind() socket\n");
-		WSACleanup();
+		ReportError("listener socket: failed to bind() socket\n");
+		Shutdown();
 		return NETWORK_ERROR;
 	}
 
@@ -79,8 +79,8 @@ int TCPServer::StartServer(int numConnections, char* port)
 
 	if (nret == SOCKET_ERROR) 
 	{
-		ReportError(WSAGetLastError(), "listen()");
-		WSACleanup();
+		ReportError("listen()");
+		Shutdown();
 		return NETWORK_ERROR;
 	}
 
@@ -104,7 +104,7 @@ void TCPServer::ShutdownServer()
 	closesocket(listeningSocket);
 
 	// Shutdown Winsock
-	WSACleanup();
+	Shutdown();
 }
 //------------------------------------------------------------------------------
 int TCPServer::WaitForFirstClientConnect()
@@ -118,8 +118,8 @@ int TCPServer::WaitForFirstClientConnect()
 
 	if (remoteConn.theSocket == INVALID_SOCKET)
 	{
-		ReportError(WSAGetLastError(), "accept()");
-		WSACleanup();
+		ReportError("accept()");
+		Shutdown();
 		return NETWORK_ERROR;
 	}
 
@@ -162,8 +162,8 @@ int TCPServer::WaitForClientAsync()
 
 		if (remoteConn.theSocket == INVALID_SOCKET)
 		{
-			ReportError(WSAGetLastError(), "accept()");
-			WSACleanup();
+			ReportError("accept()");
+			Shutdown();
 			return NETWORK_ERROR;
 		}
 

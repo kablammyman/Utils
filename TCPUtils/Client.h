@@ -6,13 +6,13 @@ class Client: public TCPUtils
 public:
 	struct ServerConnection
 	{
-		SOCKET theSocket;
-		int portNumber = 0;
-		string ipAddy;
+		SOCKET sendSocket;
+		//SOCKET recvSocket;//for udp sockets...mistly to test using1machine so i can use more than 1 port
+		string ipAddy;//srevers uip
 		struct addrinfo *remoteInfo;
 	};
 
-	int ConnectToServer(const char *ip, const char* port, SOCKET_TYPE socketType = STREAM_SOCKET);
+	int ConnectToServer(const char *ip, const char* serverPort,const char* listenPort,  SOCKET_TYPE socketType = STREAM_SOCKET);
 	int SendDataTCP(const char *msg);//for stream sockets
 	int GetDataTCP(char *msg, int dataSize);//for stream sockets
 

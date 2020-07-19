@@ -20,6 +20,8 @@ public:
 private:
 	bool waitingForClients = false;
 	struct addrinfo  *clientAddr; 
+	//SOCKET recvSocket;
+	//SOCKET sendSocket;
 	SOCKET theSocket;
 	int numCurConnections;
 	//int maxConnections;//we didnt even do anything with this. let the lib user decide on max connections

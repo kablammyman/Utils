@@ -3,8 +3,14 @@
 #include "TCPUtils.h"
 
 
-void TCPUtils::ReportError(int errorCode, std::string  whichFunc)
+void TCPUtils::ReportError(std::string  whichFunc)
 {
+	int errorCode = 0;
+#ifdef _WIN32
+	errorCode =	WSAGetLastError();
+#else
+	errorCode = errno;
+#endif
 	string error = ("Call to " + whichFunc + " returned error ");
 	std::cout << error << errorCode <<endl;
 	//MessageBox(0, errorMsg, "socketIndication", MB_OK);
@@ -35,7 +41,7 @@ int TCPUtils::SendDataTCP(SOCKET daSocket, const char *msg)//for stream sockets
 
 	if (nret == SOCKET_ERROR) 
 	{
-		ReportError(WSAGetLastError(), "send()");
+		ReportError("SendDataTCP()");
 		return NETWORK_ERROR;
 	}
 
@@ -50,7 +56,7 @@ int TCPUtils::GetDataTCP(SOCKET daSocket, char *msg, int dataSize)//for stream s
 
 	if (nret == SOCKET_ERROR) 
 	{
-		ReportError(WSAGetLastError(), "recv()");
+		ReportError("GetDataTCP()");
 		return NETWORK_ERROR;
 	}
 
@@ -65,7 +71,7 @@ int TCPUtils::SendDataUDP(SOCKET daSocket, const char *msg, int dataLen, addrinf
 
 	if (nret == SOCKET_ERROR) 
 	{
-		ReportError(WSAGetLastError(), "send()");
+		ReportError("SendDataUDP()");
 		return NETWORK_ERROR;
 	}
 
@@ -81,7 +87,7 @@ int TCPUtils::GetDataUDP(SOCKET daSocket, char *msg)//for datagram sockets
 	
 	if (numBytes == SOCKET_ERROR) 
 	{
-		ReportError(WSAGetLastError(), "recv()");
+		ReportError("GetDataUDP()");
 		return NETWORK_ERROR;
 	}
 	//printf("listener: got packet from %s\n",inet_ntop(their_addr.ss_family,get_in_addr((struct sockaddr *)&their_addr),s, sizeof s));
@@ -197,6 +203,12 @@ void TCPUtils::WriteStringToBuffer(char* stringInput, unsigned char* buffer, siz
 	index += size;
 }
 
+void TCPUtils::Shutdown()
+{
+#ifdef _WIN32
+	WSACleanup();
+#endif
+}
 /*std::string getServerInfo()
 {
 	int length =sizeof(struct sockaddr);
