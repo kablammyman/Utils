@@ -40,7 +40,7 @@ class TCPUtils
 {
 protected:
 	struct addrinfo *servinfo, *listenInfo;
-	struct addrinfo myInfo;
+	struct addrinfo hints;
 	WORD sockVersion;
 	WSADATA wsaData;
 	

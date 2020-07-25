@@ -4,8 +4,11 @@
 //------------------------------------------------------------------------------   
 int UDPServer::SendData(int index, const char *msg, int dataSize)//for datagram sockets
 {
-
-	return TCPUtils::SendDataUDP(theSocket, msg, dataSize,remoteConnections[index].remoteInfo);
+	struct sockaddr_in *addr4 = (struct sockaddr_in *) remoteConnections[index].remoteInfo.ai_addr;
+	string destIP = inet_ntoa( addr4->sin_addr);
+	cout << "sending client " << destIP  <<" : "<<msg <<endl;
+		
+	return TCPUtils::SendDataUDP(theSocket, msg, dataSize,&remoteConnections[index].remoteInfo);
 
 }
 //------------------------------------------------------------------------------   
@@ -34,7 +37,7 @@ void UDPServer::GetData(UDPServer::RemoteDataInfo &ret)
 	for(size_t i = 0; i < remoteConnections.size(); i++)
 	{
 		//check to see if we have this client address stored in our list of clients,if so, which index
-		connectionIP = (struct sockaddr_in *)(remoteConnections[i].remoteInfo->ai_addr);
+		connectionIP = (struct sockaddr_in *)(remoteConnections[i].remoteInfo.ai_addr);
 
 		if(strcmp(inet_ntoa(connectionIP->sin_addr),clientIP) ==0)
 		{
@@ -61,13 +64,12 @@ int UDPServer::StartServer(/*int numConnections,*/ char* port)
 	
 	numCurConnections = 0;
 	//maxConnections = numConnections;
-	memset(&myInfo, 0, sizeof(myInfo)); // zero the rest of the struct 
-	myInfo.ai_family = AF_INET;
-	myInfo.ai_flags = AI_PASSIVE; 				                   
-	//myInfo.sin_port = htons(port);		// Convert integer to network-byte order and insert into the port field		
-	myInfo.ai_socktype = SOCK_DGRAM;
+	memset(&hints, 0, sizeof(hints)); // zero the rest of the struct 
+	hints.ai_family = AF_INET;
+	hints.ai_flags = AI_PASSIVE; 				                   
+	hints.ai_socktype = SOCK_DGRAM;
 
-	if(getaddrinfo(NULL, port, &myInfo, &servinfo) != 0)
+	if(getaddrinfo(NULL, port, &hints, &servinfo) != 0)
 	{
 		ReportError("getaddrinfo()");		// Report the error with our custom function
 		Shutdown();				// Shutdown Winsock
@@ -85,7 +87,7 @@ int UDPServer::StartServer(/*int numConnections,*/ char* port)
 		return NETWORK_ERROR;			// Return an error value
 	}
 
-	//nret = bind(remoteConn.theSocket, (LPSOCKADDR)&myInfo, sizeof(struct sockaddr));
+	//nret = bind(remoteConn.theSocket, (LPSOCKADDR)&hints, sizeof(struct sockaddr));
 	//setsockopt(remoteConn.theSocket, SOL_SOCKET, SO_REUSEADDR, (char*)&yes, sizeof(int)); // lose the pesky "address already in use" error message
 	for(clientAddr = servinfo; clientAddr != NULL; clientAddr = clientAddr->ai_next) 
 	{
@@ -120,11 +122,28 @@ int UDPServer::StartServer(/*int numConnections,*/ char* port)
 }
 //------------------------------------------------------------------------------
 //returns the index...mostly used to send client thier info
-int UDPServer::AddClientToList(addrinfo *newClient)
+int UDPServer::AddClientToList(unsigned char a,unsigned char b,unsigned char c,unsigned char d , int port, int family)
 {
 	RemoteConnection newremote;
 	newremote.isActive = true;
-	newremote.remoteInfo = newClient;
+	sockaddr_in newClientInfo;
+	newClientInfo.sin_addr.S_un.S_un_b.s_b1 = a;
+	newClientInfo.sin_addr.S_un.S_un_b.s_b2 = b;
+	newClientInfo.sin_addr.S_un.S_un_b.s_b3 = c;
+	newClientInfo.sin_addr.S_un.S_un_b.s_b4 = d;
+
+	newremote.remoteInfo.ai_addr->sa_data[0] = 0xFF;
+	newremote.remoteInfo.ai_addr->sa_data[1] = 0x08;
+	newremote.remoteInfo.ai_addr->sa_data[2] = a;
+	newremote.remoteInfo.ai_addr->sa_data[3] = b;
+	newremote.remoteInfo.ai_addr->sa_data[4] = c;
+	newremote.remoteInfo.ai_addr->sa_data[5] = d;
+	newremote.remoteInfo.ai_addr->sa_family = (unsigned short)family;
+
+	newremote.remoteInfo.ai_addrlen = sizeof(newClientInfo);
+	newremote.remoteInfo.ai_family = family;
+	newremote.remoteInfo.ai_socktype = SOCK_DGRAM;
+	//newremote.remoteInfo.ai_addr->sa_family
 	size_t i = 0;
 	bool usedOldSpot = false;
 	//if we have any unused spaces, lets use that instead of adding more to the array
@@ -147,11 +166,11 @@ int UDPServer::AddClientToList(addrinfo *newClient)
 }
 //------------------------------------------------------------------------------
 //returns the index...mostly used to send client thier info
-bool UDPServer::IsCLientInList(addrinfo *newClient)
+bool UDPServer::IsCLientInList(addrinfo newClient)
 {
 	for(size_t i = 0; i < remoteConnections.size(); i++)
 	{
-		if(remoteConnections[i].remoteInfo->ai_addr == newClient->ai_addr)
+		if(remoteConnections[i].remoteInfo.ai_addr == newClient.ai_addr)
 		{
 			return true;
 		}
@@ -208,7 +227,7 @@ void UDPServer::CloseConnectionToAClient(int id)
 
 	int index  = id-1;
 	remoteConnections[index].isActive = false;
-	//freeaddrinfo(remoteConnections[index].remoteInfo);
+	//freeaddrinfo(&remoteConnections[index].remoteInfo);
 }
 //------------------------------------------------------------------------------
 void UDPServer::ShutdownServer()
@@ -241,4 +260,18 @@ int UDPServer::ServerBroadcast(const char *msg, int dataSize)
 	}
 
 	return howManySent;
+}
+
+void UDPServer::PrintCurrentConnectedIPs()
+{
+	for (size_t i = 0; i < remoteConnections.size(); i++)
+	{
+		if(remoteConnections[i].isActive)
+		{
+			struct sockaddr_in *addr4 = (struct sockaddr_in *) remoteConnections[i].remoteInfo.ai_addr;
+			string destIP = inet_ntoa( addr4->sin_addr);
+			cout << "client " << i+1 << ") " << destIP <<endl;
+		}
+	}
+
 }

@@ -7,7 +7,12 @@ public:
 	struct RemoteConnection
 	{
 		bool isActive;
-		struct addrinfo *remoteInfo;
+		struct addrinfo remoteInfo;
+
+		RemoteConnection()
+		{
+			isActive = false;
+		}
 	};
 	struct RemoteDataInfo
 	{
@@ -45,10 +50,12 @@ public:
 
 	void CloseConnectionToAClient(int index);
 	void ShutdownServer();
-	int AddClientToList(addrinfo *newClient);
-	bool IsCLientInList(addrinfo *newClient);
+	int AddClientToList(unsigned char a,unsigned char b,unsigned char c,unsigned char d , int port, int family);
+	bool IsCLientInList(addrinfo newClient);
 	bool IsCLientInList(int id);
 	int GetNumActiveUsers();
 	int GetNumAvailConn();
 	bool HasRecivedData(){ return TCPUtils::HasRecivedData(theSocket);  }
+
+	void PrintCurrentConnectedIPs();
 };

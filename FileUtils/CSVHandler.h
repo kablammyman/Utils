@@ -33,9 +33,11 @@ public:
 
 	void AddCSVHeaderEntry(std::string header);
 	void WriteCSVEntry(std::map<std::string, std::string>& dict);
+	
 	void WriteCSVEntryRaw(std::string entry);
 	void CreateCSVHeader(std::vector<std::string> headerList);
 	std::string GetCsvEntryString(std::map<std::string, std::string>& dict);
+	std::string GetCsvEntryStringAsXML(std::map<std::string, std::string>& dict);//special for click2mail api
 	std::string GetCsvHeaderString();
 	void SetDelimeter(char delim);
 };

@@ -12,14 +12,14 @@ int Client::ConnectToServer(const char* ip, const char* serverPort,const char* l
 	int yes = 1;
 	
 	// Fill a SOCKADDR_IN struct with address information of host trying to conenct to
-	memset(&myInfo, 0, sizeof(myInfo)); // zero the rest of the struct 
-	myInfo.ai_family = AF_INET;
+	memset(&hints, 0, sizeof(hints)); // zero the rest of the struct 
+	hints.ai_family = AF_INET;
 	if (socketType == STREAM_SOCKET)
-		myInfo.ai_socktype = SOCK_STREAM;
+		hints.ai_socktype = SOCK_STREAM;
 	else
-		myInfo.ai_socktype = SOCK_DGRAM;
+		hints.ai_socktype = SOCK_DGRAM;
 	
-	nret = getaddrinfo(ip, serverPort, &myInfo, &servinfo);
+	nret = getaddrinfo(ip, serverPort, &hints, &servinfo);
 	if (nret!= 0) 
 	{
 		//fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
@@ -28,7 +28,7 @@ int Client::ConnectToServer(const char* ip, const char* serverPort,const char* l
 		return NETWORK_ERROR;
 	}
 		
-	nret = getaddrinfo(ip, listenPort, &myInfo, &listenInfo);
+	nret = getaddrinfo(ip, listenPort, &hints, &listenInfo);
 	if (nret!= 0) 
 	{
 		//fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));

@@ -187,6 +187,22 @@ std::string CSVHandler::GetCsvEntryString(std::map<std::string, std::string>& di
 	entry.pop_back();
 	return entry;
 }
+//special for click2mail api
+std::string CSVHandler::GetCsvEntryStringAsXML(std::map<std::string, std::string>& dict)
+{
+	string entry;
+	string token;
+
+	for (size_t i = 0; i < csvHeader.size(); i++)
+	{
+		token = csvHeader[i];
+		if(dict.count(token) == 1)
+			entry += "<"+token+">"+dict[token]+"</"+token+">\n";
+		
+	}
+
+	return entry;
+}
 
 void CSVHandler::WriteCSVEntryRaw(std::string entry)
 {

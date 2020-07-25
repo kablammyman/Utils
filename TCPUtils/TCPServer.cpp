@@ -39,14 +39,13 @@ int TCPServer::StartServer(int numConnections, char* port)
 	int nret = SOCKET_ERROR;
 
 	numListeningConnections = numConnections;
-	memset(&myInfo, 0, sizeof(myInfo)); // zero the rest of the struct 
-	myInfo.ai_family = AF_INET;
-	myInfo.ai_flags = AI_PASSIVE; 				                   
-	//myInfo.sin_port = htons(port);		// Convert integer to network-byte order and insert into the port field		
-	myInfo.ai_socktype = SOCK_STREAM;
+	memset(&hints, 0, sizeof(hints)); // zero the rest of the struct 
+	hints.ai_family = AF_INET;
+	hints.ai_flags = AI_PASSIVE; 				                   
+	hints.ai_socktype = SOCK_STREAM;
 	
 
-	if(getaddrinfo(NULL, port, &myInfo, &servinfo) != 0)
+	if(getaddrinfo(NULL, port, &hints, &servinfo) != 0)
 	{
 		ReportError("getaddrinfo()");		// Report the error with our custom function
 		Shutdown();				// Shutdown Winsock
@@ -62,7 +61,7 @@ int TCPServer::StartServer(int numConnections, char* port)
 		return NETWORK_ERROR;			// Return an error value
 	}
 		
-	nret = bind(listeningSocket, (LPSOCKADDR)&myInfo, sizeof(struct sockaddr));
+	nret = bind(listeningSocket, (LPSOCKADDR)&hints, sizeof(struct sockaddr));
 	setsockopt(listeningSocket, SOL_SOCKET, SO_REUSEADDR, (char*)&yes, sizeof(int)); // lose the pesky "address already in use" error message
 
 	

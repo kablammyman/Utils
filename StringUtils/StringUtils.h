@@ -35,11 +35,14 @@ public:
 	//this may go into its own file....
 	static void SanitizeJsonString(std::string& value);
 	static void DesanitizeJsonString(std::string& value);
-	static std::string CreateJsonEntry(std::string name, std::string value, bool noQuotes);
-	static std::string CreateJsonEntry(std::string name, int val);
-	static std::string CreateJsonEntry(std::string name, float val);
-	static std::string CreateJsonEntry(std::string name, bool val);
-	static std::string CreateJsonEntry(std::string name, std::string val);
+	static std::string CreateJsonEntry(std::string name, std::string value, bool noQuotes,bool lastEntry);
+	
+	static std::string CreateJsonEntry(std::string name, int val,bool lastEntry=false);
+	static std::string CreateJsonEntry(std::string name, float val,bool lastEntry=false);
+	static std::string CreateJsonEntry(std::string name, bool val,bool lastEntry=false);
+	static std::string CreateJsonEntry(std::string name, std::string val,bool lastEntry=false);
+	static std::string CreateJsonEntry(std::string name, const char* val,bool lastEntry=false);
+
 	static std::string CreateJsonArrayEntry(std::string name, std::vector<std::string> value, bool noQuotes);
 	static std::string CreateJsonArrayEntry(std::string name, std::vector<int> value);
 	static std::string GetJsonEntryValue(std::string& json, std::string name);

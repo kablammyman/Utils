@@ -521,7 +521,7 @@ void StringUtils::DesanitizeJsonString(std::string& value)
 	}
 	value = ret;
 }
-std::string StringUtils::CreateJsonEntry(std::string name, std::string value, bool noQuotes)
+std::string StringUtils::CreateJsonEntry(std::string name, std::string value, bool noQuotes,bool lastEntry)
 {
 	std::string ret = "\"";
 	ret += name + "\" : ";
@@ -533,30 +533,41 @@ std::string StringUtils::CreateJsonEntry(std::string name, std::string value, bo
 		SanitizeJsonString(value);
 		ret += "\"" + value + "\"";
 	}
+	if(lastEntry)
+		return ret +"\n";
 	return ret +",\n";
 }
 
-std::string StringUtils::CreateJsonEntry(std::string name, int val)
+
+
+std::string StringUtils::CreateJsonEntry(std::string name, int val,bool lastEntry)
 {
-	return CreateJsonEntry( name, std::to_string(val),true);
+	return CreateJsonEntry( name, std::to_string(val),true,lastEntry);
 }
 
-std::string StringUtils::CreateJsonEntry(std::string name, float val)
+std::string StringUtils::CreateJsonEntry(std::string name, float val,bool lastEntry)
 {
-	return CreateJsonEntry( name, std::to_string(val),true);
+	return CreateJsonEntry( name, std::to_string(val),true,lastEntry);
 }
 
-std::string StringUtils::CreateJsonEntry(std::string name, bool val)
+std::string StringUtils::CreateJsonEntry(std::string name, bool val,bool lastEntry)
 {
 	std::string t = "true";
 	if(!val)
 		t = "false";
-	return CreateJsonEntry( name, t,true);
+	return CreateJsonEntry( name, t,true,lastEntry);
 }
-std::string StringUtils::CreateJsonEntry(std::string name, std::string val)
+std::string StringUtils::CreateJsonEntry(std::string name, std::string val,bool lastEntry)
 {
-	return CreateJsonEntry( name, val,false);
+	return CreateJsonEntry( name, val,false,lastEntry);
 }
+
+std::string StringUtils::CreateJsonEntry(std::string name, const char* val, bool lastEntry)
+{
+	std::string value = val;
+	return CreateJsonEntry( name, value,false,lastEntry);
+}
+
 std::string StringUtils::CreateJsonArrayEntry(std::string name, std::vector<std::string> value, bool noQuotes)
 {
 	std::string ret = "\"";
