@@ -197,7 +197,10 @@ std::string CSVHandler::GetCsvEntryStringAsXML(std::map<std::string, std::string
 	{
 		token = csvHeader[i];
 		if(dict.count(token) == 1)
-			entry += "<"+token+">"+dict[token]+"</"+token+">\n";
+		{
+			string val = StringUtils::FindAndReplace(dict[token],"&","&amp;");
+			entry += "<"+token+">"+val+"</"+token+">\n";
+		}
 		
 	}
 
