@@ -8,7 +8,7 @@ public:
 	{
 		bool isActive;
 		struct addrinfo remoteInfo;
-
+		unsigned char ip4Data[14];
 		RemoteConnection()
 		{
 			isActive = false;
@@ -50,7 +50,8 @@ public:
 
 	void CloseConnectionToAClient(int index);
 	void ShutdownServer();
-	int AddClientToList(unsigned char a,unsigned char b,unsigned char c,unsigned char d , int port, int family);
+	//int AddClientToList(unsigned char a,unsigned char b,unsigned char c,unsigned char d , int port, int family);
+	int AddClientToList(addrinfo adder);
 	bool IsCLientInList(addrinfo newClient);
 	bool IsCLientInList(int id);
 	int GetNumActiveUsers();

@@ -4,6 +4,13 @@
 //------------------------------------------------------------------------------   
 int UDPServer::SendData(int index, const char *msg, int dataSize)//for datagram sockets
 {
+	unsigned char t;
+	for(int i = 0; i < 14; i++)
+	{
+		t = remoteConnections[index].ip4Data[i];
+		remoteConnections[index].remoteInfo.ai_addr->sa_data[i] = t;
+	}
+
 	struct sockaddr_in *addr4 = (struct sockaddr_in *) remoteConnections[index].remoteInfo.ai_addr;
 	string destIP = inet_ntoa( addr4->sin_addr);
 	cout << "sending client " << destIP  <<" : "<<msg <<endl;
@@ -122,28 +129,31 @@ int UDPServer::StartServer(/*int numConnections,*/ char* port)
 }
 //------------------------------------------------------------------------------
 //returns the index...mostly used to send client thier info
-int UDPServer::AddClientToList(unsigned char a,unsigned char b,unsigned char c,unsigned char d , int port, int family)
+//int UDPServer::AddClientToList(unsigned char a,unsigned char b,unsigned char c,unsigned char d , int port, int family)
+int UDPServer::AddClientToList(addrinfo adder)
 {
 	RemoteConnection newremote;
 	newremote.isActive = true;
-	sockaddr_in newClientInfo;
+	unsigned char t;
+	for(int i = 0; i < 14; i++)
+	{
+		t = adder.ai_addr->sa_data[i];
+		newremote.ip4Data[i] = t;
+	}
+
+	/*sockaddr_in newClientInfo;
 	newClientInfo.sin_addr.S_un.S_un_b.s_b1 = a;
 	newClientInfo.sin_addr.S_un.S_un_b.s_b2 = b;
 	newClientInfo.sin_addr.S_un.S_un_b.s_b3 = c;
 	newClientInfo.sin_addr.S_un.S_un_b.s_b4 = d;
 
-	newremote.remoteInfo.ai_addr->sa_data[0] = 0xFF;
-	newremote.remoteInfo.ai_addr->sa_data[1] = 0x08;
-	newremote.remoteInfo.ai_addr->sa_data[2] = a;
-	newremote.remoteInfo.ai_addr->sa_data[3] = b;
-	newremote.remoteInfo.ai_addr->sa_data[4] = c;
-	newremote.remoteInfo.ai_addr->sa_data[5] = d;
-	newremote.remoteInfo.ai_addr->sa_family = (unsigned short)family;
 
 	newremote.remoteInfo.ai_addrlen = sizeof(newClientInfo);
 	newremote.remoteInfo.ai_family = family;
 	newremote.remoteInfo.ai_socktype = SOCK_DGRAM;
 	//newremote.remoteInfo.ai_addr->sa_family
+	*/
+	newremote.remoteInfo = adder;
 	size_t i = 0;
 	bool usedOldSpot = false;
 	//if we have any unused spaces, lets use that instead of adding more to the array
