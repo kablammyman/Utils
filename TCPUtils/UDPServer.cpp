@@ -64,6 +64,7 @@ int UDPServer::StartServer(/*int numConnections,*/ char* port)
 	sockVersion = MAKEWORD(2, 2);			// We'd like Winsock version 1.1
 	WSAStartup(sockVersion, &wsaData);
 #endif
+
 	FD_ZERO(&master);    // clear the master and temp sets
 	FD_ZERO(&read_fds);
 	int yes = 1;
@@ -71,7 +72,7 @@ int UDPServer::StartServer(/*int numConnections,*/ char* port)
 	
 	numCurConnections = 0;
 	//maxConnections = numConnections;
-	memset(&hints, 0, sizeof(hints)); // zero the rest of the struct 
+	std::memset(&hints, 0, sizeof(hints)); // zero the rest of the struct 
 	hints.ai_family = AF_INET;
 	hints.ai_flags = AI_PASSIVE; 				                   
 	hints.ai_socktype = SOCK_DGRAM;

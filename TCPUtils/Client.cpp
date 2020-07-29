@@ -5,14 +5,16 @@ int Client::ConnectToServer(const char* ip, const char* serverPort,const char* l
 	tv.tv_sec = 0;
 	tv.tv_usec = 0;
 	int nret;
+#ifdef _WIN32
 	sockVersion = MAKEWORD(2, 2);
 	WSAStartup(sockVersion, &wsaData);
+#endif
 	FD_ZERO(&master);    // clear the master and temp sets
 	FD_ZERO(&read_fds);
 	int yes = 1;
 	
 	// Fill a SOCKADDR_IN struct with address information of host trying to conenct to
-	memset(&hints, 0, sizeof(hints)); // zero the rest of the struct 
+	std::memset(&hints, 0, sizeof(hints)); // zero the rest of the struct 
 	hints.ai_family = AF_INET;
 	if (socketType == STREAM_SOCKET)
 		hints.ai_socktype = SOCK_STREAM;
@@ -73,7 +75,7 @@ int Client::ConnectToServer(const char* ip, const char* serverPort,const char* l
 	if (socketType == STREAM_SOCKET)//if we use this with datagram sokcets, we dont need to senttoand recvFrom...we use send and recv
 	{
 		FD_SET(serverConnection.sendSocket, &master);//for use with select()
-		int nret = connect(serverConnection.sendSocket, (LPSOCKADDR)&serverConnection.remoteInfo, sizeof(struct sockaddr));
+		nret = connect(serverConnection.sendSocket, (LPSOCKADDR)&serverConnection.remoteInfo, sizeof(struct sockaddr));
 		//nret = connect(sockfd, (struct sockaddr *)&dest_addr, sizeof(struct sockaddr));
 
 		if (nret == SOCKET_ERROR)

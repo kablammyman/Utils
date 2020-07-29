@@ -28,6 +28,12 @@
 #define GOT_CONNECTION 1
 #define MAX_BUFFFER_SIZE 1400
 
+#ifndef _WIN32
+#define SOCKET_ERROR -1
+#define SOCKET int
+#define INVALID_SOCKET 0
+#endif
+
 using namespace std;
 /*
 change it so that each "connection" (aka server or client) has its own
@@ -41,9 +47,11 @@ class TCPUtils
 protected:
 	struct addrinfo *servinfo, *listenInfo;
 	struct addrinfo hints;
+#ifdef _WIN32
 	WORD sockVersion;
 	WSADATA wsaData;
-	
+#endif
+
 	int sockfd;
 	struct timeval tv;
 
