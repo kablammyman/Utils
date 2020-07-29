@@ -67,7 +67,13 @@ void DateTime::SetCurrentDateTime()
 {
 	time_t now = time(0);
 	struct tm buf;
+#ifdef _WIN32
 	localtime_s(&buf, &now);
+#else
+	localtime_r(&now,&buf);
+#endif
+
+	
 
 
 	// print various components of tm structure.
