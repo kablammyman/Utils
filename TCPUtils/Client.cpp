@@ -16,7 +16,7 @@ int Client::ConnectToServer(const char* ip, const char* serverPort,const char* l
 	int yes = 1;
 	
 	// Fill a SOCKADDR_IN struct with address information of host trying to conenct to
-	std::memset(&hints, 0, sizeof(hints)); // zero the rest of the struct 
+	memset(&hints, 0, sizeof(hints)); // zero the rest of the struct 
 	hints.ai_family = AF_INET;
 	if (socketType == STREAM_SOCKET)
 		hints.ai_socktype = SOCK_STREAM;

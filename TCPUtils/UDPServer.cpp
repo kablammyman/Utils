@@ -72,7 +72,7 @@ int UDPServer::StartServer(/*int numConnections,*/ char* port)
 	
 	numCurConnections = 0;
 	//maxConnections = numConnections;
-	std::memset(&hints, 0, sizeof(hints)); // zero the rest of the struct 
+	memset(&hints, 0, sizeof(hints)); // zero the rest of the struct 
 	hints.ai_family = AF_INET;
 	hints.ai_flags = AI_PASSIVE; 				                   
 	hints.ai_socktype = SOCK_DGRAM;

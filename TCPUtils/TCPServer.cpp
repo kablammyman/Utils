@@ -39,7 +39,7 @@ int TCPServer::StartServer(int numConnections, char* port)
 	int nret = SOCKET_ERROR;
 
 	numListeningConnections = numConnections;
-	std::memset(&hints, 0, sizeof(hints)); // zero the rest of the struct 
+	memset(&hints, 0, sizeof(hints)); // zero the rest of the struct 
 	hints.ai_family = AF_INET;
 	hints.ai_flags = AI_PASSIVE; 				                   
 	hints.ai_socktype = SOCK_STREAM;
