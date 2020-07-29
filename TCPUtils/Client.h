@@ -27,6 +27,6 @@ public:
 
 	private:
 		ServerConnection serverConnection;
-		LPHOSTENT hostEntry;
+		hostent hostEntry;
 
 };

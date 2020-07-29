@@ -61,7 +61,7 @@ int TCPServer::StartServer(int numConnections, char* port)
 		return NETWORK_ERROR;			// Return an error value
 	}
 		
-	nret = bind(listeningSocket, (LPSOCKADDR)&hints, sizeof(struct sockaddr));
+	nret = bind(listeningSocket, (sockaddr *)&hints, sizeof(struct sockaddr));
 	setsockopt(listeningSocket, SOL_SOCKET, SO_REUSEADDR, (char*)&yes, sizeof(int)); // lose the pesky "address already in use" error message
 
 	

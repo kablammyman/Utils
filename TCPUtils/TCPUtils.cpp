@@ -20,7 +20,7 @@ int TCPUtils::FillTheirInfo(addrinfo *who, SOCKET daSocket)
 {
 	// Fill a SOCKADDR_IN struct with address information of comp trying to conenct to
 	int length = sizeof(struct sockaddr);
-	int otherCompInfo = getpeername(daSocket, (LPSOCKADDR)&who, &length);
+	int otherCompInfo = getpeername(daSocket, (sockaddr *)&who, &length);
 
 	return otherCompInfo;
 	/*

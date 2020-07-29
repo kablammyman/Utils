@@ -1,4 +1,6 @@
 #include "Client.h"
+#include <cstdio>
+
 
 int Client::ConnectToServer(const char* ip, const char* serverPort,const char* listenPort, SOCKET_TYPE socketType)
 {
@@ -75,7 +77,7 @@ int Client::ConnectToServer(const char* ip, const char* serverPort,const char* l
 	if (socketType == STREAM_SOCKET)//if we use this with datagram sokcets, we dont need to senttoand recvFrom...we use send and recv
 	{
 		FD_SET(serverConnection.sendSocket, &master);//for use with select()
-		nret = connect(serverConnection.sendSocket, (LPSOCKADDR)&serverConnection.remoteInfo, sizeof(struct sockaddr));
+		nret = connect(serverConnection.sendSocket, (sockaddr *)&serverConnection.remoteInfo, sizeof(struct sockaddr));
 		//nret = connect(sockfd, (struct sockaddr *)&dest_addr, sizeof(struct sockaddr));
 
 		if (nret == SOCKET_ERROR)
@@ -141,6 +143,6 @@ int Client::ChangeToNonBlocking()
 /*std::string getServerInfo()
 {
 int length =sizeof(struct sockaddr);
-int otherCompInfo = getpeername(theSocket,(LPSOCKADDR)&hostInfo,&length);
+int otherCompInfo = getpeername(theSocket,(sockaddr *)&hostInfo,&length);
 return 
 } */
