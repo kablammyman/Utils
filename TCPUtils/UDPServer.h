@@ -45,7 +45,6 @@ public:
 	int StartServer(/*int numConnections,*/ char* port);
 
 
-	int ChangeToNonBlocking();
 	size_t GetNumConnections() {return remoteConnections.size();}
 
 	void CloseConnectionToAClient(int index);
