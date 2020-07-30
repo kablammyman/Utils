@@ -8,12 +8,21 @@
 #include <ws2tcpip.h>
 #include <Windows.h>
 
+
 #else
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h> 
+#include <unistd.h>//close()
+#include <sys/select.h> //FD_SET,FD_ZERO
+#include <sys/ioctl.h> //icotl()
+
+#define SOCKET_ERROR -1
+#define SOCKET int
+#define INVALID_SOCKET 0
+
 #endif
 
 
@@ -27,12 +36,6 @@
 #define NETWORK_OK     0
 #define GOT_CONNECTION 1
 #define MAX_BUFFFER_SIZE 1400
-
-#ifndef _WIN32
-#define SOCKET_ERROR -1
-#define SOCKET int
-#define INVALID_SOCKET 0
-#endif
 
 using namespace std;
 /*

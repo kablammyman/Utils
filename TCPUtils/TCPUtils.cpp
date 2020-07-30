@@ -1,4 +1,4 @@
-
+#include <string.h> //memset,strlen
 #include <string>
 #include "TCPUtils.h"
 
@@ -20,7 +20,7 @@ int TCPUtils::FillTheirInfo(addrinfo *who, SOCKET daSocket)
 {
 	// Fill a SOCKADDR_IN struct with address information of comp trying to conenct to
 	int length = sizeof(struct sockaddr);
-	int otherCompInfo = getpeername(daSocket, (sockaddr *)&who, &length);
+	int otherCompInfo = getpeername(daSocket, (sockaddr *)who, &length);
 
 	return otherCompInfo;
 	/*
@@ -101,16 +101,22 @@ void TCPUtils::CloseConnection(SOCKET daSocket)
 //------------------------------------------------------------------------------   
 int TCPUtils::ChangeToNonBlocking(SOCKET daSocket)// Change the socket mode on the listening socket from blocking to non-block 
 {
-	ULONG NonBlock = 1;
+	unsigned long NonBlock = 1;
+#ifdef _WIN32
 	if (ioctlsocket(daSocket, FIONBIO, &NonBlock) == SOCKET_ERROR)
 		return -1;
 	return 0;
+#else
+		if (fcntl(daSocket, O_NONBLOCK , &NonBlock) == SOCKET_ERROR)
+			return -1;
+	return 0;
+#endif
 }
 //------------------------------------------------------------------------------
 bool TCPUtils::HasRecivedData(SOCKET daSocket)
 {
 	FD_ZERO(&read_fds);
-	FD_SET(daSocket, &read_fds,0);
+	FD_SET(daSocket, &read_fds);
 
 	int result = select(0, &read_fds, 0, 0, &tv);
 	if (result > 0)
