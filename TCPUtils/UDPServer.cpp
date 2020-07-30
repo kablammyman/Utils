@@ -108,7 +108,7 @@ int UDPServer::StartServer(/*int numConnections,*/ char* port)
 		nret = bind(theSocket, clientAddr->ai_addr, clientAddr->ai_addrlen);
 		if (nret == -1) 
 		{
-			closesocket(theSocket);
+			MyCloseSocket(theSocket);
 			//perror("listener: bind");
 			continue;
 		}
@@ -246,7 +246,7 @@ void UDPServer::ShutdownServer()
 	freeaddrinfo(servinfo);
 	//for (size_t x = 0; x < remoteConnections.size(); x++)
 	//	freeaddrinfo(remoteConnections[x].remoteInfo);
-	closesocket(theSocket);
+	MyCloseSocket(theSocket);
 
 
 	// Shutdown Winsock

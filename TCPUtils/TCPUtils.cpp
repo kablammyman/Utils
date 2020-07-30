@@ -96,7 +96,7 @@ int TCPUtils::GetDataUDP(SOCKET daSocket, char *msg)//for datagram sockets
 //------------------------------------------------------------------------------
 void TCPUtils::CloseConnection(SOCKET daSocket)
 {
-	closesocket(daSocket);
+	MyCloseSocket(daSocket);
 }
 //------------------------------------------------------------------------------   
 int TCPUtils::ChangeToNonBlocking(SOCKET daSocket)// Change the socket mode on the listening socket from blocking to non-block 
@@ -207,6 +207,16 @@ void TCPUtils::Shutdown()
 {
 #ifdef _WIN32
 	WSACleanup();
+#endif
+}
+
+//dellocate the resorces for a socket for windows or *nix
+void TCPUtils::MyCloseSocket(SOCKET daSocket)
+{
+#ifdef _WIN32
+	closesocket(daSocket);
+#else
+	close(daSocket);
 #endif
 }
 /*std::string getServerInfo()

@@ -1,6 +1,6 @@
 #include <string>
 #include "TCPServer.h"
-
+#include <string.h> //memset,strlen
 
 
 //------------------------------------------------------------------------------ 
@@ -99,8 +99,8 @@ void TCPServer::ShutdownServer()
 {
 	freeaddrinfo(servinfo);
 	for (size_t x = 0; x < remoteConnections.size(); x++)
-		closesocket(remoteConnections[x].theSocket);
-	closesocket(listeningSocket);
+		MyCloseSocket(remoteConnections[x].theSocket);
+	MyCloseSocket(listeningSocket);
 
 	// Shutdown Winsock
 	Shutdown();

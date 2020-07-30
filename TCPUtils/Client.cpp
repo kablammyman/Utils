@@ -1,5 +1,5 @@
 #include "Client.h"
-#include <cstring>
+#include <string.h> //memset,strlen
 
 
 int Client::ConnectToServer(const char* ip, const char* serverPort,const char* listenPort, SOCKET_TYPE socketType)

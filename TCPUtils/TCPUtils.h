@@ -83,6 +83,7 @@ public:
 	bool HasRecivedData(SOCKET daSocket);
 	void CloseConnection(SOCKET daSocket);
 	void Shutdown();
+	void MyCloseSocket(SOCKET daSocket);
 
 	static int ReadIntFromBuffer(unsigned char *buffer, size_t &index);
 	static float ReadFloatFromBuffer(unsigned char *buffer, size_t &index);
