@@ -1,5 +1,6 @@
 #include <string>
 #include "UDPServer.h"
+#include <string.h> //memset,strlen,strcmp
 
 //------------------------------------------------------------------------------   
 int UDPServer::SendData(int index, const char *msg, int dataSize)//for datagram sockets
@@ -38,11 +39,13 @@ void UDPServer::GetData(UDPServer::RemoteDataInfo &ret)
 		return;
 	}
 	
-	struct sockaddr_in *addr4 = (struct sockaddr_in *)&ret.clientInfo;
 	char * clientIP = inet_ntoa(ret.clientInfo.sin_addr);
 	struct sockaddr_in * connectionIP = nullptr;
 	for(size_t i = 0; i < remoteConnections.size(); i++)
 	{
+		if(!remoteConnections[i].isActive)
+			continue;
+
 		//check to see if we have this client address stored in our list of clients,if so, which index
 		connectionIP = (struct sockaddr_in *)(remoteConnections[i].remoteInfo.ai_addr);
 
@@ -191,7 +194,7 @@ bool UDPServer::IsCLientInList(addrinfo newClient)
 }
 //------------------------------------------------------------------------------
 //returns the index...mostly used to send client thier info
-bool UDPServer::IsCLientInList(int id)
+bool UDPServer::IsCLientInList(size_t id)
 {
 	if (id <= 0 || id > remoteConnections.size())
 		return false;
@@ -251,14 +254,6 @@ void UDPServer::ShutdownServer()
 
 	// Shutdown Winsock
 	Shutdown();
-}
-//------------------------------------------------------------------------------   
-int UDPServer::ChangeToNonBlocking()// Change the socket mode on the listening socket from blocking to non-block 
-{
-	ULONG NonBlock = 1;
-	if (ioctlsocket(theSocket, FIONBIO, &NonBlock) == SOCKET_ERROR)
-		return -1;
-	return 0;
 }
 //------------------------------------------------------------------------------   
 int UDPServer::ServerBroadcast(const char *msg, int dataSize)

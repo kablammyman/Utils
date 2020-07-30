@@ -53,7 +53,7 @@ public:
 	//int AddClientToList(unsigned char a,unsigned char b,unsigned char c,unsigned char d , int port, int family);
 	int AddClientToList(addrinfo adder);
 	bool IsCLientInList(addrinfo newClient);
-	bool IsCLientInList(int id);
+	bool IsCLientInList(size_t id);
 	int GetNumActiveUsers();
 	int GetNumAvailConn();
 	bool HasRecivedData(){ return TCPUtils::HasRecivedData(theSocket);  }

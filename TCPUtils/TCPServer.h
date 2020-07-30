@@ -23,8 +23,8 @@ class TCPServer : public TCPUtils
 public:
 	
 
-	int SendData(int socketIndex, const char *msg);//for stream sockets
-	int GetData(int socketIndex, char *msg, int dataSize);//for stream sockets
+	int SendData(size_t socketIndex, const char *msg);//for stream sockets
+	int GetData(size_t socketIndex, char *msg, int dataSize);//for stream sockets
 
 	int ServerBroadcast(const char *msg);
 	int HasRecivedData();

@@ -4,7 +4,7 @@
 
 
 //------------------------------------------------------------------------------ 
-int TCPServer::SendData(int socketIndex, const char *msg)//for stream sockets
+int TCPServer::SendData(size_t socketIndex, const char *msg)//for stream sockets
 {
 	if(socketIndex >= remoteConnections.size())
 		return NETWORK_ERROR;
@@ -13,7 +13,7 @@ int TCPServer::SendData(int socketIndex, const char *msg)//for stream sockets
 }
 
 //------------------------------------------------------------------------------
-int TCPServer::GetData(int socketIndex, char *msg, int dataSize)//for stream sockets
+int TCPServer::GetData(size_t socketIndex, char *msg, int dataSize)//for stream sockets
 {
 	if (socketIndex >= remoteConnections.size())
 		return NETWORK_ERROR;
