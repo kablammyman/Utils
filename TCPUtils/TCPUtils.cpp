@@ -19,7 +19,7 @@ void TCPUtils::ReportError(std::string  whichFunc)
 int TCPUtils::FillTheirInfo(addrinfo *who, SOCKET daSocket)
 {
 	// Fill a SOCKADDR_IN struct with address information of comp trying to conenct to
-	int length = sizeof(struct sockaddr);
+	socklen_t length = sizeof(struct sockaddr);
 	int otherCompInfo = getpeername(daSocket, (sockaddr *)who, &length);
 
 	return otherCompInfo;
@@ -107,9 +107,11 @@ int TCPUtils::ChangeToNonBlocking(SOCKET daSocket)// Change the socket mode on t
 		return -1;
 	return 0;
 #else
-		if (fcntl(daSocket, O_NONBLOCK , &NonBlock) == SOCKET_ERROR)
-			return -1;
-	return 0;
+	int flags = fcntl(daSocket, F_GETFL, 0);
+	if (flags == -1) 
+		return -1;
+	flags = (flags & ~O_NONBLOCK);
+	return (fcntl(daSocket, F_SETFL, flags) == 0) ? 0 : -1;
 #endif
 }
 //------------------------------------------------------------------------------

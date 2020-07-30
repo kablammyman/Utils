@@ -18,6 +18,8 @@
 #include <unistd.h>//close()
 #include <sys/select.h> //FD_SET,FD_ZERO
 #include <sys/ioctl.h> //icotl()
+#include <fcntl.h>
+
 
 #define SOCKET_ERROR -1
 #define SOCKET int
