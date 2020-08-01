@@ -101,9 +101,10 @@ void TCPUtils::CloseConnection(SOCKET daSocket)
 //------------------------------------------------------------------------------   
 int TCPUtils::ChangeToNonBlocking(SOCKET daSocket)// Change the socket mode on the listening socket from blocking to non-block 
 {
-	unsigned long NonBlock = 1;
+	
 #ifdef _WIN32
-	if (ioctlsocket(daSocket, FIONBIO, &NonBlock) == SOCKET_ERROR)
+    unsigned long NonBlock = 1;	
+    if (ioctlsocket(daSocket, FIONBIO, &NonBlock) == SOCKET_ERROR)
 		return -1;
 	return 0;
 #else
@@ -111,7 +112,8 @@ int TCPUtils::ChangeToNonBlocking(SOCKET daSocket)// Change the socket mode on t
 	if (flags == -1) 
 		return -1;
 	flags = (flags & ~O_NONBLOCK);
-	return (fcntl(daSocket, F_SETFL, flags) == 0) ? 0 : -1;
+    int block = (fcntl(daSocket, F_SETFL, flags) == 0) ? 0 : -1;
+	return block;
 #endif
 }
 //------------------------------------------------------------------------------

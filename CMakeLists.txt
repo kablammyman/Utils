@@ -41,7 +41,7 @@ ELSE ()
 		endforeach( OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES )
 
 	ELSE()
-		set (CMAKE_CXX_FLAGS "-I/usr/include/i386-linux-gnu/c++/4.8 -I/usr/include/c++/4.8 -std=c++11 -pthread -g3 -Wall -O2")
+		set (CMAKE_CXX_FLAGS "-I/usr/include/i386-linux-gnu/c++/4.8 -I/usr/include/c++/4.8 -std=c++11 -pthread -g3 -Wall -O2 -fPIC")
 		
 		
 	ENDIF()
