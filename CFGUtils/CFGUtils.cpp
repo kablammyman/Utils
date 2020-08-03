@@ -54,16 +54,16 @@ float CFGUtils::GetFloatValueFromList(std::string listName, std::string optionNa
 std::string CFGUtils::GetStringValueFromList(std::string listName, std::string optionName)
 {
 	std::string returnVal = cfgr.GetOptionListStringValue(listName,optionName);
-	if(returnVal == "")
-		return "could not find option: " +optionName;
+	//if(returnVal == "")
+	//	return "could not find option: " +optionName;
 	return returnVal;
 }
 
 std::string CFGUtils::GetRawValueFromList(std::string listName, std::string optionName)//dont parse he csv data
 {
 	std::string returnVal = cfgr.GetOptionListRawString(listName,optionName);
-	if(returnVal == "")
-		return "could not find option: " +optionName;
+	//if(returnVal == "")
+	//	return "could not find option: " +optionName;
 	return returnVal;
 }
 //need a way to give expected values, with default and data limits

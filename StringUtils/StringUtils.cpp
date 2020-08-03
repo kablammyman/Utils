@@ -659,17 +659,21 @@ std::string StringUtils::GetJsonEntryValue(std::string& json, std::string name)
 int StringUtils::GetJsonEntryIntValue(std::string& json, std::string name)
 {
 	std::string value = GetJsonEntryValue(json, name);
+	if(value == "null" || value == "NULL")
+		return 0;
 	if (!value.empty())
 		return stoi(value);
-	return -1;
+	return 0;
 }
 
 float StringUtils::GetJsonEntryFloatValue(std::string& json, std::string name)
 {
 	std::string value = GetJsonEntryValue(json, name);
+	if(value == "null" || value == "NULL")
+		return 0;
 	if (!value.empty())
 		return GetFloatFromString(value);
-	return -1;
+	return 0;
 }
 
 float StringUtils::GetFloatFromString(std::string str)
