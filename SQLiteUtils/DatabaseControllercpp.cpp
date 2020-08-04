@@ -713,6 +713,40 @@ int DatabaseController::GetIdFromQuereyResult(std::string input)
 	return stoi(input);
 }
 
+int DatabaseController::DuplicateEntry(string table, int id)
+{
+	std::vector<std::string> fields;
+	GetAllColsInTable(table, fields);
+	dbDataPair whereData = make_pair("ID",to_string(id));
+	string output;
+
+	if(!DoDBQuerey(table, fields,whereData , output))
+	{
+		return -1;
+	}
+
+	vector<DBResult> returnData;
+	ParseDBOutputOLD(output, fields, returnData);
+
+	output.clear();
+	vector<dbDataPair> dupeData;
+
+	for (size_t i = 0; i < fields.size(); i++)
+	{
+		if(fields[i] != "ID")
+		{
+			dbDataPair newPair = make_pair(fields[i],returnData[0].GetValueFromKey(fields[i]));
+			dupeData.push_back(newPair);
+		}
+	}
+
+	if(!InsertNewDataEntry(table, dupeData, output))
+	{
+		return -1;
+	}
+
+	return GetLatestRowID();
+}
 ///////////////////////////////////////////////////////////test methods
 void DatabaseController::testGetTable()
 {

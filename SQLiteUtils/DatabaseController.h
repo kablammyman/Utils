@@ -169,7 +169,7 @@ public:
 	static string GetCSVFromVector(vector<string> &fields);
 	void GetAllTablesInDB(std::vector<std::string> &retData);
 	void GetAllColsInTable(string tableName, std::vector<std::string> &retData);
-
+	int DuplicateEntry(string table, int id);
 	int GetLatestRowID()
 	{
 		return db->GetLatestRowID();
