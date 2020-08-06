@@ -2,6 +2,7 @@
 #include <string>
 #include "TCPUtils.h"
 
+bool TCPUtils::verboseOutput = true;
 
 void TCPUtils::ReportError(std::string  whichFunc)
 {
@@ -111,9 +112,12 @@ int TCPUtils::ChangeToNonBlocking(SOCKET daSocket)// Change the socket mode on t
 	int flags = fcntl(daSocket, F_GETFL, 0);
 	if (flags == -1) 
 		return -1;
-	flags = (flags & ~O_NONBLOCK);
-    int block = (fcntl(daSocket, F_SETFL, flags) == 0) ? 0 : -1;
-	return block;
+	//flags = (flags & ~O_NONBLOCK);
+	flags |= O_NONBLOCK;
+	if(fcntl(daSocket, F_SETFL, flags) == 0) 
+		return 0;
+
+	return -1;
 #endif
 }
 //------------------------------------------------------------------------------
@@ -122,7 +126,8 @@ bool TCPUtils::HasRecivedData(SOCKET daSocket)
 	FD_ZERO(&read_fds);
 	FD_SET(daSocket, &read_fds);
 
-	int result = select(0, &read_fds, 0, 0, &tv);
+	//windows ignores first param of select, everyone else says The parameter must be set to the highest socket value +1 that is being monitored.
+	int result = select(daSocket+1, &read_fds, 0, 0, &tv);
 	if (result > 0)
 	{
 		if (FD_ISSET(daSocket, &read_fds))
@@ -235,7 +240,17 @@ void TCPUtils::MyCloseSocket(SOCKET daSocket)
 	int otherCompInfo = getpeername(theSocket,(LPSOCKADDR)&hostInfo,&length);
 	return 
 } */
-
+void TCPUtils::print(string output)
+{
+	if(verboseOutput)
+	{
+#ifdef __ANDROID_API__
+		__android_log_write(ANDROID_LOG_DEBUG, "NetUtils->", output.c_str());
+#else
+		cout << output <<endl;
+#endif
+	}
+}
 
 ///////////////////////
 //part of start server code that worked, but unnesc

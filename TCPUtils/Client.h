@@ -12,7 +12,7 @@ public:
 		struct addrinfo *remoteInfo;
 	};
 
-	int ConnectToServer(const char *ip, const char* serverPort,const char* listenPort,  SOCKET_TYPE socketType = STREAM_SOCKET);
+	int ConnectToServer(const char *ip, const char* serverPort,/*const char* listenPort,*/  SOCKET_TYPE socketType = STREAM_SOCKET);
 	int SendDataTCP(const char *msg);//for stream sockets
 	int GetDataTCP(char *msg, int dataSize);//for stream sockets
 
@@ -27,6 +27,6 @@ public:
 
 	private:
 		ServerConnection serverConnection;
-		hostent hostEntry;
+		//hostent hostEntry;
 
 };

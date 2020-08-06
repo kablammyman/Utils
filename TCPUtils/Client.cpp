@@ -2,7 +2,8 @@
 #include <string.h> //memset,strlen
 
 
-int Client::ConnectToServer(const char* ip, const char* serverPort,const char* listenPort, SOCKET_TYPE socketType)
+
+int Client::ConnectToServer(const char* ip, const char* serverPort,/*const char* listenPort,*/ SOCKET_TYPE socketType)
 {
 	tv.tv_sec = 0;
 	tv.tv_usec = 0;
@@ -11,12 +12,14 @@ int Client::ConnectToServer(const char* ip, const char* serverPort,const char* l
 	sockVersion = MAKEWORD(2, 2);
 	WSAStartup(sockVersion, &wsaData);
 #endif
+	print("Client::ConnectToServer about to fd zero\n");
 	FD_ZERO(&master);    // clear the master and temp sets
 	FD_ZERO(&read_fds);
 	int yes = 1;
-	
+	print("Client::ConnectToServer fd zero done, about to memset\n");
 	// Fill a SOCKADDR_IN struct with address information of host trying to conenct to
 	memset(&hints, 0, sizeof(hints)); // zero the rest of the struct 
+	print("Client::ConnectToServer amemset done get adder info\n");
 	hints.ai_family = AF_INET;
 	if (socketType == STREAM_SOCKET)
 		hints.ai_socktype = SOCK_STREAM;
@@ -31,15 +34,15 @@ int Client::ConnectToServer(const char* ip, const char* serverPort,const char* l
 		Shutdown();
 		return NETWORK_ERROR;
 	}
-		
-	nret = getaddrinfo(ip, listenPort, &hints, &listenInfo);
+	print("Client::ConnectToServeradder info done, about to set up socket\n");	
+	/*nret = getaddrinfo(ip, listenPort, &hints, &listenInfo);
 	if (nret!= 0) 
 	{
 		//fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
 		ReportError("ConnectToServer ->getaddrinfo listen port()");
 		Shutdown();
 		return NETWORK_ERROR;
-	}
+	}*/
 
 	if (socketType == STREAM_SOCKET)
 	{
@@ -65,7 +68,7 @@ int Client::ConnectToServer(const char* ip, const char* serverPort,const char* l
 		}
 		
 	}
-
+	print("Client::ConnectToServer sup up sockeet done\n");
 	if (serverConnection.sendSocket == INVALID_SOCKET)
 	{
 		ReportError("socket()");
@@ -92,7 +95,7 @@ int Client::ConnectToServer(const char* ip, const char* serverPort,const char* l
 		//int numbytes = sendto(sockfd, argv[2], strlen(argv[2]), 0,p->ai_addr, p->ai_addrlen)
 		SendDataUDP("let me in");
 	}*/
-
+	print("Client::ConnectToServer exiting with an netowrk ok\n");
 	// Successfully connected!
 	return NETWORK_OK;
 }

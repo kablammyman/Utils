@@ -60,8 +60,13 @@ int TCPServer::StartServer(int numConnections, char* port)
 		Shutdown();				// Shutdown Winsock
 		return NETWORK_ERROR;			// Return an error value
 	}
-		
+#ifndef __ANDROID__	
+	//android version doesnt return an int
 	nret = bind(listeningSocket, (sockaddr *)&hints, sizeof(struct sockaddr));
+#else
+	bind(listeningSocket, (sockaddr *)&hints, sizeof(struct sockaddr));
+#endif
+
 	setsockopt(listeningSocket, SOL_SOCKET, SO_REUSEADDR, (char*)&yes, sizeof(int)); // lose the pesky "address already in use" error message
 
 	

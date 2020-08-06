@@ -1,5 +1,5 @@
 #include <iostream>
-
+#include "StringUtils.h"
 
 #include "CommandLineUtils.h"
 
@@ -38,7 +38,7 @@ int CommandLineUtils::GetIntInput(string inputMessage)
 	int selection;
 	try
 	{
-		selection = stoi(input);
+		selection = StringUtils::GetIntFromString(input);
 	}
 	catch (invalid_argument e)
 	{

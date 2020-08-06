@@ -5,6 +5,7 @@
 #include <vector>
 #include "SQLiteUtils.h"
 #include "DateTime.h"
+#include "StringUtils.h"
 
 using namespace std;
 
@@ -73,7 +74,7 @@ public:
 				{
 					try
 					{
-						return stoi(data[i].second);
+						return StringUtils::GetIntFromString(data[i].second);
 					}
 					catch (...)
 					{

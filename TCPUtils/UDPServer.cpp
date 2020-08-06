@@ -70,7 +70,7 @@ int UDPServer::StartServer(/*int numConnections,*/ char* port)
 
 	FD_ZERO(&master);    // clear the master and temp sets
 	FD_ZERO(&read_fds);
-	int yes = 1;
+	//int yes = 1;
 	int nret = SOCKET_ERROR;
 	
 	numCurConnections = 0;
@@ -108,7 +108,11 @@ int UDPServer::StartServer(/*int numConnections,*/ char* port)
 			//perror("listener: socket");
 			continue;
 		}
+#ifndef __ANDROID_API__ 
 		nret = bind(theSocket, clientAddr->ai_addr, clientAddr->ai_addrlen);
+#else
+		bind(theSocket, clientAddr->ai_addr, clientAddr->ai_addrlen);
+#endif
 		if (nret == -1) 
 		{
 			MyCloseSocket(theSocket);

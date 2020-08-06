@@ -710,7 +710,7 @@ int DatabaseController::GetIdFromQuereyResult(std::string input)
 		return -1;
 
 	RemoveTableNameFromOutput(input);
-	return stoi(input);
+	return StringUtils::GetIntFromString(input);
 }
 
 int DatabaseController::DuplicateEntry(string table, int id)

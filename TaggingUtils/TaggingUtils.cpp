@@ -365,7 +365,7 @@ vector<TaggingUtils::TaggedItem> TaggingUtils::GetAllItemsWithTag(string tag)
 	for (size_t i = 0; i < dbResults[0].data.size(); i++)
 	{
 		//TaggedItem nextItem = GetItemFromID( dbResults[i].GetIntValueFromKey("ItemID") );
-		TaggedItem nextItem = GetItemFromID( stoi(dbResults[0].data[i].second ) );
+		TaggedItem nextItem = GetItemFromID( StringUtils::GetIntFromString(dbResults[0].data[i].second ) );
 		ret.push_back(nextItem);
 	}
 	
@@ -410,7 +410,7 @@ vector<TaggingUtils::TaggedItem> TaggingUtils::GetAllItemsWithAnyOfTheseTags(vec
 	for (size_t i = 0; i < dbResults[0].data.size(); i++)
 	{
 		//TaggedItem nextItem = GetItemFromID( dbResults[i].GetIntValueFromKey("ItemID") );
-		TaggedItem nextItem = GetItemFromID( stoi(dbResults[0].data[i].second ) );
+		TaggedItem nextItem = GetItemFromID( StringUtils::GetIntFromString(dbResults[0].data[i].second ) );
 		ret.push_back(nextItem);
 	}
 

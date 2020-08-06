@@ -662,7 +662,7 @@ int StringUtils::GetJsonEntryIntValue(std::string& json, std::string name)
 	if(value == "null" || value == "NULL")
 		return 0;
 	if (!value.empty())
-		return stoi(value);
+		return GetIntFromString(value);
 	return 0;
 }
 
@@ -680,13 +680,36 @@ float StringUtils::GetFloatFromString(std::string str)
 {
 	if(str.empty())
 		return 0.0;
+	
 	size_t f = str.find(",");
 	if (f != std::string::npos)
 		str.erase(f, 1);
 	f = str.find("$");
 	if (f != std::string::npos)
 		str.erase(f, 1);
-	return stof(str);
+
+	if(isdigit(str[0]))
+		return stof(str);
+
+	return 0.0;
+}
+
+int StringUtils::GetIntFromString(std::string str)
+{
+	if(str.empty())
+		return 0;
+
+	size_t f = str.find(",");
+	if (f != std::string::npos)
+		str.erase(f, 1);
+	f = str.find("$");
+	if (f != std::string::npos)
+		str.erase(f, 1);
+
+	if(isdigit(str[0]))
+		return stoi(str);
+
+	return 0;
 }
 
 std::string StringUtils::ToMoneyString(float amount)

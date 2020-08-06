@@ -21,6 +21,7 @@
 #include <fcntl.h>
 
 
+
 #define SOCKET_ERROR -1
 #define SOCKET int
 #define INVALID_SOCKET 0
@@ -45,6 +46,14 @@ change it so that each "connection" (aka server or client) has its own
 params including port num
 
 have an array of that class*/
+
+#ifdef __ANDROID_API__
+#include <android/log.h>
+#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "NetUtils", __VA_ARGS__))
+#define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "NetUtils", __VA_ARGS__))
+#endif
+
+
 
 
 class TCPUtils
@@ -99,6 +108,9 @@ public:
 	static void WriteFloatToBuffer(float x,unsigned char *buffer, size_t &index);
 	static void WriteHeaderToBuffer(unsigned char *header,unsigned  char *buffer);
 	static void WriteStringToBuffer(char *stringInput, unsigned char *buffer,size_t size,size_t &index);
+	
+	static bool verboseOutput;
+	static void print(string output);
 };
 
 #endif //INC_NETWORKCONNECTION_H
