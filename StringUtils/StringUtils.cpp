@@ -385,35 +385,37 @@ std::string  StringUtils::GetRandomString(int size)
 
 std::string StringUtils::FindAndReplace(std::string orig, std::string findToken, std::string replaceToken)
 {
-	size_t index = orig.find(findToken);
 	std::string ret = "";
+	size_t i = 0;
+	size_t index = orig.find(findToken);
 	
-	if (index != std::string::npos)
-	{
-		//orig.replace(index,replaceToken.size(),replaceToken);
-		size_t i = 0;
-		size_t j = 0;
-		while(i < index)
-		{
-			ret += orig[i];
-			i++;
-		}
-		i = index + findToken.size();
-
-		while( j < replaceToken.size())
-		{
-			ret += replaceToken[j];
-			j++;
-		}
-		while(i < orig.size())
-		{
-			ret += orig[i];
-			i++;
-		}
-		return ret;
-	}
-	else
+	if(index == std::string::npos)
 		return orig;
+	
+	while( i < orig.size())
+	{
+		index = orig.find(findToken,i);
+		if(index != std::string::npos)
+		{
+			while(i < index)
+			{
+				ret += orig[i];
+				i++;
+			}
+			i = index + findToken.size();
+			ret += replaceToken;
+		}
+		else
+		{
+			while(i < index)
+			{
+				ret += orig[i];
+				i++;
+			}
+		}
+				
+	}
+		
 }
 
 std::string StringUtils::StringClean(std::string orig, bool includeNewLines = true)
