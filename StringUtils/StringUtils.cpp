@@ -407,15 +407,12 @@ std::string StringUtils::FindAndReplace(std::string orig, std::string findToken,
 		}
 		else
 		{
-			while(i < index)
-			{
-				ret += orig[i];
-				i++;
-			}
+			ret += orig[i];
+			i++;
 		}
 				
 	}
-		
+	return ret;
 }
 
 std::string StringUtils::StringClean(std::string orig, bool includeNewLines = true)
