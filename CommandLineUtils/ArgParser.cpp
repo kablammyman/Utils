@@ -76,12 +76,13 @@ int ArgParser::GetArgFromFlag(string flag)
 
 bool ArgParser::ParseArgs(int argc, const char* argv[])
 {
-	
+	int start = 0;
 #ifdef _WIN32
 	string temp = argv[0];
 	std::size_t found = temp.find_last_of("/\\");
 	basePath = temp.substr(0, found);
 	exeName = temp.substr(found + 1);
+	start = 1;
 	
 #else
 	char cwd[PATH_MAX];
@@ -89,13 +90,14 @@ bool ArgParser::ParseArgs(int argc, const char* argv[])
 		basePath = cwd;
 #endif
 	int argsCounted = 0;
-	for (int i = 0; i < argc; i++)
+	for (int i = start; i < argc; i++)
 	{
 		string curArg = argv[i];
 		int index = GetArgFromFlag(curArg);
 
 		if (index == -1)
 		{
+			cout << "unrecognized param: " << curArg <<endl;
 			continue;
 			//return false;
 		}
