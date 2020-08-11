@@ -18,7 +18,7 @@ bool CSVHandler::ReadCSVFile(std::string file, char d)
 		{
 			if (isHeader)
 			{
-				vector<string> tokens = StringUtils::Tokenize(line, inputDelim);
+				vector<string> tokens = CSVTokenize(line);
 				for (size_t i = 0; i < tokens.size(); i++)
 					headerLookup[tokens[i]] = i;
 				isHeader = false;
