@@ -56,6 +56,6 @@ public:
 	int GetNumActiveUsers();
 	int GetNumAvailConn();
 	bool HasRecivedData(){ return TCPUtils::HasRecivedData(theSocket);  }
-
+	int ChangeToIsBlocking(bool isBlocking) {return TCPUtils::ChangeToIsBlocking(theSocket,isBlocking);}
 	void PrintCurrentConnectedIPs();
 };

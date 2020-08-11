@@ -131,7 +131,7 @@ int UDPServer::StartServer(/*int numConnections,*/ char* port)
 		return NETWORK_ERROR;
 	}
 
-	ChangeToNonBlocking(theSocket);// Change the socket mode on the listening socket from blocking to non-block 
+	//ChangeToNonBlocking(theSocket);// Change the socket mode on the listening socket from blocking to non-block 
 
 	//now cerate a sending socket
 	waitingForClients = true;

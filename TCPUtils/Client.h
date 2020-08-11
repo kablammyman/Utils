@@ -23,7 +23,7 @@ public:
 
 	//this needs to send a packet to tell the server we are leaving
 	void DisconnectFromServer();
-	int ChangeToNonBlocking();
+	int ChangeToIsBlocking(bool isBlocking);
 
 	private:
 		ServerConnection serverConnection;

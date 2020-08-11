@@ -87,7 +87,7 @@ public:
 	
 	int SendDataTCP(SOCKET daSocket, const char *msg);
 	int GetDataTCP(SOCKET daSocket, char *msg, int dataSize);
-	int ChangeToNonBlocking(SOCKET daSocket);
+	virtual int ChangeToIsBlocking(SOCKET daSocket, bool isBlocking);
 
 	//for datagram sockets
 	int SendDataUDP(SOCKET daSocket, const char *msg, int dataLen,addrinfo *whomToSend);

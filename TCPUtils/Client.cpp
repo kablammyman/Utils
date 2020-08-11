@@ -138,10 +138,10 @@ bool Client::HasRecivedData()
 	return TCPUtils::HasRecivedData(serverConnection.sendSocket);
 }
 //-----------------------
-int Client::ChangeToNonBlocking()
+int Client::ChangeToIsBlocking(bool isBlocking)
 {
 	//return TCPUtils::ChangeToNonBlocking(serverConnection.recvSocket);
-	return TCPUtils::ChangeToNonBlocking(serverConnection.sendSocket);
+	return TCPUtils::ChangeToIsBlocking(serverConnection.sendSocket,isBlocking);
 }
 /*std::string getServerInfo()
 {

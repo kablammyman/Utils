@@ -100,11 +100,15 @@ void TCPUtils::CloseConnection(SOCKET daSocket)
 	MyCloseSocket(daSocket);
 }
 //------------------------------------------------------------------------------   
-int TCPUtils::ChangeToNonBlocking(SOCKET daSocket)// Change the socket mode on the listening socket from blocking to non-block 
+int TCPUtils::ChangeToIsBlocking(SOCKET daSocket, bool isBlocking)// Change the socket mode on the listening socket from blocking to non-block 
 {
 	
 #ifdef _WIN32
-    unsigned long NonBlock = 1;	
+	// If iMode = 0, blocking is enabled; 
+	// If iMode != 0, non-blocking mode is enabled.
+	unsigned long NonBlock = 1;
+	if(isBlocking)
+		NonBlock = 0;
     if (ioctlsocket(daSocket, FIONBIO, &NonBlock) == SOCKET_ERROR)
 		return -1;
 	return 0;
@@ -112,8 +116,10 @@ int TCPUtils::ChangeToNonBlocking(SOCKET daSocket)// Change the socket mode on t
 	int flags = fcntl(daSocket, F_GETFL, 0);
 	if (flags == -1) 
 		return -1;
-	//flags = (flags & ~O_NONBLOCK);
-	flags |= O_NONBLOCK;
+	if(isBlocking)
+		flags &= ~O_NONBLOCK;           // set blocking
+	else
+		flags |= O_NONBLOCK;	// set non-blocking
 	if(fcntl(daSocket, F_SETFL, flags) == 0) 
 		return 0;
 
