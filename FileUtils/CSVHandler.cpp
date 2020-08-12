@@ -20,7 +20,10 @@ bool CSVHandler::ReadCSVFile(std::string file, char d)
 			{
 				vector<string> tokens = CSVTokenize(line);
 				for (size_t i = 0; i < tokens.size(); i++)
+				{
+					csvHeader.push_back(tokens[i]);//this preserves the order of the header
 					headerLookup[tokens[i]] = i;
+				}
 				isHeader = false;
 			}
 			else
@@ -34,11 +37,14 @@ bool CSVHandler::ReadCSVFile(std::string file, char d)
 
 vector<string> CSVHandler::GetCSVHeader()
 {
+	if(!csvHeader.empty())
+		return csvHeader;
+
 	map<string, size_t>::iterator it;
 	vector<string> ret;
-	for ( it = headerLookup.begin(); it != headerLookup.end(); it++ )
+	for (it = headerLookup.begin(); it != headerLookup.end(); it++)
 	{
-		ret.push_back( it->first);
+		ret.push_back(it->first);
 	}
 	return ret;
 }
@@ -139,6 +145,14 @@ bool CSVHandler::CreateCSVFile(std::string outputFile,vector<string> header, cha
 		return false;
 	string entry = "";
 	CreateCSVHeader(header);
+
+	for (size_t i = 0; i < csvHeader.size(); i++)
+	{
+		entry += csvHeader[i] + d;
+	}
+	entry.pop_back();
+	WriteCSVEntryRaw(entry);
+
 	return true;
 }
 
