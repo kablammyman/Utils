@@ -12,9 +12,9 @@ int UDPServer::SendData(int index, const char *msg, int dataSize)//for datagram 
 		remoteConnections[index].remoteInfo.ai_addr->sa_data[i] = t;
 	}
 
-	struct sockaddr_in *addr4 = (struct sockaddr_in *) remoteConnections[index].remoteInfo.ai_addr;
-	string destIP = inet_ntoa( addr4->sin_addr);
-	cout << "sending client " << destIP  <<" : "<<msg <<endl;
+	//struct sockaddr_in *addr4 = (struct sockaddr_in *) remoteConnections[index].remoteInfo.ai_addr;
+	//string destIP = inet_ntoa( addr4->sin_addr);
+	//cout << "sending client " << destIP  <<" : "<<msg <<endl;
 		
 	return TCPUtils::SendDataUDP(theSocket, msg, dataSize,&remoteConnections[index].remoteInfo);
 

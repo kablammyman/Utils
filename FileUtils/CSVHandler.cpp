@@ -137,10 +137,14 @@ size_t CSVHandler::GetCSVLength()
 	return csvEntry.size();
 }
 ///////////////////writing csv files//////////////////////////////
-bool CSVHandler::CreateCSVFile(std::string outputFile,vector<string> header, char d)
+bool CSVHandler::CreateCSVFile(std::string outputFile,vector<string> header, char d, bool overwrite)
 {
 	outputDelim = d;
-	outputCSV.open(outputFile, std::ios_base::app);
+	if(overwrite)
+		outputCSV.open(outputFile);
+	else
+		outputCSV.open(outputFile, std::ios_base::app);
+
 	if(!outputCSV.is_open())
 		return false;
 	string entry = "";
@@ -151,7 +155,12 @@ bool CSVHandler::CreateCSVFile(std::string outputFile,vector<string> header, cha
 		entry += csvHeader[i] + d;
 	}
 	entry.pop_back();
-	WriteCSVEntryRaw(entry);
+	string line;
+	getline(inputCSV, line);
+
+	//only write the header if this is a brand new file
+	if(line.empty())
+		WriteCSVEntryRaw(entry);
 
 	return true;
 }
@@ -190,8 +199,14 @@ std::string CSVHandler::GetCsvEntryString(std::map<std::string, std::string>& di
 	{
 		token = csvHeader[i];//easier to read code
 							 //make sure the map we passed in actually has the header entry we want right now
-		if(dict.count(token) == 1)
-			entry += dict[token] + outputDelim;
+		if (dict.count(token) == 1)
+		{
+			//if we are using commas as the delimeter, and the entry we have has a comma within in, put it within quotes
+			if (outputDelim == ',' && dict[token].find(",") != string::npos)
+				entry += "\"" + dict[token] + "\"" + outputDelim;
+			else
+				entry += dict[token] + outputDelim;
+		}
 		else
 		{
 			entry += " " + outputDelim;
