@@ -128,7 +128,11 @@ int Client::GetDataUDP(char *msg)//for datagram sockets
 //------------------------------------------------------------------------------
 void Client::DisconnectFromServer()
 {
-	freeaddrinfo(servinfo);
+	if (servinfo)
+	{
+		freeaddrinfo(servinfo);
+		servinfo = nullptr;
+	}
 	TCPUtils::CloseConnection(serverConnection.sendSocket);
 }
 //------------------------------------------------------------------------------

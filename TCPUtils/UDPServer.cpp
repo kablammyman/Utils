@@ -266,6 +266,7 @@ int UDPServer::ServerBroadcast(const char *msg, int dataSize)
 {
 	int howManySent = 0;
 	for (size_t n = 0; n < remoteConnections.size(); n++)
+	if(remoteConnections[n].isActive)
 	{
 		SendData(n, msg, dataSize);
 		howManySent++;
