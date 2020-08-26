@@ -1,7 +1,7 @@
 #pragma once
-#include "TCPUtils.h"
+#include "NetUtils.h"
 
-class TCPServer : public TCPUtils
+class TCPServer : public NetUtils
 {
 	public:
 		struct RemoteComputerConnection
@@ -18,7 +18,7 @@ class TCPServer : public TCPUtils
 	bool waitingForClients = false;
 	SOCKET listeningSocket;
 	int numListeningConnections;
-	vector<RemoteComputerConnection> remoteConnections;
+	vector<RemoteComputerConnection *> remoteConnections;
 	
 public:
 	
@@ -38,7 +38,7 @@ public:
 	
 	
 	size_t GetNumConnections() {return remoteConnections.size();}
-	SOCKET GetSocket(int index) { return remoteConnections[index].theSocket; }
+	SOCKET GetSocket(int index) { return remoteConnections[index]->theSocket; }
 	void CloseConnectionToAClient(int index);
 	void ShutdownServer();
 };

@@ -1,11 +1,11 @@
 #pragma once
 #include "LogMessage.h"
 
-#include "TCPUtils.h"
+#include "NetUtils.h"
 
 class TCPOutput : public LogOutput
 {
-	TCPUtils *conn;
+	NetUtils *conn;
 	int socket;
 public:
 	TCPOutput()
@@ -13,7 +13,7 @@ public:
 		conn = 0;
 		socket = -1;
 	}
-	TCPOutput(TCPUtils *c, int s)
+	TCPOutput(NetUtils *c, int s)
 	{
 		conn = c;
 		socket = s;

@@ -103,27 +103,27 @@ int Client::ConnectToServer(const char* ip, const char* serverPort,/*const char*
 int Client::SendDataTCP(const char *msg)//for stream sockets
 {
 
-	return TCPUtils::SendDataTCP(serverConnection.sendSocket, msg);
+	return NetUtils::SendDataTCP(serverConnection.sendSocket, msg);
 }
 
 //------------------------------------------------------------------------------
 int Client::GetDataTCP(char *msg, int dataSize)//for stream sockets
 {
-	//return TCPUtils::GetDataTCP(serverConnection.recvSocket,msg,dataSize);
-	return TCPUtils::GetDataTCP(serverConnection.sendSocket,msg,dataSize);
+	//return NetUtils::GetDataTCP(serverConnection.recvSocket,msg,dataSize);
+	return NetUtils::GetDataTCP(serverConnection.sendSocket,msg,dataSize);
 }
 
 //------------------------------------------------------------------------------   
 int Client::SendDataUDP( const char *msg, int dataSize)//for datagram sockets
 {
-	return TCPUtils::SendDataUDP(serverConnection.sendSocket, msg, dataSize, serverConnection.remoteInfo);
+	return NetUtils::SendDataUDP(serverConnection.sendSocket, msg, dataSize, serverConnection.remoteInfo);
 
 }
 //------------------------------------------------------------------------------
 int Client::GetDataUDP(char *msg)//for datagram sockets
 {
-	//return TCPUtils::GetDataUDP(serverConnection.recvSocket, msg);
-	return TCPUtils::GetDataUDP(serverConnection.sendSocket, msg);
+	//return NetUtils::GetDataUDP(serverConnection.recvSocket, msg);
+	return NetUtils::GetDataUDP(serverConnection.sendSocket, msg);
 }
 //------------------------------------------------------------------------------
 void Client::DisconnectFromServer()
@@ -133,19 +133,19 @@ void Client::DisconnectFromServer()
 		freeaddrinfo(servinfo);
 		servinfo = nullptr;
 	}
-	TCPUtils::CloseConnection(serverConnection.sendSocket);
+	NetUtils::CloseConnection(serverConnection.sendSocket);
 }
 //------------------------------------------------------------------------------
 bool Client::HasRecivedData()
 {
-	//return TCPUtils::HasRecivedData(serverConnection.recvSocket);
-	return TCPUtils::HasRecivedData(serverConnection.sendSocket);
+	//return NetUtils::HasRecivedData(serverConnection.recvSocket);
+	return NetUtils::HasRecivedData(serverConnection.sendSocket);
 }
 //-----------------------
 int Client::ChangeToIsBlocking(bool isBlocking)
 {
-	//return TCPUtils::ChangeToNonBlocking(serverConnection.recvSocket);
-	return TCPUtils::ChangeToIsBlocking(serverConnection.sendSocket,isBlocking);
+	//return NetUtils::ChangeToNonBlocking(serverConnection.recvSocket);
+	return NetUtils::ChangeToIsBlocking(serverConnection.sendSocket,isBlocking);
 }
 /*std::string getServerInfo()
 {

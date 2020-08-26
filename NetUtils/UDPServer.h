@@ -1,7 +1,7 @@
 #pragma once
-#include "TCPUtils.h"
+#include "NetUtils.h"
 
-class UDPServer : public TCPUtils
+class UDPServer : public NetUtils
 {
 public:
 	struct RemoteConnection
@@ -11,6 +11,7 @@ public:
 		unsigned char ip4Data[14];
 		RemoteConnection()
 		{
+			ip4Data[0] = '\0';
 			isActive = false;
 		}
 	};
@@ -22,7 +23,7 @@ public:
 		sockaddr_in clientInfo;
 		//struct sockaddr_in clientAdd; 
 	};
-private:
+protected:
 	bool waitingForClients = false;
 	struct addrinfo  *clientAddr; 
 	//SOCKET recvSocket;
@@ -34,7 +35,7 @@ private:
 	//we dont need multiple sockets with udp
 	//it will lsiten on one socket, and send out messages to all peopel with one sicket
 	//but you still need to keep track of the ips we are dealing with
-	vector<RemoteConnection> remoteConnections;
+	vector<RemoteConnection *> remoteConnections;
 
 public:
 	int SendData(int index, const char *msg, int dataSize);//for datagram sockets
@@ -55,7 +56,7 @@ public:
 	bool IsCLientInList(size_t id);
 	int GetNumActiveUsers();
 	int GetNumAvailConn();
-	bool HasRecivedData(){ return TCPUtils::HasRecivedData(theSocket);  }
-	int ChangeToIsBlocking(bool isBlocking) {return TCPUtils::ChangeToIsBlocking(theSocket,isBlocking);}
+	bool HasRecivedData(){ return NetUtils::HasRecivedData(theSocket);  }
+	int ChangeToIsBlocking(bool isBlocking) {return NetUtils::ChangeToIsBlocking(theSocket,isBlocking);}
 	void PrintCurrentConnectedIPs();
 };

@@ -2,7 +2,7 @@
 project(LogUtils)
 include_directories(../StringUtils)
 if (WIN32)
-include_directories(../TCPUtils)
+include_directories(../NetUtils)
 endif()
 
 file(GLOB SOURCES

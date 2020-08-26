@@ -9,7 +9,7 @@ int TCPServer::SendData(size_t socketIndex, const char *msg)//for stream sockets
 	if(socketIndex >= remoteConnections.size())
 		return NETWORK_ERROR;
 
-	return TCPUtils::SendDataTCP(remoteConnections[socketIndex].theSocket, msg);
+	return NetUtils::SendDataTCP(remoteConnections[socketIndex]->theSocket, msg);
 }
 
 //------------------------------------------------------------------------------
@@ -18,17 +18,15 @@ int TCPServer::GetData(size_t socketIndex, char *msg, int dataSize)//for stream 
 	if (socketIndex >= remoteConnections.size())
 		return NETWORK_ERROR;
 
-	return TCPUtils::GetDataTCP(remoteConnections[socketIndex].theSocket,msg,dataSize);
+	return NetUtils::GetDataTCP(remoteConnections[socketIndex]->theSocket,msg,dataSize);
 }
 //------------------------------------------------------------------------------
-
-
 int TCPServer::StartServer(int numConnections, char* port)
 {
 	tv.tv_sec = 0;
 	tv.tv_usec = 0;
 
-	RemoteComputerConnection remoteConn;
+	RemoteComputerConnection *remoteConn = new RemoteComputerConnection();
 #ifdef _WIN32
 	sockVersion = MAKEWORD(2, 2);			// We'd like Winsock version 1.1
 	WSAStartup(sockVersion, &wsaData);
@@ -95,7 +93,7 @@ int TCPServer::StartServer(int numConnections, char* port)
 //------------------------------------------------------------------------------
 void TCPServer::CloseConnectionToAClient(int index)
 {
-	TCPUtils::CloseConnection(remoteConnections[index].theSocket);
+	NetUtils::CloseConnection(remoteConnections[index]->theSocket);
 	// erase the 6th element: myvector.erase(myvector.begin() + 5);
 	remoteConnections.erase(remoteConnections.begin()+index);
 }
@@ -104,7 +102,7 @@ void TCPServer::ShutdownServer()
 {
 	freeaddrinfo(servinfo);
 	for (size_t x = 0; x < remoteConnections.size(); x++)
-		MyCloseSocket(remoteConnections[x].theSocket);
+		MyCloseSocket(remoteConnections[x]->theSocket);
 	MyCloseSocket(listeningSocket);
 
 	// Shutdown Winsock
@@ -115,19 +113,19 @@ int TCPServer::WaitForFirstClientConnect()
 {
 	int yes = 1;
 
-	RemoteComputerConnection remoteConn;
-	remoteConn.theSocket = accept(listeningSocket, 0, 0);
+	RemoteComputerConnection *remoteConn = new RemoteComputerConnection();
+	remoteConn->theSocket = accept(listeningSocket, 0, 0);
 
-	setsockopt(remoteConn.theSocket, SOL_SOCKET, SO_REUSEADDR, (char*)&yes,sizeof(int)); // lose the pesky "address already in use" error message
+	setsockopt(remoteConn->theSocket, SOL_SOCKET, SO_REUSEADDR, (char*)&yes,sizeof(int)); // lose the pesky "address already in use" error message
 
-	if (remoteConn.theSocket == INVALID_SOCKET)
+	if (remoteConn->theSocket == INVALID_SOCKET)
 	{
 		ReportError("accept()");
 		Shutdown();
 		return NETWORK_ERROR;
 	}
 
-	FillTheirInfo(remoteConn.remoteInfo, remoteConn.theSocket);
+	FillTheirInfo(remoteConn->remoteInfo, remoteConn->theSocket);
 
 	remoteConnections.push_back(remoteConn);
 	
@@ -159,19 +157,19 @@ int TCPServer::WaitForClientAsync()
 
 	if (select(listeningSocket, &readSet, 0, 0, &timeout) == 1)
 	{
-		RemoteComputerConnection remoteConn;
+		RemoteComputerConnection *remoteConn = new RemoteComputerConnection();
 		int yes = 1;
-		remoteConn.theSocket = accept(listeningSocket, 0, 0);
-		setsockopt(remoteConn.theSocket, SOL_SOCKET, SO_REUSEADDR, (char*)&yes, sizeof(int)); // lose the pesky "address already in use" error message
+		remoteConn->theSocket = accept(listeningSocket, 0, 0);
+		setsockopt(remoteConn->theSocket, SOL_SOCKET, SO_REUSEADDR, (char*)&yes, sizeof(int)); // lose the pesky "address already in use" error message
 
-		if (remoteConn.theSocket == INVALID_SOCKET)
+		if (remoteConn->theSocket == INVALID_SOCKET)
 		{
 			ReportError("accept()");
 			Shutdown();
 			return NETWORK_ERROR;
 		}
 
-		FillTheirInfo(remoteConn.remoteInfo, remoteConn.theSocket);
+		FillTheirInfo(remoteConn->remoteInfo, remoteConn->theSocket);
 
 		remoteConnections.push_back(remoteConn);
 
@@ -185,7 +183,7 @@ int TCPServer::ServerBroadcast(const char *msg)//for stream sockets
 	int howManySent = 0;
 	for (size_t n = 0; n < remoteConnections.size(); n++)
 	{
-		int nret = send(remoteConnections[n].theSocket, msg, (int)strlen(msg), 0);
+		int nret = send(remoteConnections[n]->theSocket, msg, (int)strlen(msg), 0);
 		if (nret != -1)
 			howManySent++;
 	}
@@ -196,7 +194,7 @@ int TCPServer::ServerBroadcast(const char *msg)//for stream sockets
 int TCPServer::HasRecivedData()
 {
 	for( size_t i =0; i < remoteConnections.size(); i++)
-		if(TCPUtils::HasRecivedData(remoteConnections[i].theSocket))
+		if(NetUtils::HasRecivedData(remoteConnections[i]->theSocket))
 			return i;
 	return -1;
 }

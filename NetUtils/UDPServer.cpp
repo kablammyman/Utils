@@ -8,22 +8,22 @@ int UDPServer::SendData(int index, const char *msg, int dataSize)//for datagram 
 	unsigned char t;
 	for(int i = 0; i < 14; i++)
 	{
-		t = remoteConnections[index].ip4Data[i];
-		remoteConnections[index].remoteInfo.ai_addr->sa_data[i] = t;
+		t = remoteConnections[index]->ip4Data[i];
+		remoteConnections[index]->remoteInfo.ai_addr->sa_data[i] = t;
 	}
 
 	//struct sockaddr_in *addr4 = (struct sockaddr_in *) remoteConnections[index].remoteInfo.ai_addr;
 	//string destIP = inet_ntoa( addr4->sin_addr);
 	//cout << "sending client " << destIP  <<" : "<<msg <<endl;
 		
-	return TCPUtils::SendDataUDP(theSocket, msg, dataSize,&remoteConnections[index].remoteInfo);
+	return NetUtils::SendDataUDP(theSocket, msg, dataSize,&remoteConnections[index]->remoteInfo);
 
 }
 //------------------------------------------------------------------------------   
 //useful fro telling people who arent connected stuff...like "server is full" or "you're in" etc
 int UDPServer::SendRespnoseData(const char *msg,int dataSize, addrinfo *whomToSend)
 {
-	return TCPUtils::SendDataUDP(theSocket, msg, dataSize,whomToSend);
+	return NetUtils::SendDataUDP(theSocket, msg, dataSize,whomToSend);
 }
 //------------------------------------------------------------------------------
 void UDPServer::GetData(UDPServer::RemoteDataInfo &ret)
@@ -43,11 +43,11 @@ void UDPServer::GetData(UDPServer::RemoteDataInfo &ret)
 	struct sockaddr_in * connectionIP = nullptr;
 	for(size_t i = 0; i < remoteConnections.size(); i++)
 	{
-		if(!remoteConnections[i].isActive)
+		if(!remoteConnections[i]->isActive)
 			continue;
 
 		//check to see if we have this client address stored in our list of clients,if so, which index
-		connectionIP = (struct sockaddr_in *)(remoteConnections[i].remoteInfo.ai_addr);
+		connectionIP = (struct sockaddr_in *)(remoteConnections[i]->remoteInfo.ai_addr);
 
 		if(strcmp(inet_ntoa(connectionIP->sin_addr),clientIP) ==0)
 		{
@@ -142,13 +142,13 @@ int UDPServer::StartServer(/*int numConnections,*/ char* port)
 //int UDPServer::AddClientToList(unsigned char a,unsigned char b,unsigned char c,unsigned char d , int port, int family)
 int UDPServer::AddClientToList(addrinfo adder)
 {
-	RemoteConnection newremote;
-	newremote.isActive = true;
+	RemoteConnection *newremote = new RemoteConnection();
+	newremote->isActive = true;
 	unsigned char t;
 	for(int i = 0; i < 14; i++)
 	{
 		t = adder.ai_addr->sa_data[i];
-		newremote.ip4Data[i] = t;
+		newremote->ip4Data[i] = t;
 	}
 
 	/*sockaddr_in newClientInfo;
@@ -163,13 +163,13 @@ int UDPServer::AddClientToList(addrinfo adder)
 	newremote.remoteInfo.ai_socktype = SOCK_DGRAM;
 	//newremote.remoteInfo.ai_addr->sa_family
 	*/
-	newremote.remoteInfo = adder;
+	newremote->remoteInfo = adder;
 	size_t i = 0;
 	bool usedOldSpot = false;
 	//if we have any unused spaces, lets use that instead of adding more to the array
 	for(i = 0; i < remoteConnections.size(); i++)
 	{
-		if(!remoteConnections[i].isActive)
+		if(!remoteConnections[i]->isActive)
 		{
 			remoteConnections[i] = newremote;
 			usedOldSpot = true;
@@ -190,7 +190,7 @@ bool UDPServer::IsCLientInList(addrinfo newClient)
 {
 	for(size_t i = 0; i < remoteConnections.size(); i++)
 	{
-		if(remoteConnections[i].remoteInfo.ai_addr == newClient.ai_addr)
+		if(remoteConnections[i]->remoteInfo.ai_addr == newClient.ai_addr)
 		{
 			return true;
 		}
@@ -205,7 +205,7 @@ bool UDPServer::IsCLientInList(size_t id)
 	if (id <= 0 || id > remoteConnections.size())
 		return false;
 	
-	if(remoteConnections[id-1].isActive)
+	if(remoteConnections[id-1]->isActive)
 		return true;
 
 	return false;
@@ -217,7 +217,7 @@ int UDPServer::GetNumAvailConn()
 	int numOpenSlots = 0;
 	for(size_t i = 0; i < remoteConnections.size(); i++)
 	{
-		if(!remoteConnections[i].isActive)
+		if(!remoteConnections[i]->isActive)
 			numOpenSlots++;
 	}
 	
@@ -230,7 +230,7 @@ int UDPServer::GetNumActiveUsers()
 	int numUsers = 0;
 	for(size_t i = 0; i < remoteConnections.size(); i++)
 	{
-		if(remoteConnections[i].isActive)
+		if(remoteConnections[i]->isActive)
 			numUsers++;
 	}
 	
@@ -246,7 +246,7 @@ void UDPServer::CloseConnectionToAClient(int id)
 		return;
 
 	int index  = id-1;
-	remoteConnections[index].isActive = false;
+	remoteConnections[index]->isActive = false;
 	//freeaddrinfo(&remoteConnections[index].remoteInfo);
 }
 //------------------------------------------------------------------------------
@@ -266,7 +266,7 @@ int UDPServer::ServerBroadcast(const char *msg, int dataSize)
 {
 	int howManySent = 0;
 	for (size_t n = 0; n < remoteConnections.size(); n++)
-	if(remoteConnections[n].isActive)
+	if(remoteConnections[n]->isActive)
 	{
 		SendData(n, msg, dataSize);
 		howManySent++;
@@ -279,9 +279,9 @@ void UDPServer::PrintCurrentConnectedIPs()
 {
 	for (size_t i = 0; i < remoteConnections.size(); i++)
 	{
-		if(remoteConnections[i].isActive)
+		if(remoteConnections[i]->isActive)
 		{
-			struct sockaddr_in *addr4 = (struct sockaddr_in *) remoteConnections[i].remoteInfo.ai_addr;
+			struct sockaddr_in *addr4 = (struct sockaddr_in *) remoteConnections[i]->remoteInfo.ai_addr;
 			string destIP = inet_ntoa( addr4->sin_addr);
 			cout << "client " << i+1 << ") " << destIP <<endl;
 		}

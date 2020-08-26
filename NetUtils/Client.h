@@ -1,7 +1,7 @@
 #pragma once
-#include "TCPUtils.h"
+#include "NetUtils.h"
 
-class Client: public TCPUtils
+class Client: public NetUtils
 {
 public:
 	struct ServerConnection
