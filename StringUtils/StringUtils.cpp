@@ -320,7 +320,15 @@ bool StringUtils::IsPrevCharNonAlpha(std::string line,std::string word)
 			return true;
 	return false;
 }
-	
+bool StringUtils::IsNumber(std::string word)
+{
+	for (size_t i = 0; i < word.size(); i++)
+		//should I include the $ or %?
+		if (!std::isdigit(word[i]) && word[i] != '.' && word[i] != '-' && word[i] != '$')
+			return false;
+	return true;
+}
+
 bool StringUtils::IsPostCharNonAlpha(std::string line,std::string word)
 {
 	size_t start = line.find(word);

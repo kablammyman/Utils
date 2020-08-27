@@ -51,6 +51,13 @@ bool ArgParser::IsArgEnabled(std::string name)
 			return true;
 	return false;
 }
+bool ArgParser::NoValidArgs()
+{
+	for (size_t i = 0; i < args.size(); i++)
+		if (args[i].enabled)
+			return false;
+	return true;
+}
 
 void ArgParser::StoreStringValue(Args& curArg, string value)
 {

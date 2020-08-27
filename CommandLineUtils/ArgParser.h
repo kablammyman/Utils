@@ -29,6 +29,7 @@ public:
 	void StoreFlagValue(Args& curArg);
 	void AddArg(std::string name, Action action, std::string shortFlag, std::string longFlag, std::string helpText);
 	bool IsArgEnabled(std::string name);
+	bool NoValidArgs();
 	std::string GetArgValue(std::string argName);
 	std::string HelpText();
 };
