@@ -21,7 +21,7 @@ int TCPServer::GetData(size_t socketIndex, char *msg, int dataSize)//for stream 
 	return NetUtils::GetDataTCP(remoteConnections[socketIndex]->theSocket,msg,dataSize);
 }
 //------------------------------------------------------------------------------
-int TCPServer::StartServer(int numConnections, char* port)
+int TCPServer::StartServer(/*int numConnections,*/ char* port)
 {
 	tv.tv_sec = 0;
 	tv.tv_usec = 0;
@@ -36,7 +36,7 @@ int TCPServer::StartServer(int numConnections, char* port)
 	int yes = 1;
 	int nret = SOCKET_ERROR;
 
-	numListeningConnections = numConnections;
+	//numListeningConnections = numConnections;
 	memset(&hints, 0, sizeof(hints)); // zero the rest of the struct 
 	hints.ai_family = AF_INET;
 	hints.ai_flags = AI_PASSIVE; 				                   
@@ -51,33 +51,32 @@ int TCPServer::StartServer(int numConnections, char* port)
 	}
 
 
-	listeningSocket = socket(PF_INET, SOCK_STREAM, 0);
+	listeningSocket = socket(servinfo->ai_family, servinfo->ai_socktype, 0);
 	if (listeningSocket == INVALID_SOCKET) 
 	{
-		ReportError("socket()");		// Report the error with our custom function
+		ReportError("listeningSocket creation");		// Report the error with our custom function
 		Shutdown();				// Shutdown Winsock
 		return NETWORK_ERROR;			// Return an error value
 	}
 #ifndef __ANDROID__	
 	//android version doesnt return an int
-	nret = bind(listeningSocket, (sockaddr *)&hints, sizeof(struct sockaddr));
+	nret = bind(listeningSocket, servinfo->ai_addr, (int)servinfo->ai_addrlen);
 #else
 	bind(listeningSocket, (sockaddr *)&hints, sizeof(struct sockaddr));
 #endif
-
-	setsockopt(listeningSocket, SOL_SOCKET, SO_REUSEADDR, (char*)&yes, sizeof(int)); // lose the pesky "address already in use" error message
-
-	
-	if (nret == SOCKET_ERROR) 
+	if (nret == SOCKET_ERROR)
 	{
 		ReportError("listener socket: failed to bind() socket\n");
 		Shutdown();
 		return NETWORK_ERROR;
 	}
 
+	//freeaddrinfo(servinfo);
+
+	setsockopt(listeningSocket, SOL_SOCKET, SO_REUSEADDR, (char*)&yes, sizeof(int)); // lose the pesky "address already in use" error message
 
 	FD_SET(listeningSocket, &master);
-	nret = listen(listeningSocket, numListeningConnections);// Up to 10 connections may wait at any one time to be accept()'ed
+	nret = listen(listeningSocket, SOMAXCONN);
 
 	if (nret == SOCKET_ERROR) 
 	{

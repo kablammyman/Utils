@@ -13,11 +13,11 @@ class TCPServer : public NetUtils
 			//if needed, we can set an id for who or what this is connected to
 			int id = 0;
 		};
-	private:
-
+	protected:
+	
 	bool waitingForClients = false;
 	SOCKET listeningSocket;
-	int numListeningConnections;
+	//int numListeningConnections;
 	vector<RemoteComputerConnection *> remoteConnections;
 	
 public:
@@ -30,12 +30,10 @@ public:
 	int HasRecivedData();
 	
 	
-	int StartServer(int numConnections, char* port);
+	int StartServer(/*int numConnections,*/ char* port);
 	
 	int WaitForFirstClientConnect();
 	int WaitForClientAsync();
-	//for stream sockets
-	
 	
 	size_t GetNumConnections() {return remoteConnections.size();}
 	SOCKET GetSocket(int index) { return remoteConnections[index]->theSocket; }
