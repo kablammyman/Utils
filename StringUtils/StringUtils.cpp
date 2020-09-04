@@ -324,7 +324,7 @@ bool StringUtils::IsNumber(std::string word)
 {
 	for (size_t i = 0; i < word.size(); i++)
 		//should I include the $ or %?
-		if (!std::isdigit(word[i]) && word[i] != '.' && word[i] != '-' && word[i] != '$')
+		if (!isdigit(word[i]) && word[i] != '.' && word[i] != '-' && word[i] != '$')
 			return false;
 	return true;
 }
@@ -695,7 +695,7 @@ float StringUtils::GetFloatFromString(std::string str)
 	if (f != std::string::npos)
 		str.erase(f, 1);
 
-	if(isdigit(str[0]))
+	if(IsNumber(str))
 		return stof(str);
 
 	return 0.0;
@@ -713,7 +713,7 @@ int StringUtils::GetIntFromString(std::string str)
 	if (f != std::string::npos)
 		str.erase(f, 1);
 
-	if(isdigit(str[0]))
+	if(IsNumber(str))
 		return stoi(str);
 
 	return 0;
