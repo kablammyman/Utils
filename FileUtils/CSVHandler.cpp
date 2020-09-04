@@ -54,40 +54,33 @@ vector<string> CSVHandler::GetCSVHeader()
 vector<string> CSVHandler::CSVTokenize(string line)
 {
 	vector<string> tokens;
-	bool usesQuotes = false;
-	bool insideData = true;
-
+	bool insideQuotesData = false;
 
 	string curToken = "";
-	for (size_t i = 0; i < line.size(); i++)
+	int i = -1;
+	int size = line.size();
+	while (i < size)
 	{
+		i++;
 		if (curToken.size() == 0 && line[i] == '"')
 		{
-			usesQuotes = true;
-			insideData = false;
+			insideQuotesData = true;
 			continue;
 		}
 
 
-		if (usesQuotes)
+		if (insideQuotesData)
 		{
 			if (line[i] == '"')
 			{
-				if (!insideData)//start of data
-					insideData = true;
+				tokens.push_back(curToken);
+				curToken.clear();
+				insideQuotesData = false;
+				//this hsould get teh cursor on to the next delim, and the end of the loop will get the cursor onto the next charater for the next token
+				i++;
 			}
 			else
-			{
-				if (line[i] != inputDelim)
-					curToken += line[i];
-				else
-				{
-					tokens.push_back(curToken);
-					curToken.clear();
-					usesQuotes = false;
-					insideData = false;
-				}
-			}
+				curToken += line[i];		
 		}
 //---------------------
 		else
@@ -104,7 +97,7 @@ vector<string> CSVHandler::CSVTokenize(string line)
 	
 	if(!curToken.empty())
 		tokens.push_back(curToken);
-
+	
 	return tokens;
 }
 
