@@ -145,7 +145,9 @@ public:
 	bool DoDBQuerey(string table, vector<string> selectData, string whereString, string &output);
 	bool UpdateEntry(string table, dbDataPair data, dbDataPair WhereClause, string &output);
 	bool UpdateEntry(string table, vector<dbDataPair> data, dbDataPair WhereClause, string &output);
-	
+	bool UpdateEntry(string table, vector<dbDataPair> data, vector<dbDataPair> whereData, string &output, bool useAnd = true);
+
+
 	static void ParseDBOutput(string &inputData, int numFields, vector <vector<string>> &returnData);
 	static void ParseDBOutput(string &inputData, int numFields, vector<DBResult> &returnData);
 	static void ParseDBOutputOLD(string &inputData, vector<string>fields, vector<DBResult> &returnData);

@@ -331,6 +331,39 @@ bool DatabaseController::UpdateEntry(string table, vector<dbDataPair> data, dbDa
 
 	return db->ExecuteSQL(querey + whereClause, output);
 }
+bool DatabaseController::UpdateEntry(string table, vector<dbDataPair> data, vector<dbDataPair> whereData, string &output, bool useAnd)
+{
+	string querey = ("UPDATE " + table + " SET ");
+	string whereString = " WHERE ";
+
+
+	for (size_t i = 0; i < data.size(); i++)
+	{
+		querey += (data[i].first + "= \"" + data[i].second + "\"");
+
+		if (i < data.size() - 1)
+		{
+			querey += ",";
+		}
+	}
+
+
+	for (size_t i = 0; i < whereData.size(); i++)
+	{
+		if (i > 0)
+		{
+			if (useAnd)
+				whereString += " AND ";
+			else
+				whereString += " OR ";
+		}
+		whereString += (whereData[i].first + " = \"" + whereData[i].second + "\"");
+	}
+	whereString += ";";
+
+	return db->ExecuteSQL(querey + whereString, output);
+}
+
 void DatabaseController::ParseDBOutput(string &inputData, int numFields, vector<vector<string>> &returnData)
 {
 	returnData.clear();
