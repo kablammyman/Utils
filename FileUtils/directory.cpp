@@ -497,8 +497,11 @@ string DirectoryTree::PrepPathForTraversal(string path)
 
 	else
 	{
-        if(ast != ' ')
-            newPath += SLASH + ast;//if we forgot to add the last back slash, add it, so we dont crash
+		if (ast != ' ')
+		{
+			newPath += SLASH;
+			newPath += ast;//if we forgot to add the last back slash, add it, so we dont crash
+		}
         else
             newPath += SLASH;//if we forgot to add the last back slash, add it, so we dont crash
 	}

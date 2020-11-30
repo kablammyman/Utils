@@ -5,7 +5,7 @@
 
 using namespace std;
 
-bool CSVHandler::ReadCSVFile(std::string file, char d)
+bool CSVHandler::ReadCSVFile(std::string file, char d, bool hasHeader )
 {
 	inputDelim = d;
 	inputCSV.open(file);
@@ -16,7 +16,7 @@ bool CSVHandler::ReadCSVFile(std::string file, char d)
 	{
 		while (getline(inputCSV, line))
 		{
-			if (isHeader)
+			if (isHeader && hasHeader)
 			{
 				vector<string> tokens = CSVTokenize(line);
 				for (size_t i = 0; i < tokens.size(); i++)
@@ -166,6 +166,7 @@ void CSVHandler::AddCSVHeaderEntry(std::string header)
 			return;
 
 	csvHeader.push_back(header);
+	headerLookup[header] = csvHeader.size()-1;
 }
 
 void CSVHandler::CreateCSVHeader(vector<string> headerList)
@@ -205,8 +206,8 @@ std::string CSVHandler::GetCsvEntryString(std::map<std::string, std::string>& di
 			entry += " " + outputDelim;
 		}
 	}
-
-	entry.pop_back();
+	if(!entry.empty())
+		entry.pop_back();
 	return entry;
 }
 //special for click2mail api
@@ -242,7 +243,8 @@ std::string CSVHandler::GetCsvHeaderString()
 	{
 		entry += csvHeader[i] + outputDelim;
 	}
-	entry.pop_back();//remove last instance of the delimiter
+	if (!entry.empty())
+		entry.pop_back();//remove last instance of the delimiter
 	entry += "\n";
 
 	return entry;

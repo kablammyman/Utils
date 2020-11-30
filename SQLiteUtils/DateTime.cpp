@@ -327,6 +327,35 @@ std::string DateTime::GetMonthWord(int month)
 			return "";
 	}
 }
+void DateTime::SetMonthFromWord(std::string monthWord)
+{
+	StringUtils::ToUpper(monthWord);
+	if (monthWord == "JANUARY")
+		month = 1;
+	else if (monthWord == "FEBUARY")
+		month = 2;
+	else if (monthWord == "MARCH")
+		month = 3;
+	else if (monthWord == "APRIL")
+		month = 4;
+	else if (monthWord == "MAY")
+		month = 5;
+	else if (monthWord == "JUNE")
+		month = 6;
+	else if (monthWord == "JULY")
+		month = 7;
+	else if (monthWord == "AUGUST")
+		month = 8;
+	else if (monthWord == "SEPTEMBER")
+		month = 9;
+	else if (monthWord == "OCTOBER")
+		month = 10;
+	else if (monthWord == "NOVEMBER")
+		month = 11;
+	else if (monthWord == "DECEMBER")
+		month = 12;
+}
+
 std::string DateTime::GetMonthAbrv(int month)
 {
 	switch (month)
@@ -359,6 +388,35 @@ std::string DateTime::GetMonthAbrv(int month)
 		return "";
 	}
 }
+void DateTime::SetMonthFromAbrv(std::string monthAbrv)
+{
+	StringUtils::ToUpper(monthAbrv);
+	if (monthAbrv == "JAN")
+		month = 1;
+	else if (monthAbrv == "FEB")
+		month = 2;
+	else if (monthAbrv == "MAR")
+		month = 3;
+	else if (monthAbrv == "APR")
+		month = 4;
+	else if (monthAbrv == "MAY")
+		month = 5;
+	else if (monthAbrv == "JUN")
+		month = 6;
+	else if (monthAbrv == "JUL")
+		month = 7;
+	else if (monthAbrv == "AUG")
+		month = 8;
+	else if (monthAbrv == "SEPT" || monthAbrv == "SEP")
+		month = 9;
+	else if (monthAbrv == "OCT")
+		month = 10;
+	else if (monthAbrv == "NOV")
+		month = 11;
+	else if (monthAbrv == "DEC")
+		month = 12;
+}
+
 std::string DateTime::GetDayOfMonthWord(int day)
 {
 	std::string word = std::to_string(day);
