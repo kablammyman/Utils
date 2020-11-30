@@ -27,6 +27,7 @@ public:
 
 	DateTime operator=(const DateTime& d);
 	bool operator==(const DateTime& d);
+	bool operator!=(const DateTime& d);
 
 	bool operator>(const DateTime& d);
 

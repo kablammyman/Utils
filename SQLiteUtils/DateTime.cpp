@@ -158,7 +158,15 @@ bool DateTime::operator==(const DateTime& d)
 
 	return false;
 }
+bool DateTime::operator!=(const DateTime& d)
+{
+	if (this->year != d.year ||
+		this->month != d.month ||
+		this->day != d.day)
+		return true;
 
+	return false;
+}
 bool DateTime::operator>(const DateTime& d)
 {
 	if (this->year > d.year)
