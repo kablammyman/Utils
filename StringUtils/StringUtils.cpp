@@ -172,7 +172,7 @@ int StringUtils::GetStandAloneWordInLineIndex(std::string line,std::string word)
 		//the word is not even in here!
 		if (start == std::string::npos)
 			return -1;
-		index += start+1;
+		index += start +1;
 		
 		size_t end = start + word.size()-1;
 		bool startIsFirst = false;
@@ -208,7 +208,8 @@ int StringUtils::GetStandAloneWordInLineIndex(std::string line,std::string word)
 		}
 		else
 		{
-			if (! isalpha(line[start]) && !isalpha(line[end]))				
+			//why am i doing this if statement???
+		//	if (! isalpha(line[start]) && !isalpha(line[end]))							
 				return (int)start;
 		}
 	}
