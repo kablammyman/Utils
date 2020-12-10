@@ -133,6 +133,8 @@ size_t CSVHandler::GetCSVLength()
 bool CSVHandler::CreateCSVFile(std::string outputFile,vector<string> header, char d, bool overwrite)
 {
 	outputDelim = d;
+	if(inputDelim == 0)
+		inputDelim = d;
 	if(overwrite)
 		outputCSV.open(outputFile);
 	else
@@ -154,7 +156,7 @@ bool CSVHandler::CreateCSVFile(std::string outputFile,vector<string> header, cha
 	//only write the header if this is a brand new file
 	if(line.empty())
 		WriteCSVEntryRaw(entry);
-
+	
 	return true;
 }
 
@@ -182,6 +184,12 @@ void CSVHandler::WriteCSVEntry(map<string, string>& dict)
 	WriteCSVEntryRaw(entry);
 }
 
+void CSVHandler::WriteCSVMemToFile()
+{
+	for(size_t i = 0; i < csvEntry.size(); i++)
+		WriteCSVEntryRaw(csvEntry[i]);
+}
+
 std::string CSVHandler::GetCsvEntryString(std::map<std::string, std::string>& dict)
 {
 	string entry;
@@ -203,13 +211,21 @@ std::string CSVHandler::GetCsvEntryString(std::map<std::string, std::string>& di
 		}
 		else
 		{
-			entry += " " + outputDelim;
+			entry += outputDelim;
 		}
 	}
 	if(!entry.empty())
 		entry.pop_back();
+
 	return entry;
 }
+std::string CSVHandler::GetAndStoreCsvEntryString(std::map<std::string, std::string>& dict)
+{
+	string entry = GetCsvEntryString(dict);
+	csvEntry.push_back(entry);
+	return entry;
+}
+
 //special for click2mail api
 std::string CSVHandler::GetCsvEntryStringAsXML(std::map<std::string, std::string>& dict)
 {
@@ -254,3 +270,19 @@ void CSVHandler::SetDelimeter(char delim)
 {
 	outputDelim = delim;
 }
+
+std::vector<std::string> CSVHandler::GetCSVDataAsVector()
+{
+	return csvEntry;
+}
+
+std::vector<std::string> CSVHandler::GetCSVLineAsVector(size_t index)
+{
+	return CSVTokenize(csvEntry[index]);
+}
+
+std::vector<std::string> CSVHandler::GetCSVLineAsVector(string line)
+{
+	return CSVTokenize(line);
+}
+

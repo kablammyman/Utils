@@ -8,8 +8,9 @@ class CSVHandler
 {
 	std::ifstream inputCSV;
 	std::ofstream outputCSV;
-	char inputDelim;
-	char outputDelim;
+	//bool saveCSVDataInMem;//not sure if this is needed
+	char inputDelim = 0;
+	char outputDelim = 0;
 	std::vector<std::string> csvHeader;
 	std::vector<std::string> csvEntry;
 	//when reading in a csv, we want to quickly find the data wwe want without constant for loops
@@ -37,7 +38,15 @@ public:
 	void WriteCSVEntryRaw(std::string entry);
 	void CreateCSVHeader(std::vector<std::string> headerList);
 	std::string GetCsvEntryString(std::map<std::string, std::string>& dict);
+	std::string GetAndStoreCsvEntryString(std::map<std::string, std::string>& dict);
 	std::string GetCsvEntryStringAsXML(std::map<std::string, std::string>& dict);//special for click2mail api
 	std::string GetCsvHeaderString();
 	void SetDelimeter(char delim);
+	std::vector<std::string> GetCSVDataAsVector();
+	std::vector<std::string> GetCSVLineAsVector(size_t index);
+	std::vector<std::string> GetCSVLineAsVector(std::string line);
+	void WriteCSVMemToFile();
+	
+	//void SetSaveDataInMemFlag(bool saveInMem);//not sure if this is needed
+
 };
