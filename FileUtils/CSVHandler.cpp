@@ -142,21 +142,20 @@ bool CSVHandler::CreateCSVFile(std::string outputFile,vector<string> header, cha
 
 	if(!outputCSV.is_open())
 		return false;
-	string entry = "";
+	
 	CreateCSVHeader(header);
 
-	for (size_t i = 0; i < csvHeader.size(); i++)
+	if (overwrite)
 	{
-		entry += csvHeader[i] + d;
-	}
-	entry.pop_back();
-	string line;
-	getline(inputCSV, line);
+		string entry = "";
+		for (size_t i = 0; i < csvHeader.size(); i++)
+		{
+			entry += csvHeader[i] + d;
+		}
+		entry.pop_back();
 
-	//only write the header if this is a brand new file
-	if(line.empty())
 		WriteCSVEntryRaw(entry);
-	
+	}
 	return true;
 }
 
