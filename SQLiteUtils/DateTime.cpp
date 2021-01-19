@@ -6,6 +6,12 @@ DateTime::DateTime()
 	month = 1;
 	day = 1;
 };
+DateTime::DateTime(int y, int m, int d)
+{
+	year = y;
+	month = m;
+	day = d;
+}
 DateTime::DateTime(std::string date)
 {
 	ParseDateString(date);

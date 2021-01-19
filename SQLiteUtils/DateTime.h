@@ -13,6 +13,7 @@ public:
 	int month;
 	int day;
 	DateTime();
+	DateTime(int y, int m, int d);
 	DateTime(std::string date);
 	void ParseDateString(std::string dateString);
 	std::string ToString();
