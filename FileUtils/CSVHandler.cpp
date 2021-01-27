@@ -5,6 +5,12 @@
 
 using namespace std;
 
+//sometimes a null terminator is added to a header for some weird reason, so lets remove it if its there!
+void RemoveNullTerminator(string &word)
+{
+	if (word[word.size() - 1] == '\0')
+		word.pop_back();
+}
 bool CSVHandler::ReadCSVFile(std::string file, char d, bool hasHeader )
 {
 	inputDelim = d;
@@ -21,6 +27,11 @@ bool CSVHandler::ReadCSVFile(std::string file, char d, bool hasHeader )
 				vector<string> tokens = CSVTokenize(line);
 				for (size_t i = 0; i < tokens.size(); i++)
 				{
+					//sometimes a null terminator is added to a header for some weird reason, so lets remove it if its there!
+					if (i == tokens.size() - 1)
+					{
+						RemoveNullTerminator(tokens[i]);
+					}
 					csvHeader.push_back(tokens[i]);//this preserves the order of the header
 					headerLookup[tokens[i]] = i;
 				}
@@ -119,7 +130,10 @@ map<string, string> CSVHandler::GetAllDataFromLine(size_t line)
 	for (it = headerLookup.begin(); it != headerLookup.end(); it++)
 	{
 		if (it->second < tokens.size())
+		{
+			RemoveNullTerminator(tokens[it->second]);
 			ret[it->first] = tokens[it->second];
+		}
 	}
 
 	return ret;
