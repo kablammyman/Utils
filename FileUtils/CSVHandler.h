@@ -46,7 +46,8 @@ public:
 	std::vector<std::string> GetCSVLineAsVector(size_t index);
 	std::vector<std::string> GetCSVLineAsVector(std::string line);
 	void WriteCSVMemToFile();
-	
+	bool IsEntryInCSV(std::string headerName, std::string value);
+	int GetHeaderIndex(std::string headerName);
 	//void SetSaveDataInMemFlag(bool saveInMem);//not sure if this is needed
 
 };

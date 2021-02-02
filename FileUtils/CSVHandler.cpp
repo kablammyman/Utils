@@ -8,6 +8,8 @@ using namespace std;
 //sometimes a null terminator is added to a header for some weird reason, so lets remove it if its there!
 void RemoveNullTerminator(string &word)
 {
+	if (word.empty())
+		return;
 	if (word[word.size() - 1] == '\0')
 		word.pop_back();
 }
@@ -298,4 +300,24 @@ std::vector<std::string> CSVHandler::GetCSVLineAsVector(string line)
 {
 	return CSVTokenize(line);
 }
-
+int CSVHandler::GetHeaderIndex(std::string headerName)
+{
+	for (size_t i = 0; i < csvHeader.size(); i++)
+		if (headerName == csvHeader[i])
+			return i;
+	return -1;
+}
+bool CSVHandler::IsEntryInCSV(std::string headerName, std::string value)
+{
+	int index = GetHeaderIndex(headerName);
+	if (index == -1)
+		return false;
+	
+	for (size_t i = 0; i < csvEntry.size(); i++)
+	{
+		map<string,string> values = GetAllDataFromLine(i);
+		if (values[headerName] == value)
+			return true;
+	}
+	return false;
+}
