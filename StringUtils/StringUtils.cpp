@@ -1,5 +1,5 @@
 #include "StringUtils.h"
-
+#include <ctime>//for time  in random string method
 #ifndef _WIN32
 #include <cstring> //strtok_r
 #endif
@@ -725,4 +725,20 @@ std::string StringUtils::ToMoneyString(float amount)
 	char temp[15];
 	sprintf(temp,"%.2f",amount);
 	return temp;
+}
+
+std::string StringUtils::GetRandomAlphaNumericString(int size)
+{
+
+	std::string ret;
+	time_t t;
+	srand((unsigned)time(&t));
+	static const char alphanum[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+	for (int i = 0; i < size; i++)
+	{
+		int index = rand() % sizeof(alphanum-1);
+		ret += alphanum[index];
+	}
+	return ret;
 }

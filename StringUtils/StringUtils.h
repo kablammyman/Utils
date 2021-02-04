@@ -52,5 +52,5 @@ public:
 	static float GetFloatFromString(std::string str);
 	static int GetIntFromString(std::string str);
 	static std::string ToMoneyString(float amount);
-	
+	static std::string GetRandomAlphaNumericString(int size);
 };

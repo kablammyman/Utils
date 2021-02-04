@@ -17,10 +17,10 @@ size_t CurlUtils::WriteCallback(char *contents, size_t size, size_t nmemb, void 
 	((std::string*)userp)->append((char*)contents, size * nmemb);
 	return size * nmemb;
 }
-int CurlUtils::PostToClick2Mail(string url,vector<string> &headerOptions,  string xmlData)
+int CurlUtils::HttpsPost(string url,vector<string> &headerOptions,  string postFields)
 {
 	CURL *curl;
-	CURLcode res;
+	CURLcode res = CURLE_OK;
 	readBuffer.clear();
 	curl = curl_easy_init();
 	if(curl) {
@@ -31,13 +31,9 @@ int CurlUtils::PostToClick2Mail(string url,vector<string> &headerOptions,  strin
 		struct curl_slist *headers = NULL;
 		for(size_t i = 0; i < headerOptions.size(); i++)
 			headers = curl_slist_append(headers, headerOptions[i].c_str());
-		//headers = curl_slist_append(headers, "Content-Type: application/xml");
-		//headers = curl_slist_append(headers, "Accept: application/xml");
-		headers = curl_slist_append(headers, "user-agent: my-app/0.0.1");
-		headers = curl_slist_append(headers, "Authorization: Basic dmljdG9yc3ZhY2FudGxhbmQ6bmJrYjRSYSQh");
-		headers = curl_slist_append(headers, "Cookie: __cfduid=d3e2b886144d81b97036da5d8b1f5a82a1595614892");
+
 		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, xmlData.c_str());
+		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postFields.c_str());
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
 		
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
@@ -49,10 +45,10 @@ int CurlUtils::PostToClick2Mail(string url,vector<string> &headerOptions,  strin
 	return res;
 }
 
-int CurlUtils::GetFromClick2Mail(string url, string data)
+int CurlUtils::HttpsGet(string url, vector<string>& headerOptions, string data)
 {
 	CURL *curl;
-	CURLcode res;
+	CURLcode res = CURLE_OK;
 	readBuffer.clear();
 	curl = curl_easy_init();
 	if(curl) {
@@ -65,8 +61,8 @@ int CurlUtils::GetFromClick2Mail(string url, string data)
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
 
 		struct curl_slist *headers = NULL;
-		headers = curl_slist_append(headers, "Authorization: Basic dmljdG9yc3ZhY2FudGxhbmQ6bmJrYjRSYSQh");
-		headers = curl_slist_append(headers, "Cookie: __cfduid=d3e2b886144d81b97036da5d8b1f5a82a1595614892");
+		for (size_t i = 0; i < headerOptions.size(); i++)
+			headers = curl_slist_append(headers, headerOptions[i].c_str());
 		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 		res = curl_easy_perform(curl);
 	}
@@ -115,7 +111,7 @@ size_t CurlUtils::ftp_read_callback(void *ptr, size_t size, size_t nmemb, void *
 }
 
 
-int CurlUtils::UploadToFTP(string ftpUrl, string localFile,string fileNameWithoutPath)
+int CurlUtils::UploadToFTP(string ftpUrl, string username, string password, string localFile,string fileNameWithoutPath)
 {
 	CURL *curl;
 	CURLcode res;
@@ -166,7 +162,8 @@ int CurlUtils::UploadToFTP(string ftpUrl, string localFile,string fileNameWithou
 		curl_easy_setopt(curl, CURLOPT_FTP_CREATE_MISSING_DIRS,CURLFTP_CREATE_DIR_RETRY);
 
 		//provide the usernaem and password for the ftp server
-		curl_easy_setopt( curl, CURLOPT_USERPWD, "admin@victorsvacantland.com:nbkb4Ra$!" );
+		string userPass = username + ":" + password;
+		curl_easy_setopt( curl, CURLOPT_USERPWD, userPass.c_str());
 
 		/* pass in that last of FTP commands to run after the transfer */ 
 		curl_easy_setopt(curl, CURLOPT_POSTQUOTE, headerlist);
@@ -214,13 +211,22 @@ const std::string CurrentDateTime()
 	return buf;
 }
 
-vector<string> CurlUtils::CreatePayloadText(string emailAddress, string subject, string message)
+vector<string> CurlUtils::CreatePayloadText(string emailAddress, string fromEmail,string domain, string subject, string message)
 {
 	vector<string> email;
 	email.push_back("Date: " + CurrentDateTime() + "\r\n");
 	email.push_back("To: " +emailAddress +"\r\n");
-	email.push_back("From: victor@victorsvacantland.com\r\n");
-	email.push_back("Message-ID: <dcd7cb36-11db-487a-9f3a-e652a9458efd@victorsvacantland.com\r\n");
+	email.push_back("From: "+fromEmail+"\r\n");
+	string messageID = "Message-ID: <";
+	messageID += StringUtils::GetRandomAlphaNumericString(8);
+	messageID += "-" + StringUtils::GetRandomAlphaNumericString(4);
+	messageID += "-" + StringUtils::GetRandomAlphaNumericString(4);
+	messageID += "-" + StringUtils::GetRandomAlphaNumericString(4);
+	messageID += "-" + StringUtils::GetRandomAlphaNumericString(12);
+	messageID += "@" + domain+"\r\n";
+
+	//email.push_back("Message-ID: <dcd7cb36-11db-487a-9f3a-e652a9458efd@victorsvacantland.com\r\n");
+	email.push_back(messageID);
 	email.push_back("Subject: "+ subject+"\r\n");
 	email.push_back("\r\n"); // empty line to divide headers from body, see RFC5322
 	email.push_back(message+"\r\n");
@@ -261,7 +267,8 @@ size_t CurlUtils::payload_source(void *ptr, size_t size, size_t nmemb, void *use
 	}
 	return 0;
 }
-int CurlUtils::SendEmail(string emailAddress, string subject, string message)
+
+int CurlUtils::SendEmail(string toEmailAddress, string fromEmailAddress, string password, string sendingDomain,string smtpUrlAndPort, string subject, string message)
 {
 	CURL *curl;
 	CURLcode res = CURLE_OK;
@@ -274,13 +281,14 @@ int CurlUtils::SendEmail(string emailAddress, string subject, string message)
 	if(curl) 
 	{
 		curEmail.clear();
-		curEmail = CreatePayloadText(emailAddress, subject, message);
+		curEmail = CreatePayloadText(toEmailAddress, fromEmailAddress, sendingDomain, subject, message);
 
 		/* This is the URL for your mailserver */ 
 
-		curl_easy_setopt(curl, CURLOPT_USERNAME, "victor@victorsvacantland.com");
-		curl_easy_setopt(curl, CURLOPT_PASSWORD, "nbkb4Ra$!");
-		curl_easy_setopt(curl, CURLOPT_URL, "smtp://mail.victorsvacantland.com:26");
+		//curl_easy_setopt(curl, CURLOPT_USERNAME, "victor@victorsvacantland.com");
+		curl_easy_setopt(curl, CURLOPT_USERNAME, fromEmailAddress.c_str());
+		curl_easy_setopt(curl, CURLOPT_PASSWORD, password.c_str());
+		curl_easy_setopt(curl, CURLOPT_URL, smtpUrlAndPort.c_str());
 		curl_easy_setopt(curl, CURLOPT_USE_SSL, (long)CURLUSESSL_ALL);
 
 		/* Note that this option isn't strictly required, omitting it will result
@@ -290,12 +298,12 @@ int CurlUtils::SendEmail(string emailAddress, string subject, string message)
 		* they could cause an endless loop. See RFC 5321 Section 4.5.5 for more
 		* details.
 		*/ 
-		curl_easy_setopt(curl, CURLOPT_MAIL_FROM, "victor@victorsvacantland.com");
+		curl_easy_setopt(curl, CURLOPT_MAIL_FROM, fromEmailAddress.c_str());
 
 		/* Add two recipients, in this particular case they correspond to the
 		* To: and Cc: addressees in the header, but they could be any kind of
 		* recipient. */ 
-		recipients = curl_slist_append(recipients, emailAddress.c_str());
+		recipients = curl_slist_append(recipients, toEmailAddress.c_str());
 		//recipients = curl_slist_append(recipients, CC_ADDR);
 		curl_easy_setopt(curl, CURLOPT_MAIL_RCPT, recipients);
 
