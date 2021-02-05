@@ -3,8 +3,7 @@
 #include <string>
 #include <vector>
 
-#include <curl.h>
-
+#include "libcurl/include/curl.h"
 
 class CurlUtils
 {
