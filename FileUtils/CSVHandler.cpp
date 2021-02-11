@@ -86,6 +86,7 @@ vector<string> CSVHandler::CSVTokenize(string line)
 		{
 			if (line[i] == '"')
 			{
+				RemoveNullTerminator(curToken);
 				tokens.push_back(curToken);
 				curToken.clear();
 				insideQuotesData = false;
@@ -102,15 +103,18 @@ vector<string> CSVHandler::CSVTokenize(string line)
 				curToken += line[i];
 			else
 			{
+				RemoveNullTerminator(curToken);
 				tokens.push_back(curToken);
 				curToken.clear();
 			}
 		}	
 	}
 	
-	if(!curToken.empty())
+	if (!curToken.empty())
+	{
+		RemoveNullTerminator(curToken);
 		tokens.push_back(curToken);
-	
+	}
 	return tokens;
 }
 
