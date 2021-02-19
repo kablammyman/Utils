@@ -1,5 +1,5 @@
 #include <iostream>
-
+#include "FileUtils.h" //to check if file exists
 #include "StringUtils.h"
 #include "CSVHandler.h"
 
@@ -155,8 +155,14 @@ bool CSVHandler::CreateCSVFile(std::string outputFile,vector<string> header, cha
 	outputDelim = d;
 	if(inputDelim == 0)
 		inputDelim = d;
-	if(overwrite)
+	
+	bool fileExist = FileUtils::DoesFileExist(outputFile);
+
+	if (overwrite || !fileExist)
+	{
 		outputCSV.open(outputFile);
+		overwrite = true;//set this here, just incase it was set to false, but the file didnt exist
+	}
 	else
 		outputCSV.open(outputFile, std::ios_base::app);
 
