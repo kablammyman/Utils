@@ -121,6 +121,8 @@ vector<string> CSVHandler::CSVTokenize(string line)
 string CSVHandler::GetColValue(std::string colName, size_t line)
 {
 	//vector<string> tokens = StringUtils::Tokenize(csvEntry[line], inputDelim);
+	if (line >= csvEntry.size())
+		return "";
 	vector<string> tokens = CSVTokenize(csvEntry[line]);
 	size_t i = headerLookup[colName];
 	return tokens[i];
@@ -129,6 +131,9 @@ string CSVHandler::GetColValue(std::string colName, size_t line)
 map<string, string> CSVHandler::GetAllDataFromLine(size_t line)
 {
 	map<string, string> ret;
+	if (line >= csvEntry.size())
+		return ret;
+	
 	//vector<string> tokens = StringUtils::Tokenize(csvEntry[line], inputDelim);
 	vector<string> tokens = CSVTokenize(csvEntry[line]);
 	map<string, size_t>::iterator it;
