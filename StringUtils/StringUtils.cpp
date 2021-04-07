@@ -723,8 +723,40 @@ int StringUtils::GetIntFromString(std::string str)
 std::string StringUtils::ToMoneyString(float amount)
 {
 	char temp[15];
+	char ret[15];//15 is enoguh to squeeze in 3 commas
 	sprintf(temp,"%.2f",amount);
-	return temp;
+	int numExtraSpaces = 0;
+	//see how many extra chars we need when adding in commas:
+	if (strlen(temp) > 6)
+		numExtraSpaces = 1;
+
+	int comma = 0;
+	int retIndex = strlen(temp) + numExtraSpaces;
+
+	//add the commas
+	ret[retIndex] = '\0';
+	ret[retIndex - 1] = temp[strlen(temp) - 1];
+	ret[retIndex - 2] = temp[strlen(temp) - 2];
+	ret[retIndex - 3] = temp[strlen(temp) - 3];
+	retIndex -= 3;
+	for (int i = strlen(temp)-3; i >= 0; i--)//start from the whole dollar amount
+	{
+		if (comma < 4)
+		{
+			ret[retIndex] = temp[i];
+			retIndex--;
+		}
+		else
+		{
+			ret[retIndex] = ',';
+			ret[retIndex -1] = temp[i];
+			retIndex -= 2;
+			comma = 0;
+		}
+		comma++;
+	}
+	
+	return ret;
 }
 
 std::string StringUtils::GetRandomAlphaNumericString(int size)

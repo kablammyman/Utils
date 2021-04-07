@@ -93,7 +93,7 @@ public:
 				{
 					try
 					{
-						return stof(data[i].second);
+						return StringUtils::GetFloatFromString(data[i].second);
 					}
 					catch (...)
 					{
