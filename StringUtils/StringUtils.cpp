@@ -774,3 +774,15 @@ std::string StringUtils::GetRandomAlphaNumericString(int size)
 	}
 	return ret;
 }
+
+int StringUtils::HammingDistance(std::string str1, std::string str2)
+{
+	int difference = 0;
+	for (int i = 0; i < 64; i++)
+	{
+		if (str1[i] != str2[i])
+			difference++;
+	}
+
+	return difference;
+}
