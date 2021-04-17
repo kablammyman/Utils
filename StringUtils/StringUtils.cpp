@@ -778,11 +778,60 @@ std::string StringUtils::GetRandomAlphaNumericString(int size)
 int StringUtils::HammingDistance(std::string str1, std::string str2)
 {
 	int difference = 0;
-	for (int i = 0; i < 64; i++)
+	size_t len = 0;
+	size_t diff = 0;
+	//use the smaller string size
+	if (str1.size() > str2.size())
+	{
+		len = str2.size();
+		diff = str1.size() - str2.size();
+	}
+	else
+	{
+		len = str1.size();
+		diff = str2.size() - str1.size();
+	}
+
+	for (int i = 0; i < len; i++)
 	{
 		if (str1[i] != str2[i])
 			difference++;
 	}
-
+	difference += diff;
 	return difference;
+}
+
+std::string StringUtils::LongestCommonSubStr(std::string str1, std::string str2)
+{
+	// converted 2d array into a 1d array
+	// length of longest common suffix
+	// of X[0..i-1] and Y[0..j-1].
+	int m = str1.size();
+	int n = str2.size();
+	int maxlen = 0;         // stores the max length of LCS
+	int endingIndex = m;    // stores the ending index of LCS in str1
+
+	int *lookup = new int[(m + 1) * (n + 1)];
+	memset(lookup, 0, sizeof(lookup));
+
+
+	// Following steps build lookup[m+1][n+1] in bottom up fashion. 
+	for (int i = 1; i <= m; i++)
+	{
+		for (int j = 1; j <= n; j++)
+		{
+			if (str1[i - 1] ==str2[j - 1]) 
+			{
+				lookup[i * n + j] = lookup[(i-1) * n + (j-1)] + 1;
+				// update the maximum length and ending index
+				if (lookup[i * n + j] > maxlen)
+				{
+					maxlen = lookup[i * n + j];
+					endingIndex = i;
+				}
+			}
+		}
+	}
+	// return longest common substring having length `maxlen`
+	return str1.substr(endingIndex - maxlen, maxlen);
 }
