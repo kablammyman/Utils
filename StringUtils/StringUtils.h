@@ -51,7 +51,7 @@ public:
 	static float GetJsonEntryFloatValue(std::string& json, std::string name);
 	static float GetFloatFromString(std::string str);
 	static int GetIntFromString(std::string str);
-	static std::string ToMoneyString(float amount);
+	static std::string ToMoneyString(float amount, bool prettyPrint = true);
 	static std::string GetRandomAlphaNumericString(int size);
 	static int HammingDistance(std::string str1, std::string str2);
 	static std::string LongestCommonSubStr(std::string str1, std::string str2);
