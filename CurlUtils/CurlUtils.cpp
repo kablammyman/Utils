@@ -384,13 +384,22 @@ CurlUtils::EmailStruct CurlUtils::ReadEmail(string username, string password,str
 		else
 		{
 			//first get who sent this:
-			email.from = StringUtils::GetDataBetweenSubStrings(readBuffer, "From:", "\n");
+			email.from = StringUtils::GetDataBetweenSubStrings(readBuffer, "\nFrom:", "\n");
 			//see who this email is meant for
-			email.to = StringUtils::GetDataBetweenSubStrings(readBuffer, "To:", "\n");
+			email.to = StringUtils::GetDataBetweenSubStrings(readBuffer, "\nTo:", "\n");
 			//get the subject
-			email.subject = StringUtils::GetDataBetweenSubStrings(readBuffer, "Subject:", "\n");
-			//get the text of the email, not the attachments
-			email.message = StringUtils::GetDataBetweenSubStrings(readBuffer, "Content-Type: text/plain;", "Content-Type:");
+			email.subject = StringUtils::GetDataBetweenSubStrings(readBuffer, "\nSubject:", "\n");
+			
+			email.dateRecv = StringUtils::GetDataBetweenSubStrings(readBuffer, "\nDate:", "\n");  
+			//get the text of the email, not the attachments.
+			//later on, Ill add a way to get all Conent-Types within an email and do shit with them
+			size_t messageStart = readBuffer.find("Content-Type: text/plain;") + 25;//25 = strlen of "Content-Type: text/plain;"
+			size_t messageEnd = readBuffer.find("Content-Type:", messageStart);
+
+			if (messageEnd != string::npos)
+				email.message = readBuffer.substr(messageStart, messageEnd- messageStart);
+			else
+				email.message = readBuffer.substr(messageStart);
 		}
 		/* Always cleanup */
 		curl_easy_cleanup(curl);

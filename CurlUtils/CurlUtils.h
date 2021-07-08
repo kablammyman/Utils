@@ -11,6 +11,15 @@ class CurlUtils
 	{
 		int lines_read;
 	};
+	
+	
+
+	static std::vector<std::string> curEmail;
+	static std::vector<std::string> CreatePayloadText(std::string emailAddress, std::string fromEmail, std::string domain, std::string subject, std::string message);
+	static size_t payload_source(void *ptr, size_t size, size_t nmemb, void *userp);
+	static size_t WriteCallback(char *contents, size_t size, size_t nmemb, void *userp);
+	
+	public:
 	struct EmailStruct
 	{
 		std::string to;
@@ -20,12 +29,6 @@ class CurlUtils
 		std::string dateRecv;
 	};
 
-	static std::vector<std::string> curEmail;
-	static std::vector<std::string> CreatePayloadText(std::string emailAddress, std::string fromEmail, std::string domain, std::string subject, std::string message);
-	static size_t payload_source(void *ptr, size_t size, size_t nmemb, void *userp);
-	static size_t WriteCallback(char *contents, size_t size, size_t nmemb, void *userp);
-	
-	public:
 	static std::string lastError;
 	static std::string readBuffer;
 	static int HttpsPost(std::string url, std::vector<std::string> &headerOptions,  std::string postFields);
