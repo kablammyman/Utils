@@ -343,3 +343,59 @@ int CurlUtils::SendEmail(string toEmailAddress, string fromEmailAddress, string 
 
 	return (int)res;
 }
+
+CurlUtils::EmailStruct CurlUtils::ReadEmail(string username, string password,string url, string imapArgs)
+{
+
+	CURL* curl;
+	CURLcode res = CURLE_OK;
+	readBuffer.clear();
+	curl = curl_easy_init();
+	CurlUtils::EmailStruct email;
+	if (curl) 
+	{
+		/* Set username and password */
+		curl_easy_setopt(curl, CURLOPT_USERNAME, username.c_str());
+		curl_easy_setopt(curl, CURLOPT_PASSWORD, password.c_str());
+
+		/* This will fetch message 1 from the user's inbox */
+		//curl_easy_setopt(curl, CURLOPT_URL,"imap://imap.example.com/INBOX/;UID=1");
+		//string completeUrl = "imap://" + url + ":" + port + "/INBOX/;UID=1";
+
+		
+		string completeUrl = "imap://" + url + "/" + imapArgs;
+		curl_easy_setopt(curl, CURLOPT_URL, completeUrl.c_str());
+
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+
+		curl_easy_setopt(curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);//THIS LINE IS VERY IMPORTANT!
+
+		/* Perform the fetch */
+		res = curl_easy_perform(curl);
+
+		/* Check for errors */
+		if (res != CURLE_OK)
+		{
+			fprintf(stderr, "curl_easy_perform() failed: %s\n",
+				curl_easy_strerror(res));
+		}
+		else
+		{
+			//first get who sent this:
+			email.from = StringUtils::GetDataBetweenSubStrings(readBuffer, "From:", "\n");
+			//see who this email is meant for
+			email.to = StringUtils::GetDataBetweenSubStrings(readBuffer, "To:", "\n");
+			//get the subject
+			email.subject = StringUtils::GetDataBetweenSubStrings(readBuffer, "Subject:", "\n");
+			//get the text of the email, not the attachments
+			email.message = StringUtils::GetDataBetweenSubStrings(readBuffer, "Content-Type: text/plain;", "Content-Type:");
+		}
+		/* Always cleanup */
+		curl_easy_cleanup(curl);
+	}
+
+	return email;
+
+}

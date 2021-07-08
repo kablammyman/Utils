@@ -11,7 +11,15 @@ class CurlUtils
 	{
 		int lines_read;
 	};
-	
+	struct EmailStruct
+	{
+		std::string to;
+		std::string from;
+		std::string subject;
+		std::string message;
+		std::string dateRecv;
+	};
+
 	static std::vector<std::string> curEmail;
 	static std::vector<std::string> CreatePayloadText(std::string emailAddress, std::string fromEmail, std::string domain, std::string subject, std::string message);
 	static size_t payload_source(void *ptr, size_t size, size_t nmemb, void *userp);
@@ -28,4 +36,5 @@ class CurlUtils
 	static int DumpToFile(std::string filename, std::string data);
 	static size_t ftp_read_callback(void *ptr, size_t size, size_t nmemb, void *stream);
 	static int UploadToFTP(std::string ftpUrl, std::string username, std::string password, std::string localFile,std::string fileNameWithoutPath);
+	static EmailStruct ReadEmail(std::string username, std::string password, std::string url, std::string imapArgs);
 };
