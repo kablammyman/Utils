@@ -47,6 +47,9 @@ public:
 	static std::string CreateJsonArrayEntry(std::string name, std::vector<std::string> value, bool noQuotes);
 	static std::string CreateJsonArrayEntry(std::string name, std::vector<int> value);
 	static std::string GetJsonEntryValue(std::string& json, std::string name);
+	static std::string CreateJsonNestedObjectEntry(std::string name, std::vector<std::pair <std::string, std::string>> entries, bool noQuotes);
+
+
 	static int GetJsonEntryIntValue(std::string& json, std::string name);
 	static float GetJsonEntryFloatValue(std::string& json, std::string name);
 	static float GetFloatFromString(std::string str);

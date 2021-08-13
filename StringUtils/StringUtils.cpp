@@ -684,6 +684,33 @@ float StringUtils::GetJsonEntryFloatValue(std::string& json, std::string name)
 	return 0;
 }
 
+std::string StringUtils::CreateJsonNestedObjectEntry(std::string name, std::vector<std::pair <std::string, std::string>> entries, bool noQuotes)
+{
+	std::string ret;
+	if (!name.empty())
+	{
+		ret += "\"" + name + "\" : {";
+	}
+	else
+		ret += "{";
+	for (size_t i = 0; i < entries.size(); i++)
+	{
+		ret += +"\"" + entries[i].first + "\":";
+		if (noQuotes)
+			ret += entries[i].second + ",";
+		else
+		{
+			SanitizeJsonString(entries[i].second);
+			ret += "\"" + entries[i].second + "\",";
+		}
+	}
+	size_t end = ret.find_last_of(",");
+	ret.erase(end, 1);//erase the last comma, buyt leave the new line char
+	ret += "}";
+
+	return ret;
+}
+
 float StringUtils::GetFloatFromString(std::string str)
 {
 	if(str.empty())
