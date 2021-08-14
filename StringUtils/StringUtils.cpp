@@ -684,6 +684,21 @@ float StringUtils::GetJsonEntryFloatValue(std::string& json, std::string name)
 	return 0;
 }
 
+bool StringUtils::GetJsonEntryBoolValue(std::string& json, std::string name)
+{
+	std::string value = GetJsonEntryValue(json, name);
+	if (value == "null" || value == "NULL")
+		return false;
+	if (!value.empty())
+	{
+		ToLower(value);
+		if (value == "true" || value == "yes" || value == "1")
+			return true;
+	}
+	return false;
+}
+
+
 std::string StringUtils::CreateJsonNestedObjectEntry(std::string name, std::vector<std::pair <std::string, std::string>> entries, bool noQuotes)
 {
 	std::string ret;
