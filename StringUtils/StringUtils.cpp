@@ -692,7 +692,7 @@ bool StringUtils::GetJsonEntryBoolValue(std::string& json, std::string name)
 	if (!value.empty())
 	{
 		ToLower(value);
-		if (value == "true" || value == "yes" || value == "1")
+		if (value == "true" || value == "yes" || value == "1" || value == "on")
 			return true;
 	}
 	return false;
