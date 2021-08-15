@@ -158,6 +158,8 @@ public:
 	static void RemoveTableNameFromOutput(string &inputData, int numCols, int colToUse, vector<int> &returnData);
 	static void RemoveTableNameFromOutput(string &inputData, int numCols, int colToUse, vector<float> &returnData);
 	static void RemoveTableNameFromOutput(string &inputData);
+	static int GetIdFromSingleQueryOutput(std::string quereyResult);
+
 	//same as before, but now we can couple data together
 	static void GetDataPairFromOutput(string &inputData, string colName1, string colName2, vector<dbDataPair> &returnData);
 	static void GetAllValuesFromCol(string &inputData, string colName, vector<string> &returnData);

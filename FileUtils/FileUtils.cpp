@@ -253,7 +253,42 @@ int FileUtils::GetNumFilesInDir(string &path, string ext)//needs to have *.fileE
 }
 
 //--------------------------------------------------------------------------------------------------
-vector<string> FileUtils::GetAllFileNamesInDir(string &path,string ext, bool includePath)
+vector<string> FileUtils::GetAllFileNamesInDir(string path)
+{
+	vector<string> fileList;
+	if (DoesPathExist(path) == false)
+		return fileList;
+	string curDir = DirectoryTree::PrepPathForTraversal(path);
+	string sTmp = "";
+
+	HANDLE hFind;
+	WIN32_FIND_DATA FindFileData;
+
+	hFind = FindFirstFile(curDir.c_str(), &FindFileData);
+
+	size_t removeAst = curDir.length() - 1;
+	curDir.resize(removeAst); //curDir[removeAst]='\0';//remove the asterisk
+
+	if (hFind != INVALID_HANDLE_VALUE)
+		do {
+			if (strcmp(FindFileData.cFileName, ".") == 0 || strcmp(FindFileData.cFileName, "..") == 0)//ignore anything we put in this list
+				continue;
+
+			if (!(FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+			{
+				sTmp.clear();
+				sTmp += FindFileData.cFileName;
+
+				fileList.push_back(sTmp);
+			}
+
+		} while (FindNextFile(hFind, &FindFileData));
+		FindClose(hFind);
+
+	return fileList;
+}
+//--------------------------------------------------------------------------------------------------
+vector<string> FileUtils::GetAllFileNamesInDir(string path,string ext, bool includePath)
 {
 	vector<string> fileList;
 	if (DoesPathExist(path) == false)

@@ -14,12 +14,19 @@ public:
 	static void ToLower(std::string &input);
 	static std::string FlattenVector(std::vector<std::string> input); 
 	static void TrimWhiteSpace(std::string &input);
+	
 	static std::string GetDataBetweenChars(std::string line,char char1, char char2, size_t &start);//no default valuer here
 	static std::string GetDataBetweenSubStrings(std::string line, std::string str1, std::string str2, size_t start =0);
-	static bool IsWordFromListInLine(std::vector<std::string> &wordList,std::string line);
-	static int GetStandAloneWordInLineIndex(std::string line,std::string word);
+	
+	
 	static std::string CopyCharsBetweenQuotes(std::string word, size_t index = 0);
-	static std::string CopyCharsBetweenTags(std::string word, char open,char closed,size_t index = 0);//this one has default value
+	static std::string WrapStringInSingleQuotes(std::string text);
+	static std::string WrapStringInDoubleQuotes(std::string text);
+
+	static std::string CopyCharsBetweenTags(std::string word, char open, char closed, size_t index = 0);//this one has default value
+	static bool IsWordFromListInLine(std::vector<std::string> &wordList, std::string line);
+	static int GetStandAloneWordInLineIndex(std::string line, std::string word);
+	
 	static std::string GetWordFromListInLine(std::vector<std::string> &wordList,std::string line, bool isCaseSensitive = true);
 	static int GetIndexOfWordFromListInLine(std::vector<std::string> &wordList,std::string line);
 	static int GetIndexOfWordFromList(std::vector<std::string>& wordList, std::string line);
@@ -48,7 +55,7 @@ public:
 	static std::string CreateJsonArrayEntry(std::string name, std::vector<int> value);
 	static std::string GetJsonEntryValue(std::string& json, std::string name);
 	static std::string CreateJsonNestedObjectEntry(std::string name, std::vector<std::pair <std::string, std::string>> entries, bool noQuotes);
-
+	static std::string ReturnErrorAsJSONObj(std::string err);
 
 	static int GetJsonEntryIntValue(std::string& json, std::string name);
 	static float GetJsonEntryFloatValue(std::string& json, std::string name);

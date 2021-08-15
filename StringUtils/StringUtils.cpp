@@ -886,3 +886,16 @@ std::string StringUtils::LongestCommonSubStr(std::string str1, std::string str2)
 	// return longest common substring having length `maxlen`
 	return str1.substr(endingIndex - maxlen, maxlen);
 }
+std::string StringUtils::ReturnErrorAsJSONObj(std::string err)
+{
+	std::string ret = "{" + CreateJsonEntry("error", err) + "}";
+	return ret;
+}
+std::string StringUtils::WrapStringInSingleQuotes(std::string text)
+{
+	return "'" + text + "'";
+}
+std::string StringUtils::WrapStringInDoubleQuotes(std::string text)
+{
+	return "\"" + text + "\"";
+}

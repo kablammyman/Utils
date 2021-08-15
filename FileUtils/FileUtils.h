@@ -24,7 +24,10 @@ public:
 
 	static  int GetNumFilesInDir(string &path, string ext="");
 
-    static  vector<string> GetAllFileNamesInDir(string &path,string ext ="",bool includePath = false);
+    static  vector<string> GetAllFileNamesInDir(string path,string ext,bool includePath = false);
+	//for some reason, the GetAllFileNamesInDir was cashing an issue with how the exe was being built so the method would crash when calling it (before it could execute)
+	//so i made a copy of the fn() thats windows only to bug test...and it fixes the issue?? my code still used the original code and not the copy too
+    static  vector<string> GetAllFileNamesInDir(string path);
 
 	static  bool Delete_File(string file, bool permanetDelete = false);
 

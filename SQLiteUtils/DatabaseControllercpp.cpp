@@ -682,7 +682,17 @@ void DatabaseController::RemoveTableNameFromOutput(string &inputData)
 	if(inputData.back() == '\n')
 		inputData.pop_back();
 }
+int DatabaseController::GetIdFromSingleQueryOutput(std::string quereyResult)
+{
+	if (quereyResult.empty())
+		return -1;
 
+	RemoveTableNameFromOutput(quereyResult);
+
+	if (!quereyResult.empty())
+		return stoi(quereyResult);
+	return -1;
+}
 void DatabaseController::GetAllTablesInDB(std::vector<std::string> &retData)
 {
 	db->GetAllTablesInDB(retData);
