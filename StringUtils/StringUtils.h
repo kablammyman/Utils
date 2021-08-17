@@ -51,8 +51,10 @@ public:
 	static std::string CreateJsonEntry(std::string name, std::string val,bool lastEntry=false);
 	static std::string CreateJsonEntry(std::string name, const char* val,bool lastEntry=false);
 
-	static std::string CreateJsonArrayEntry(std::string name, std::vector<std::string> value, bool noQuotes);
+	static std::string CreateJsonArrayEntry(std::string name, std::vector<std::string> value, bool noQuotes = false);
 	static std::string CreateJsonArrayEntry(std::string name, std::vector<int> value);
+	static std::string ConvVecToJsonObj(std::vector<std::string> &values);
+
 	static std::string GetJsonEntryValue(std::string& json, std::string name);
 	static std::string CreateJsonNestedObjectEntry(std::string name, std::vector<std::pair <std::string, std::string>> entries, bool noQuotes);
 	static std::string ReturnErrorAsJSONObj(std::string err);

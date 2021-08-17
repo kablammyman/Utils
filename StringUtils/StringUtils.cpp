@@ -592,7 +592,8 @@ std::string StringUtils::CreateJsonArrayEntry(std::string name, std::vector<std:
 	}
 	ret += "]";
 	size_t found = ret.find_last_of(",");
-	ret.replace(found,1,""); 
+	if (found != std::string::npos)
+		ret.replace(found,1,""); 
 
 	return ret;
 }
@@ -609,10 +610,27 @@ std::string StringUtils::CreateJsonArrayEntry(std::string name, std::vector<int>
 	ret += "]";
 	//remove last comma
 	size_t found = ret.find_last_of(",");
-	ret.replace(found,1,""); 
+	if (found != std::string::npos)
+		ret.replace(found,1,""); 
 
 	return ret;
 }
+
+std::string StringUtils::ConvVecToJsonObj(std::vector<std::string> &values)
+{
+	std::string ret = "{\n";
+	bool isEnd = false;
+	for (size_t i = 0; i < values.size(); i++)
+	{
+		if (i == values.size() - 1)
+			isEnd = true;
+		ret += CreateJsonEntry("item" + std::to_string(i + 1), values[i], isEnd);
+	}
+
+	ret += "}\n";
+	return ret;
+}
+
 
 std::string StringUtils::GetJsonEntryValue(std::string& json, std::string name)
 {
