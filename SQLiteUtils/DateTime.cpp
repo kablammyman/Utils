@@ -5,16 +5,32 @@ DateTime::DateTime()
 	year = 1900;
 	month = 1;
 	day = 1;
+	hour = 0;
+	minute =0;
+	second = 0;
 };
 DateTime::DateTime(int y, int m, int d)
 {
 	year = y;
 	month = m;
 	day = d;
+	hour = 0;
+	minute = 0;
+	second = 0;
+}
+DateTime::DateTime(int y, int m, int d, int h, int min, int s)
+{
+	DateTime(y, m, d);
+	hour = h;
+	minute = min;
+	second = s;
 }
 DateTime::DateTime(std::string date)
 {
 	ParseDateString(date);
+	hour = 0;
+	minute = 0;
+	second = 0;
 }
 void DateTime::ParseDateString(std::string dateString)
 {
@@ -92,6 +108,9 @@ void DateTime::SetCurrentDateTime()
 	year = 1900 + buf.tm_year;
 	month = 1 + buf.tm_mon;
 	day = buf.tm_mday;
+	hour = buf.tm_hour;
+	minute = buf.tm_min;
+	second = buf.tm_sec;
 }
 
 int DateTime::TimeDiff(DateTime& otherDate)
@@ -153,6 +172,9 @@ DateTime DateTime::operator=(const DateTime& d)
 	this->year = d.year;
 	this->month = d.month;
 	this->day = d.day;
+	this->hour = d.hour;
+	this->minute = d.minute;
+	this->second = d.second;
 	return *this;
 }
 bool DateTime::operator==(const DateTime& d)
@@ -444,7 +466,13 @@ std::string DateTime::GetDayOfMonthWord(int day)
 		return word + "th";
 }
 
-std::string DateTime::PrettyPrint()
+std::string DateTime::PrettyPrint(bool includeTime)
 {
-	return GetMonthWord() + " " + GetDayOfMonthWord() + " " + std::to_string(year);
+	std::string ret =  GetMonthWord() + " " + GetDayOfMonthWord() + " " + std::to_string(year);
+	if (includeTime)
+	{
+		if (hour > 0 || minute > 0 || second > 0)
+			ret += ", " + std::to_string(hour) + ":" + std::to_string(minute);
+	}
+	return ret;
 }

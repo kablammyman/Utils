@@ -12,8 +12,12 @@ public:
 	int year;
 	int month;
 	int day;
+	int hour;
+	int minute;
+	int second;
 	DateTime();
 	DateTime(int y, int m, int d);
+	DateTime(int y, int m, int d, int h, int min, int s);
 	DateTime(std::string date);
 	void ParseDateString(std::string dateString);
 	std::string ToString();
@@ -47,7 +51,7 @@ public:
 	std::string GetMonthWord(); //January
 	void SetMonthFromWord(std::string month); //January
 	std::string GetDayOfMonthWord();//1st,2nd, etc
-	std::string PrettyPrint();
+	std::string PrettyPrint(bool includeTime = false);
 	static std::string GetMonthWord(int month);
 	static std::string GetMonthAbrv(int month);
 	static std::string GetDayOfMonthWord(int day);
