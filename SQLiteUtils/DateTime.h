@@ -46,6 +46,7 @@ public:
 	void DecDay(int amt);
 	void IncMonth(int amt);
 	void DecMonth(int amt);
+	void SetTimeFromString(std::string timeString);
 	std::string GetMonthAbrv(); //Jan
 	void SetMonthFromAbrv(std::string month); //Jan
 	std::string GetMonthWord(); //January

@@ -318,6 +318,16 @@ int DateTime::GetDaysInMonth(int mon)
 
 	return days;
 }
+void DateTime::SetTimeFromString(std::string timeString)
+{
+	std::vector<std::string> time = StringUtils::Tokenize(timeString, ":");
+	if (time.size() < 2)
+		return;
+	hour = StringUtils::GetIntFromString(time[0]);
+	minute = StringUtils::GetIntFromString(time[1]);
+	if(time.size() >2)
+		second = StringUtils::GetIntFromString(time[2]);
+}
 
 std::string DateTime::GetMonthAbrv() 
 {

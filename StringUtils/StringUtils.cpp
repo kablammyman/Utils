@@ -216,14 +216,15 @@ int StringUtils::GetStandAloneWordInLineIndex(std::string line,std::string word)
 	return -1;
 }
 
-bool StringUtils::IsWordFromListInLine(std::vector<std::string> &wordList,std::string line)
+bool StringUtils::IsWordFromListInLine(std::vector<std::string> &wordList,std::string line, bool isCaseSensitive)
 {
-	//if any(word in line for word in wordList):
-	ToUpper(line);
+	if (!isCaseSensitive)
+		ToUpper(line);
 	for(size_t i = 0; i < wordList.size(); i++)
 	{
 		std::string upperWord = wordList[i];
-		ToUpper(upperWord);
+		if (!isCaseSensitive)
+			ToUpper(upperWord);
 		if (line.find(upperWord) != std::string::npos)
 			if (GetStandAloneWordInLineIndex(line, upperWord) > -1)
 				return true;
@@ -238,21 +239,29 @@ std::string StringUtils::GetWordFromListInLine(std::vector<std::string> &wordLis
 
 	for (size_t i = 0; i < wordList.size(); i++)
 	{
-		if(line.find( wordList[i] ) != std::string::npos )
-			if( GetStandAloneWordInLineIndex(line,wordList[i]) > -1)
+		std::string curWord = wordList[i];
+		if (!isCaseSensitive)
+			ToUpper(curWord);
+		if(line.find(curWord) != std::string::npos )
+			if( GetStandAloneWordInLineIndex(line, curWord) > -1)
 				return wordList[i];
 	}
 	return "";
 }
 
-int StringUtils::GetIndexOfWordFromListInLine(std::vector<std::string> &wordList,std::string line)
+int StringUtils::GetIndexOfWordFromListInLine(std::vector<std::string> &wordList,std::string line, bool isCaseSensitive)
 {
-	ToUpper(line);
+	if (!isCaseSensitive)
+		ToUpper(line);
 	for (size_t i = 0; i < wordList.size(); i++)
 	{
-		if(line.find( wordList[i] ) != std::string::npos )
+		std::string curWord = wordList[i];
+		if (!isCaseSensitive)
+			ToUpper(curWord);
+
+		if(line.find(curWord) != std::string::npos )
 		{
-			int index = GetStandAloneWordInLineIndex(line,wordList[i]);
+			int index = GetStandAloneWordInLineIndex(line, curWord);
 			if ( index > -1)
 				return index;
 		}
@@ -260,14 +269,19 @@ int StringUtils::GetIndexOfWordFromListInLine(std::vector<std::string> &wordList
 	return -1;
 }
 
-int StringUtils::GetIndexOfWordFromList(std::vector<std::string>& wordList, std::string line)
+int StringUtils::GetIndexOfWordFromList(std::vector<std::string>& wordList, std::string line, bool isCaseSensitive)
 {
-	ToUpper(line);
+	if (!isCaseSensitive)
+		ToUpper(line);
 	for (size_t i = 0; i < wordList.size(); i++)
 	{
-		if (line.find(wordList[i]) != std::string::npos)
+		std::string curWord = wordList[i];
+		if (!isCaseSensitive)
+			ToUpper(curWord);
+
+		if (line.find(curWord) != std::string::npos)
 		{
-			int index = GetStandAloneWordInLineIndex(line, wordList[i]);
+			int index = GetStandAloneWordInLineIndex(line, curWord);
 			if (index > -1)
 				return i;
 		}

@@ -384,13 +384,20 @@ CurlUtils::EmailStruct CurlUtils::ReadEmail(string username, string password,str
 		else
 		{
 			//first get who sent this:
-			email.from = StringUtils::GetDataBetweenSubStrings(readBuffer, "\nFrom:", "\n");
+			email.from = StringUtils::GetDataBetweenSubStrings(readBuffer, "\nFrom:", "\r\n");
+			StringUtils::TrimWhiteSpace(email.from);
+
 			//see who this email is meant for
-			email.to = StringUtils::GetDataBetweenSubStrings(readBuffer, "\nTo:", "\n");
+			email.to = StringUtils::GetDataBetweenSubStrings(readBuffer, "\nTo:", "\r\n");
+			StringUtils::TrimWhiteSpace(email.to);
+
 			//get the subject
-			email.subject = StringUtils::GetDataBetweenSubStrings(readBuffer, "\nSubject:", "\n");
-			
-			email.dateRecv = StringUtils::GetDataBetweenSubStrings(readBuffer, "\nDate:", "\n");  
+			email.subject = StringUtils::GetDataBetweenSubStrings(readBuffer, "\nSubject:", "\r\n");
+			StringUtils::TrimWhiteSpace(email.subject);
+
+			email.dateRecv = StringUtils::GetDataBetweenSubStrings(readBuffer, "\nDate:", "\r\n");
+			StringUtils::TrimWhiteSpace(email.dateRecv);
+
 			//get the text of the email, not the attachments.
 			//later on, Ill add a way to get all Conent-Types within an email and do shit with them
 			size_t messageStart = readBuffer.find("Content-Type: text/plain;") + 25;//25 = strlen of "Content-Type: text/plain;"
