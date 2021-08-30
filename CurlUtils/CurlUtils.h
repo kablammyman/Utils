@@ -27,6 +27,7 @@ class CurlUtils
 		std::string subject;
 		std::string message;
 		std::string dateRecv;
+		void GetNameAndEmailFromSender(std::string& name, std::string& emailAddy);
 	};
 
 	static std::string lastError;

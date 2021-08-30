@@ -415,3 +415,19 @@ CurlUtils::EmailStruct CurlUtils::ReadEmail(string username, string password,str
 	return email;
 
 }
+
+void CurlUtils::EmailStruct::GetNameAndEmailFromSender(string& name, string& emailAddy)
+{
+	//Chris Stevens <chrisss3133@gmail.com>
+
+	//no <> means no name and email combined
+	size_t found = from.find("<");
+	if (found == string::npos)
+		return;
+
+	name = from.substr(0, found);
+	for(size_t i = 0; i < name.size(); i++)
+		if(name[i] == '"')
+			name[i] = ' ';
+	emailAddy = StringUtils::GetDataBetweenChars(from, '<', '>', found);
+}

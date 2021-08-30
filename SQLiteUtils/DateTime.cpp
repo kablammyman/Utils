@@ -73,6 +73,17 @@ void DateTime::ParseDateString(std::string dateString)
 		}
 	}
 }
+//this is the format that bluehost emails are in...maybe all emails?
+void DateTime::ParseEmailDateString(std::string dateString)
+{
+	//Sun, 17 Dec 2017 16:44 : 27 - 0800
+	//Sun, 13 Jun 2021 02:56 : 07 + 0000
+	std::vector<std::string> dateTokens = StringUtils::Tokenize(dateString, " ");
+	day = StringUtils::GetIntFromString(dateTokens[1]);
+	SetMonthFromAbrv(dateTokens[2]);
+	year = StringUtils::GetIntFromString(dateTokens[3]);
+	SetTimeFromString(dateTokens[4]);
+}
 std::string DateTime::ToString()
 {
 	std::string ret = std::to_string(year) + " ";
@@ -85,6 +96,23 @@ std::string DateTime::ToString()
 
 	return ret;
 }
+
+std::string DateTime::TimeToString()
+{
+	std::string ret = std::to_string(hour) + ":";
+	if (minute < 10)
+		ret += "0";
+	ret += std::to_string(minute) + ":";
+	if (second > 0)
+	{
+		if (second < 10)
+			ret += "0";
+	}
+	ret += std::to_string(second);
+
+	return ret;
+}
+
 void DateTime::SetCurrentDateTime()
 {
 	time_t now = time(0);

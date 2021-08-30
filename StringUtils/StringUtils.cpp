@@ -457,12 +457,31 @@ std::string StringUtils::StringClean(std::string orig, bool includeNewLines = tr
 	{
 		std::string curTag = "<"+ CopyCharsBetweenTags(orig, '<', '>', found) + ">";
 		orig = FindAndReplace(orig, curTag, "");
-		found = orig.find("<",found);
+		found = orig.find("<",found+1);
 	}
 
 	TrimWhiteSpace(orig);
 	//print "done: " + line
 	return orig;
+}
+void StringUtils::SanitizeSQLDataString(std::string& value)
+{
+	std::string ret = "";
+	//std::string correct = "lineone\\nline2";
+	for (size_t i = 0; i < value.size(); i++)
+	{
+		if (value[i] == '"')
+		{
+			ret += "'";
+		}
+		else if (value[i] == '\r\n')
+		{
+			ret += "\n";
+		}
+		else
+			ret += value[i];
+	}
+	value = ret;
 }
 
 
