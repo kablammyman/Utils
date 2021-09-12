@@ -112,7 +112,7 @@ std::string StringUtils::FlattenVector(std::vector<std::string> input)
 
 void StringUtils::TrimWhiteSpace(std::string &input)
 {
-	if(input.size() == 0)
+	if(input.empty())
 		return;
 
 	input.erase(0, input.find_first_not_of(' '));       //prefixing spaces
@@ -261,9 +261,11 @@ int StringUtils::GetIndexOfWordFromListInLine(std::vector<std::string> &wordList
 
 		if(line.find(curWord) != std::string::npos )
 		{
+			//this makes sure we get the word and not a substring
+			//we want "surf" only in "this is the surf and turf" vs "we are surfers"
 			int index = GetStandAloneWordInLineIndex(line, curWord);
 			if ( index > -1)
-				return index;
+				return i;
 		}
 	}
 	return -1;

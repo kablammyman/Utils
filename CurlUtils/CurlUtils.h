@@ -41,4 +41,5 @@ class CurlUtils
 	static size_t ftp_read_callback(void *ptr, size_t size, size_t nmemb, void *stream);
 	static int UploadToFTP(std::string ftpUrl, std::string username, std::string password, std::string localFile,std::string fileNameWithoutPath);
 	static EmailStruct ReadEmail(std::string username, std::string password, std::string url, std::string imapArgs);
+	static bool MoveEmailToFolder(std::string username, std::string password, std::string emailUrl,std::string uid, std::string newFolderName);
 };

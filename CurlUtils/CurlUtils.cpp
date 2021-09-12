@@ -400,7 +400,11 @@ CurlUtils::EmailStruct CurlUtils::ReadEmail(string username, string password,str
 
 			//get the text of the email, not the attachments.
 			//later on, Ill add a way to get all Conent-Types within an email and do shit with them
-			size_t messageStart = readBuffer.find("Content-Type: text/plain;") + 25;//25 = strlen of "Content-Type: text/plain;"
+			size_t messageStart = readBuffer.find("Content-Type: text/plain;");
+			if (messageStart == string::npos)
+				messageStart = readBuffer.find("Content-Type: text/html;");
+
+			messageStart += 25;//25 = strlen of "Content-Type: text/plain;"
 			size_t messageEnd = readBuffer.find("Content-Type:", messageStart);
 
 			if (messageEnd != string::npos)
@@ -430,4 +434,65 @@ void CurlUtils::EmailStruct::GetNameAndEmailFromSender(string& name, string& ema
 		if(name[i] == '"')
 			name[i] = ' ';
 	emailAddy = StringUtils::GetDataBetweenChars(from, '<', '>', found);
+}
+bool CurlUtils::MoveEmailToFolder(std::string username, std::string password,std::string emailUrl,  std::string uid, std::string newFolderName)
+{
+
+	CURL* curl;
+	CURLcode res = CURLE_OK;
+	readBuffer.clear();
+	curl = curl_easy_init();
+	bool ret = true;
+
+	if (!curl)
+		return false;
+	
+	curl_easy_setopt(curl, CURLOPT_USERNAME, username.c_str());
+	curl_easy_setopt(curl, CURLOPT_PASSWORD, password.c_str());
+	curl_easy_setopt(curl, CURLOPT_URL, emailUrl.c_str());
+	//curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+
+	// Set the COPY command specifying the message ID and destination folder 
+	//curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "COPY 1 FOLDER");
+	string copyCommand = "UID COPY " + uid +" "+ newFolderName;
+	string deleteCommand = "UID STORE " + uid + " Flags \\Deleted";
+	
+	curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, copyCommand.c_str());
+
+	res = curl_easy_perform(curl);
+	// Check for errors 
+	if (res != CURLE_OK)
+	{
+		fprintf(stderr, "curl_easy_perform() failed: %s\n",curl_easy_strerror(res));
+		ret = false;
+		goto cleanup;
+	}
+
+	
+	curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, deleteCommand.c_str());
+	//curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+	res = curl_easy_perform(curl);
+	if (res != CURLE_OK)
+	{
+		fprintf(stderr, "curl_easy_perform() failed: %s\n",curl_easy_strerror(res));
+		ret = false;
+		goto cleanup;
+	}
+	
+	// Set the EXPUNGE command, although you can use the CLOSE command if you don't want to know the result of the STORE 
+	
+	curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "EXPUNGE");
+	res = curl_easy_perform(curl);
+	if (res != CURLE_OK)
+	{
+		fprintf(stderr, "curl_easy_perform() failed: %s\n",curl_easy_strerror(res));
+		ret = false;
+		goto cleanup;
+	}		
+
+	cleanup:	
+	// Always cleanup 
+	curl_easy_cleanup(curl);
+	
+	return ret;
 }
