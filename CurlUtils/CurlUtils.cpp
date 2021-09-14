@@ -503,3 +503,45 @@ bool CurlUtils::MoveEmailToFolder(std::string username, std::string password,std
 	
 	return ret;
 }
+
+string CurlUtils::FetchWebpage(string url)
+{
+
+	CURL* curl;
+	CURLcode res = CURLE_OK;
+	readBuffer.clear();
+	curl = curl_easy_init();
+
+	if (!curl)
+		return "";
+
+
+	/* specify URL to get */
+	curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+
+	/* send all data to this function  */
+	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+
+
+	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+
+	/* some servers don't like requests that are made without a user-agent
+	field, so we provide one */
+	//curl_easy_setopt(curl, CURLOPT_USERAGENT, "libcurl-agent/1.0");
+	curl_easy_setopt(curl, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36");
+
+	// get it! 
+	res = curl_easy_perform(curl);
+
+	// check for errors 
+	if (res != CURLE_OK)
+	{
+		fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+		return "";
+	}
+	
+	// Always cleanup 
+	curl_easy_cleanup(curl);
+
+	return readBuffer;
+}

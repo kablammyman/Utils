@@ -23,7 +23,10 @@ public:
 	static std::string WrapStringInSingleQuotes(std::string text);
 	static std::string WrapStringInDoubleQuotes(std::string text);
 
-	static std::string CopyCharsBetweenTags(std::string word, char open, char closed, size_t index = 0);//this one has default value
+	static std::string CopyCharsBetweenChars(std::string word, char open, char closed, size_t index = 0);
+	static std::string CopyCharsBetweenHTMLTags(std::string html, std::string openTag, std::string closeTag, size_t& offset);
+	static std::vector<std::string> CopyStringBetweenIdenticalTags(std::string html, std::string openTag, std::string closeTag, size_t& offset);
+
 	static bool IsWordFromListInLine(std::vector<std::string> &wordList, std::string line, bool isCaseSensitive = true);
 	static int GetStandAloneWordInLineIndex(std::string line, std::string word);
 	

@@ -310,7 +310,50 @@ std::string StringUtils::CopyCharsBetweenQuotes(std::string word, size_t index)
 	}
 	return retString;
 }
-std::string StringUtils::CopyCharsBetweenTags(std::string word, char open,char closed,size_t index)
+//if you dont want html stuff, look at GetDataBetweenSubStrings
+//make sure you dont look for a "complete" tag i.e: <tr> unles you realllllly want to. sometimes the '>' comes mucher later
+std::string StringUtils::CopyCharsBetweenHTMLTags(std::string html, std::string openTag, std::string closeTag,  size_t & offset)
+{
+	size_t start = html.find(openTag, offset);
+	if (start == std::string::npos)
+		return "";
+
+	size_t end = 0;
+
+	start = html.find('>', start) + 1;
+
+	end = html.find(closeTag, start);
+	std::string curData = html.substr(start, end - start);
+
+	start = html.find(openTag, end);
+
+	offset = end;
+
+	return curData;
+}
+//finds all tag pairs and gets the strings between them. made for html table parsing
+std::vector<std::string> StringUtils::CopyStringBetweenIdenticalTags(std::string html, std::string openTag, std::string closeTag, size_t& offset)
+{
+	std::vector<std::string> ret;
+	size_t start = html.find(openTag, offset);
+	size_t end = 0;
+
+	while (start != std::string::npos)
+	{
+		//i dont want the tag included in the final string
+		//ande some tags are long...there are the "<tr>" or there can be "<td class="currency">"...this takes care of both
+		start = html.find('>', start)+1;
+		
+		end = html.find(closeTag, start);
+		std::string curData = html.substr(start, end - start);
+		ret.push_back(curData);
+		start = html.find(openTag, end);
+	}
+	offset = end;
+
+	return ret;
+}
+std::string StringUtils::CopyCharsBetweenChars(std::string word, char open,char closed,size_t index)
 {
 	std::string retString;
 	index = word.find(open,index);
@@ -329,6 +372,7 @@ std::string StringUtils::CopyCharsBetweenTags(std::string word, char open,char c
 	}
 	return retString;
 }
+
 bool StringUtils::IsPrevCharNonAlpha(std::string line,std::string word)
 {
 	size_t start = line.find(word);
@@ -457,7 +501,7 @@ std::string StringUtils::StringClean(std::string orig, bool includeNewLines = tr
 	size_t found = orig.find("<");
 	while (found != std::string::npos)
 	{
-		std::string curTag = "<"+ CopyCharsBetweenTags(orig, '<', '>', found) + ">";
+		std::string curTag = "<"+ CopyCharsBetweenChars(orig, '<', '>', found) + ">";
 		orig = FindAndReplace(orig, curTag, "");
 		found = orig.find("<",found+1);
 	}
