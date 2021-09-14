@@ -37,6 +37,8 @@ class CurlUtils
 	
 
 	static int SendEmail(std::string toEmailAddress, std::string fromEmailAddress, std::string password, std::string sendingDomain, std::string smtpUrlAndPort, std::string subject, std::string message);
+	bool CurlUtils::SendEmail(std::string password, std::string sendingDomain, std::string smtpUrlAndPort, CurlUtils::EmailStruct email);
+
 	static int DumpToFile(std::string filename, std::string data);
 	static size_t ftp_read_callback(void *ptr, size_t size, size_t nmemb, void *stream);
 	static int UploadToFTP(std::string ftpUrl, std::string username, std::string password, std::string localFile,std::string fileNameWithoutPath);

@@ -317,7 +317,8 @@ int CurlUtils::SendEmail(string toEmailAddress, string fromEmailAddress, string 
 		* information within libcurl to see what is happening during the transfer.
 		*/
 
-		curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+		//when debugging, turn this back on
+		//curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
 
 		/* Send the message */ 
 		res = curl_easy_perform(curl);
@@ -343,7 +344,13 @@ int CurlUtils::SendEmail(string toEmailAddress, string fromEmailAddress, string 
 
 	return (int)res;
 }
-
+bool CurlUtils::SendEmail(string password, string sendingDomain, string smtpUrlAndPort, CurlUtils::EmailStruct email)
+{
+	int ret = SendEmail(email.to, email.from, password, sendingDomain, smtpUrlAndPort, email.subject, email.message);
+	if (ret == CURLE_OK)
+		return true;
+	return false;
+}
 CurlUtils::EmailStruct CurlUtils::ReadEmail(string username, string password,string url, string imapArgs)
 {
 
