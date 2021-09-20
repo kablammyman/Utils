@@ -84,15 +84,21 @@ void DateTime::ParseEmailDateString(std::string dateString)
 	year = StringUtils::GetIntFromString(dateTokens[3]);
 	SetTimeFromString(dateTokens[4]);
 }
+
+std::string DateTime::DigitToString(int num)
+{
+	if (num < 10)
+		return "0" + std::to_string(num);
+
+	return std::to_string(num);
+}
 std::string DateTime::ToString()
 {
 	std::string ret = std::to_string(year) + " ";
-	if (month < 10)
-		ret += "0";
-	ret += std::to_string(month) + " ";
-	if (day < 10)
-		ret += "0";
-	ret += std::to_string(day);
+
+	ret += DigitToString(month) + " ";
+
+	ret += DigitToString(day);
 
 	return ret;
 }
@@ -511,6 +517,36 @@ std::string DateTime::PrettyPrint(bool includeTime)
 	{
 		if (hour > 0 || minute > 0 || second > 0)
 			ret += ", " + std::to_string(hour) + ":" + std::to_string(minute);
+	}
+	return ret;
+}
+
+std::string DateTime::PrintFormattedString(std::string format)
+{
+	std::string ret;
+	//"_%Y_%m_%d_%H_%M"
+	size_t i = 0;
+	while ( i < format.size() )
+	{
+		if (format[i] == '%')
+		{
+			i++;
+			if (format[i] == 'Y' || format[i] == 'y')
+				ret += std::to_string(year);
+			else if (format[i] == 'm')
+				ret += DigitToString(month);
+			else if (format[i] == 'd')
+				ret += DigitToString(day);
+			else if (format[i] == 'H') //24 hour clock
+				ret += DigitToString(hour);
+			else if (format[i] == 'M') //big M is minute? okay python...
+				ret += DigitToString(minute);
+			else
+				ret += format[i];
+		}
+		else
+			ret += format[i];
+		i++;
 	}
 	return ret;
 }

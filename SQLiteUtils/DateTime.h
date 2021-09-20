@@ -55,8 +55,11 @@ public:
 	void SetMonthFromWord(std::string month); //January
 	std::string GetDayOfMonthWord();//1st,2nd, etc
 	std::string PrettyPrint(bool includeTime = false);
+	std::string PrintFormattedString(std::string format);
+
 	static std::string GetMonthWord(int month);
 	static std::string GetMonthAbrv(int month);
 	static std::string GetDayOfMonthWord(int day);
+	static std::string DigitToString(int num);//add a 0 in from for digits less than 10
 	static int GetDaysInMonth(int month);
 };
