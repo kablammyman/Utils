@@ -996,3 +996,12 @@ std::string StringUtils::WrapStringInDoubleQuotes(std::string text)
 {
 	return "\"" + text + "\"";
 }
+
+bool StringUtils::IsSameWord(std::string word1, std::string word2)
+{
+	ToLower(word1);
+	ToLower(word2);
+	if (word1 == word2)
+		return true;
+	return false;
+}

@@ -72,4 +72,5 @@ public:
 	static std::string GetRandomAlphaNumericString(int size);
 	static int HammingDistance(std::string str1, std::string str2);
 	static std::string LongestCommonSubStr(std::string str1, std::string str2);
+	static bool IsSameWord(std::string word1, std::string word2);
 };
