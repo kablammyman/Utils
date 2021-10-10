@@ -503,7 +503,7 @@ std::string StringUtils::StringClean(std::string orig, bool includeNewLines = tr
 	{
 		std::string curTag = "<"+ CopyCharsBetweenChars(orig, '<', '>', found) + ">";
 		orig = FindAndReplace(orig, curTag, "");
-		found = orig.find("<",found+1);
+		found = orig.find("<",found);
 	}
 
 	TrimWhiteSpace(orig);
