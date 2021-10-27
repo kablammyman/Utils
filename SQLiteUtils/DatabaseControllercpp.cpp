@@ -790,6 +790,11 @@ int DatabaseController::DuplicateEntry(string table, int id)
 
 	return GetLatestRowID();
 }
+
+string DatabaseController::GetIsNullOREmptyString(string fieldName)
+{
+	return "(" + fieldName + " IS NULL OR " + fieldName + " = \"\")";
+}
 ///////////////////////////////////////////////////////////test methods
 void DatabaseController::testGetTable()
 {
