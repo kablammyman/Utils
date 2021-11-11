@@ -19,6 +19,10 @@ class CFGReader
 {
 	public:
 	bool ReadProfile(std::string file, char delim);
+	bool WriteProfile(/*std::string file, char delim*/);
+	std::string GetOptionNameValueString(int index);
+	void UpdateOptionValue(std::string optionName, std::string newValue);
+
 	bool GetOptionBooleanValue(std::string optionName);
 	int GetOptionIntValue(std::string optionName);
 	float GetOptionFloatValue(std::string optionName);

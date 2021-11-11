@@ -172,6 +172,41 @@ bool CFGReader::ReadProfile(std::string file, char delim)
 	//catch (Exception e)Debug.LogError("error loading file: "+ file + "\nline number" + lineNum+ "\nError: "+e);
 
 }
+//--------------------------------------------------------------------------------------------------------------------
+//this wil only update single line entries, not arrays yet
+bool CFGReader::WriteProfile()
+{
+	std::ifstream inputFile;
+	std::ofstream outputFile;
+	std::vector<std::string> curFileLines;
+	inputFile.open(cfgFileName);
+
+	if (inputFile.is_open())
+	{
+		bool inList = false;
+		std::string line = "";
+		int lineNum = 1;
+
+		while (getline(inputFile, line))
+		{
+			for (size_t i = 0; i < cfgFile.size(); i++)
+			{
+				size_t found = line.find(cfgFile[i].optionName);
+				if (found == 0)//that means we have the right option and its not commented out
+					line = GetOptionNameValueString(i);
+			}
+			curFileLines.push_back(line);
+		}
+	}
+	inputFile.close();
+	//now lets write the new file
+	outputFile.open(cfgFileName);
+	for (size_t i = 0; i < curFileLines.size(); i++)
+		outputFile << curFileLines[i]<<std::endl;
+	outputFile.close();
+	
+	return true;
+}
 //--------------------------------------------------------------------------------------------------------------------			
 cfgOption* CFGReader::GetCfgOption(std::string optionName)
 {
@@ -183,7 +218,18 @@ cfgOption* CFGReader::GetCfgOption(std::string optionName)
 	}
 	return 0;
 }
-//--------------------------------------------------------------------------------------------------------------------		
+//--------------------------------------------------------------------------------------------------------------------
+void CFGReader::UpdateOptionValue(std::string optionName, std::string newValue)
+{
+	cfgOption* option = GetCfgOption(optionName);
+	option->optionValue = newValue;
+}
+//--------------------------------------------------------------------------------------------------------------------
+std::string CFGReader::GetOptionNameValueString(int index)
+{
+	return cfgFile[index].optionName + delimiter + cfgFile[index].optionValue;
+}
+//--------------------------------------------------------------------------------------------------------------------	
 std::string CFGReader::GetListData(std::string listName,std::string optionName)
 {
 	if (GetCfgOption(listName) == 0)

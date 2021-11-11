@@ -9,6 +9,8 @@ class CFGUtils
 			
 public:	
 	static  bool ReadCfgFile(std::string filePath, char delim);
+	static  bool WriteCfgFile();
+	static  void UpdateOptionValue(std::string optionName, std::string optionValue);
 
 	static  bool GetCfgBoolValue(std::string optionName);
 	static  int GetCfgIntValue(std::string optionName);

@@ -12,7 +12,14 @@ bool CFGUtils::ReadCfgFile(std::string filePath, char delim)
 {
 	return cfgr.ReadProfile(filePath, delim);
 }
-
+bool CFGUtils::WriteCfgFile()
+{
+	return cfgr.WriteProfile();
+}
+void CFGUtils::UpdateOptionValue(std::string optionName, std::string optionValue)
+{
+	return cfgr.UpdateOptionValue(optionName, optionValue);
+}
 bool CFGUtils::GetCfgBoolValue(std::string optionName)
 {
 	return cfgr.GetOptionBooleanValue(optionName);
