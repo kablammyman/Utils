@@ -834,6 +834,7 @@ float StringUtils::GetFloatFromString(std::string str)
 	f = str.find("$");
 	if (f != std::string::npos)
 		str.erase(f, 1);
+	TrimWhiteSpace(str);
 
 	if(IsNumber(str))
 		return stof(str);
@@ -852,6 +853,7 @@ int StringUtils::GetIntFromString(std::string str)
 	f = str.find("$");
 	if (f != std::string::npos)
 		str.erase(f, 1);
+	TrimWhiteSpace(str);
 
 	if(IsNumber(str))
 		return stoi(str);

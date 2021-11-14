@@ -42,8 +42,8 @@ std::string CFGUtils::GetCfgStringValue(std::string optionName)
 std::vector<std::string> CFGUtils::GetCfgListValue(std::string optionName)
 {
 	std::vector<std::string> returnVec = cfgr.GetOptionListValue(optionName);
-	if(returnVec.empty())
-		returnVec.push_back("could not find option: " +optionName);
+	//if(returnVec.empty())
+	//	returnVec.push_back("could not find option: " +optionName);
 	return returnVec;
 }
 bool CFGUtils::GetBoolValueFromList(std::string listName, std::string optionName)
