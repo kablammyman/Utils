@@ -9,9 +9,15 @@ public:
 	static std::vector<std::string> Tokenize(std::string path, char delim);
 	static std::vector<std::string> Tokenize(std::string path, std::string delims);
 	static std::vector<std::string> Tokenize2(std::string path, std::string delims);
+	
 	static void ToProperNoun(std::string &input);
 	static void ToUpper(std::string &input);
 	static void ToLower(std::string &input);
+	
+	static bool IsUpper(std::string input);
+	static bool IsLower(std::string input);
+	static bool IsProperNoun(std::string input);
+
 	static std::string FlattenVector(std::vector<std::string> input); 
 	static void TrimWhiteSpace(std::string &input);
 	

@@ -97,6 +97,50 @@ void StringUtils::ToLower(std::string &input)
 	}
 }
 
+bool StringUtils::IsUpper(std::string input)
+{
+	for (size_t j = 0; j < input.size(); j++)
+	{
+		if (!isupper(input[j]) && isalpha(input[j]))
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+bool StringUtils::IsLower(std::string input)
+{
+	for (size_t j = 0; j < input.size(); j++)
+	{
+		if (!islower(input[j]) && isalpha(input[j]))
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+bool StringUtils::IsProperNoun(std::string input)
+{
+	bool caps = true;
+	if (input.empty())
+		return false;
+
+	if (!isupper(input[0]))
+		return false;
+
+	for (size_t i = 1; i < input.size(); i++)
+	{
+		if (!islower(input[i]) && isalpha(input[i]))
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+
 std::string StringUtils::FlattenVector(std::vector<std::string> input)
 {
 	std::string returnString;
