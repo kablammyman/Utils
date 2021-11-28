@@ -7,7 +7,7 @@
 struct CmdArg
 {
 	//where do the results go...stdout(-1)? a socket(0-max socket) a text file (-2?)
-	int dest;
+	int dest = 0;
 	std::string cmd;
 	std::vector<std::string> data;
 	//what will the option be when executing this command

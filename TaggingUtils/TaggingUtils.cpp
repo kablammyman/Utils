@@ -129,6 +129,48 @@ int TaggingUtils::AddNewItem(std::string itemName,std::string content, int id )
 	return dbController->GetLatestRowID();
 }
 //---------------------------------------------------------------------------------------------------------------
+bool TaggingUtils::DeleteItem(int itemID)
+{
+
+	string output;
+	string querey = "DELETE FROM " + ITEMS_TABLE + " WHERE ID = " + to_string(itemID);
+	
+
+	if (itemID < 1)
+	{
+		return false;
+	}
+
+	//first delete the item 
+	if (!dbController->DoDBQuerey(querey, output))
+	{
+		if (dbController->GetLastError() != "")
+		{
+			lastError.errorMessage = "delete item error: " + dbController->GetLastError();
+			return false;
+		}
+	}
+	querey.clear();
+	//now delete any refrnces to the item + tag pairings
+	querey = "DELETE FROM " + ITEM_TAGS_TABLE + " WHERE ItemID = " + to_string(itemID);
+	if (!dbController->DoDBQuerey(querey, output))
+	{
+		if (dbController->GetLastError() != "")
+		{
+			lastError.errorMessage = "delete item-tag error: " + dbController->GetLastError();
+			return false;
+		}
+	}
+
+	return true;
+}
+//---------------------------------------------------------------------------------------------------------------
+bool TaggingUtils::DeleteItem(string itemName)
+{
+	int itemID = GetId(ITEMS_TABLE, itemName);
+	return DeleteItem(itemID);
+}
+//---------------------------------------------------------------------------------------------------------------
 //this is private since we control this
 int TaggingUtils::AddItemTagsEntry(int itemID,int tagID)
 {
@@ -299,10 +341,13 @@ vector<string> TaggingUtils::GetAllTagsForItem(int itemID)
 	if(!dbResults.empty())
 	{
 		//notice we have to crack open the 1 dbResult oject to get to the sweet meat of the tags
-		for (int i = 0; i < dbResults[0].data.size(); i++)
+		for (int i = 0; i < dbResults.size(); i++)
 		{
-			string tag = dbResults[0].data[i].second;
-			ret.push_back(tag);
+			for (size_t j = 0; j < dbResults[i].data.size(); j++)
+			{
+				string tag = dbResults[i].data[j].second;
+				ret.push_back(tag);
+			}
 		}
 	}
 	return ret;

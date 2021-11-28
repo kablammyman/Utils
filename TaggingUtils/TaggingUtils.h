@@ -42,7 +42,9 @@ public:
 	int GetItemId(std::string itemName);
 	int GetTagId(std::string tagName);
 	int GetItemTagId(int itemID,int tagID);
-	
+	bool DeleteItem(std::string itemName);
+	bool DeleteItem(int itemID);
+
 	std::vector<std::string> GetAllTagsForItem(int itemID);
 	std::vector<TaggedItem> GetAllItemsWithAnyOfTheseTags(std::vector<std::string> tags);
 	std::vector<TaggedItem> GetAllItemsWithALLOfTheseTags(std::vector<std::string> tags);
