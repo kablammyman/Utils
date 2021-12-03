@@ -9,12 +9,12 @@
 class DateTime
 {
 public:
-	int year;
-	int month;
-	int day;
-	int hour;
-	int minute;
-	int second;
+	int year = 1900;
+	int month = 1;
+	int day = 1;
+	int hour = 0;
+	int minute = 0;
+	int second = 0;
 	DateTime();
 	DateTime(int y, int m, int d);
 	DateTime(int y, int m, int d, int h, int min, int s);
@@ -43,6 +43,7 @@ public:
 	bool operator>=(const DateTime& d);
 	bool operator<=(const DateTime& d);
 
+	bool IsEmpty();
 	int GetDayOfYear();
 	void IncDay(int amt);
 	void DecDay(int amt);

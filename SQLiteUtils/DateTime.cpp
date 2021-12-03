@@ -32,6 +32,13 @@ DateTime::DateTime(std::string date)
 	minute = 0;
 	second = 0;
 }
+
+bool DateTime::IsEmpty()
+{
+	if (year == 1900 && month == 1 && day == 1)
+		return true;
+	return false;
+}
 void DateTime::ParseDateString(std::string dateString)
 {
 	std::vector<std::string> date;
