@@ -607,6 +607,75 @@ void DatabaseController::ParseDBOutput(string &inputData, vector<string>fields, 
 	}	
 }
 
+void DatabaseController::ParseDBOutput(string &inputData, string col, vector<DBResult> &returnData)
+{
+	returnData.clear();
+	size_t found = 0, dataEnd = 0;
+	size_t i;
+
+	//the first is the field name, the second is the value we want
+	DBResult curRow;
+	string curColName;
+	string curData;
+	bool usesCurColName = false;
+
+	while (found != string::npos)
+	{
+		found = inputData.find("|", found);
+		if (found == string::npos)
+			break;
+		//once we have '|' work backward to see what the col name is
+		//we cant rely on the names we passed in since we may only want a fraction of what we got
+
+
+		//work backward to find whole col name
+		//we also know a col name wont have a new line in it
+		i = found;
+		while (inputData[i] != '\n' && i != 0)
+			i--;
+		//ugh, until i make this better, i just gotta move the cursor off the new line
+		if (inputData[i] == '\n')
+			i++;
+
+		curColName = inputData.substr(i, found - i);
+		usesCurColName = false;
+		
+		if (col == curColName)
+		{
+			usesCurColName = true;
+			//get teh cursor off of the pipe
+			found++;
+			//now get the data for this col by finding the next pipe
+			dataEnd = inputData.find("|", found);
+			if (dataEnd == string::npos)
+				dataEnd = inputData.size();
+
+			//get "off" this current col name to find the data we want
+			i = dataEnd;
+			while (inputData[i] != '\n')
+				i--;
+			//now i is at the end of the data we want
+			//and found+1 is at teh start, so we can take the data and put it in a string 
+			curData = inputData.substr(found, i - found);
+
+			//if(curData.size() > 0 && curData.back() =='\n')
+			//	curData.pop_back();
+
+			//now enter our results into the output vector
+			curRow.insert(curColName, curData);
+		}
+		//if we are skipping the token we got back, then we need to advance the cursor by 1 so we can move on
+		if (!usesCurColName)
+			found++;
+
+		//okay, we got all the items for this row, lets start this agian for the next one...lets make sure we are on the last of the feilds we want before getting more
+		if (curColName == col)
+		{
+			returnData.push_back(curRow);
+			curRow.clear();
+		}
+	}
+}
 
 string DatabaseController::DataGrabber(string &word, size_t &curPos)
 {
