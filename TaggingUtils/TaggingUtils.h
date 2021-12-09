@@ -30,9 +30,10 @@ public:
 	void CreateTagTables(std::vector<DatabaseController::dbDataPair> &extraInfo);
 
 	//the id can be sued to override the auto increment in case you want to "reuse" the id with one another table created
-	int AddNewItem(std::string itemName,vector<DatabaseController::dbDataPair> &extraInfo, int id = -1 );
-	int AddNewItem(std::string itemName,std::string content,int id = -1 );
+	int AddOrUpdateItems(std::string itemName,vector<DatabaseController::dbDataPair> &extraInfo, int id = -1 );
+	int AddOrUpdateItem(std::string itemName,std::string content,int id = -1 );
 	int AddTag(std::string tagName );
+
 	int TagItem(std::string itemName, std::string tagName);
 	int TagItem(std::string itemName, std::vector<std::string> tags);
 	int TagItem(int itemID, std::string tagName);

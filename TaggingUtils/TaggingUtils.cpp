@@ -85,7 +85,7 @@ int TaggingUtils::AddTag(std::string tagName )
 	return dbController->GetLatestRowID();
 }
 //---------------------------------------------------------------------------------------------------------------
-int TaggingUtils::AddNewItem(std::string itemName,vector<DatabaseController::dbDataPair> &extraInfo, int id )
+int TaggingUtils::AddOrUpdateItems(std::string itemName,vector<DatabaseController::dbDataPair> &extraInfo, int id )
 {
 	
 	string output;
@@ -97,19 +97,38 @@ int TaggingUtils::AddNewItem(std::string itemName,vector<DatabaseController::dbD
 	{
 		data.push_back(extraInfo[i]);
 	}
-
-	if (!dbController->InsertNewDataEntry(ITEMS_TABLE,data ,output))
+	
+	//if thise doesnt exist yet
+	int oldID = GetItemId(itemName);
+	if (oldID == -1)
 	{
-		if(dbController->GetLastError() != "")
+		if (!dbController->InsertNewDataEntry(ITEMS_TABLE, data, output))
 		{
-			lastError.errorMessage= "AddNewItem error: " + dbController->GetLastError();
+			if (dbController->GetLastError() != "")
+			{
+				lastError.errorMessage = "AddOrUpdateItems error: " + dbController->GetLastError();
+				return -1;
+			}
+		}
+
+		return dbController->GetLatestRowID();
+	}
+	else
+	{
+		DatabaseController::dbDataPair whereClause = make_pair("ID",to_string(oldID));
+		if (!dbController->UpdateEntry(ITEMS_TABLE, data, whereClause, output))
+		{
+			if (dbController->GetLastError() != "")
+			{
+				lastError.errorMessage = "AddOrUpdateItems error: " + dbController->GetLastError();
+				return -1;
+			}
 		}
 	}
-
-	return dbController->GetLatestRowID();
+	return oldID;
 }
 //---------------------------------------------------------------------------------------------------------------
-int TaggingUtils::AddNewItem(std::string itemName,std::string content, int id )
+int TaggingUtils::AddOrUpdateItem(std::string itemName,std::string content, int id )
 {
 	string output;
 	vector<DatabaseController::dbDataPair> data;
@@ -118,15 +137,31 @@ int TaggingUtils::AddNewItem(std::string itemName,std::string content, int id )
 	DatabaseController::AddStringDataToQuerey(data, "Name",itemName);
 	DatabaseController::AddStringDataToQuerey(data, "Content", content);
 
-	if (!dbController->InsertNewDataEntry(ITEMS_TABLE,data ,output))
+	//if thise doesnt exist yet
+	if (id == -1)
 	{
-		if(dbController->GetLastError() != "")
+		if (!dbController->InsertNewDataEntry(ITEMS_TABLE, data, output))
 		{
-			lastError.errorMessage= "AddNewItem error: " + dbController->GetLastError();
+			if (dbController->GetLastError() != "")
+			{
+				lastError.errorMessage = "AddOrUpdateItem error: " + dbController->GetLastError();
+			}
+		}
+
+		return dbController->GetLatestRowID();
+	}
+	else
+	{
+		DatabaseController::dbDataPair whereClause = make_pair("ID", to_string(id));
+		if (!dbController->UpdateEntry(ITEMS_TABLE, data, whereClause, output))
+		{
+			if (dbController->GetLastError() != "")
+			{
+				lastError.errorMessage = "AddOrUpdateItems error: " + dbController->GetLastError();
+				return -1;
+			}
 		}
 	}
-
-	return dbController->GetLatestRowID();
 }
 //---------------------------------------------------------------------------------------------------------------
 bool TaggingUtils::DeleteItem(int itemID)
