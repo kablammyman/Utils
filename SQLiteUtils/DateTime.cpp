@@ -1,36 +1,87 @@
 #include "DateTime.h"
 
+DateTime::Time::Time(int h, int m, int s)
+{
+	Init(h, m, s);
+}
+DateTime::Time::Time(int h, int m)
+{
+	hour = h;
+	minute = m;
+	second = 0;
+}
+DateTime::Time::Time()
+{
+	hour = 0;
+	minute = 0;
+	second = 0;
+}
+
+
+void DateTime::Time::Init(int h, int m, int s)
+{
+	hour = h;
+	minute = m;
+	second = s;
+}
+
+void DateTime::Time::SetTimeFromString(std::string timeString)
+{
+	std::vector<std::string> timeVec = StringUtils::Tokenize(timeString, ":");
+	if (timeVec.size() < 2)
+		return;
+	hour = StringUtils::GetIntFromString(timeVec[0]);
+	minute = StringUtils::GetIntFromString(timeVec[1]);
+	if (timeVec.size() > 2)
+		second = StringUtils::GetIntFromString(timeVec[2]);
+}
+
+std::string DateTime::Time::ToString()
+{
+	std::string ret = std::to_string(hour) + ":";
+	if (minute < 10)
+		ret += "0";
+	ret += std::to_string(minute) + ":";
+	if (second > 0)
+	{
+		if (second < 10)
+			ret += "0";
+	}
+	ret += std::to_string(second);
+
+	return ret;
+}
+
+bool DateTime::Time::IsEmpty()
+{
+	if (hour == 0 && minute == 0 && second == 0)
+		return true;
+	return false;
+}
+
 DateTime::DateTime()
 {
 	year = 1900;
 	month = 1;
 	day = 1;
-	hour = 0;
-	minute =0;
-	second = 0;
+	myTime.Init(0, 0, 0);
 };
 DateTime::DateTime(int y, int m, int d)
 {
 	year = y;
 	month = m;
 	day = d;
-	hour = 0;
-	minute = 0;
-	second = 0;
+	myTime.Init(0, 0, 0);
 }
 DateTime::DateTime(int y, int m, int d, int h, int min, int s)
 {
 	DateTime(y, m, d);
-	hour = h;
-	minute = min;
-	second = s;
+	myTime.Init(h,min,s);
 }
 DateTime::DateTime(std::string date)
 {
 	ParseDateString(date);
-	hour = 0;
-	minute = 0;
-	second = 0;
+	myTime.Init(0, 0, 0);
 }
 
 bool DateTime::IsEmpty()
@@ -89,7 +140,7 @@ void DateTime::ParseEmailDateString(std::string dateString)
 	day = StringUtils::GetIntFromString(dateTokens[1]);
 	SetMonthFromAbrv(dateTokens[2]);
 	year = StringUtils::GetIntFromString(dateTokens[3]);
-	SetTimeFromString(dateTokens[4]);
+	myTime.SetTimeFromString(dateTokens[4]);
 }
 
 std::string DateTime::DigitToString(int num)
@@ -110,21 +161,7 @@ std::string DateTime::ToString()
 	return ret;
 }
 
-std::string DateTime::TimeToString()
-{
-	std::string ret = std::to_string(hour) + ":";
-	if (minute < 10)
-		ret += "0";
-	ret += std::to_string(minute) + ":";
-	if (second > 0)
-	{
-		if (second < 10)
-			ret += "0";
-	}
-	ret += std::to_string(second);
 
-	return ret;
-}
 
 void DateTime::SetCurrentDateTime()
 {
@@ -149,9 +186,9 @@ void DateTime::SetCurrentDateTime()
 	year = 1900 + buf.tm_year;
 	month = 1 + buf.tm_mon;
 	day = buf.tm_mday;
-	hour = buf.tm_hour;
-	minute = buf.tm_min;
-	second = buf.tm_sec;
+	myTime.hour = buf.tm_hour;
+	myTime.minute = buf.tm_min;
+	myTime.second = buf.tm_sec;
 }
 
 int DateTime::TimeDiff(DateTime& otherDate)
@@ -213,9 +250,9 @@ DateTime DateTime::operator=(const DateTime& d)
 	this->year = d.year;
 	this->month = d.month;
 	this->day = d.day;
-	this->hour = d.hour;
-	this->minute = d.minute;
-	this->second = d.second;
+	this->myTime.hour = d.myTime.hour;
+	this->myTime.minute = d.myTime.minute;
+	this->myTime.second = d.myTime.second;
 	return *this;
 }
 bool DateTime::operator==(const DateTime& d)
@@ -359,16 +396,7 @@ int DateTime::GetDaysInMonth(int mon)
 
 	return days;
 }
-void DateTime::SetTimeFromString(std::string timeString)
-{
-	std::vector<std::string> time = StringUtils::Tokenize(timeString, ":");
-	if (time.size() < 2)
-		return;
-	hour = StringUtils::GetIntFromString(time[0]);
-	minute = StringUtils::GetIntFromString(time[1]);
-	if(time.size() >2)
-		second = StringUtils::GetIntFromString(time[2]);
-}
+
 
 std::string DateTime::GetMonthAbrv() 
 {
@@ -522,8 +550,8 @@ std::string DateTime::PrettyPrint(bool includeTime)
 	std::string ret =  GetMonthWord() + " " + GetDayOfMonthWord() + " " + std::to_string(year);
 	if (includeTime)
 	{
-		if (hour > 0 || minute > 0 || second > 0)
-			ret += ", " + std::to_string(hour) + ":" + std::to_string(minute);
+		if(!myTime.IsEmpty())
+			ret += ", " + myTime.ToString();
 	}
 	return ret;
 }
@@ -545,9 +573,9 @@ std::string DateTime::PrintFormattedString(std::string format)
 			else if (format[i] == 'd')
 				ret += DigitToString(day);
 			else if (format[i] == 'H') //24 hour clock
-				ret += DigitToString(hour);
+				ret += DigitToString(myTime.hour);
 			else if (format[i] == 'M') //big M is minute? okay python...
-				ret += DigitToString(minute);
+				ret += DigitToString(myTime.minute);
 			else
 				ret += format[i];
 		}

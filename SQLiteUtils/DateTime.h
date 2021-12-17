@@ -9,12 +9,23 @@
 class DateTime
 {
 public:
+	struct Time
+	{
+		int hour = 0;
+		int minute = 0;
+		int second = 0;
+		Time(int h, int m, int s);
+		Time(int h, int m);
+		Time();
+		void Init(int h, int m, int s);
+		void SetTimeFromString(std::string timeString);
+		std::string ToString();
+		bool IsEmpty();
+	};
 	int year = 1900;
 	int month = 1;
 	int day = 1;
-	int hour = 0;
-	int minute = 0;
-	int second = 0;
+	Time myTime;
 	DateTime();
 	DateTime(int y, int m, int d);
 	DateTime(int y, int m, int d, int h, int min, int s);
@@ -22,7 +33,7 @@ public:
 	void ParseDateString(std::string dateString);
 	void ParseEmailDateString(std::string dateString);
 	std::string ToString();
-	std::string TimeToString();
+	
 	void SetCurrentDateTime();
 	
 	int TimeDiff(DateTime& otherDate);
@@ -49,7 +60,7 @@ public:
 	void DecDay(int amt);
 	void IncMonth(int amt);
 	void DecMonth(int amt);
-	void SetTimeFromString(std::string timeString);
+	
 	std::string GetMonthAbrv(); //Jan
 	void SetMonthFromAbrv(std::string month); //Jan
 	std::string GetMonthWord(); //January
