@@ -180,10 +180,11 @@ int CurlUtils::UploadToFTP(string ftpUrl, string username, string password, stri
 		/* Now run off and do what you've been told! */ 
 		res = curl_easy_perform(curl);
 		/* Check for errors */ 
-		if(res != CURLE_OK)
+		if (res != CURLE_OK)
+		{
 			fprintf(stderr, "curl_easy_perform() failed: %s\n",
-				curl_easy_strerror(res));
-
+			curl_easy_strerror(res));
+		}
 		/* clean up the FTP commands list */ 
 		curl_slist_free_all(headerlist);
 
@@ -193,7 +194,7 @@ int CurlUtils::UploadToFTP(string ftpUrl, string username, string password, stri
 	fclose(hd_src); /* close the local file */ 
 
 	curl_global_cleanup();
-	return 0;
+	return res;
 }
 
 //////////////////////////send email code/////////////////////////////////////////////////////
