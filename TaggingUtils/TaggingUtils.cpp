@@ -442,10 +442,11 @@ vector<TaggingUtils::TaggedItem> TaggingUtils::GetAllItemsWithTag(string tag)
 		return ret;
 	
 	//notice we have to crack open the 1 dbResult oject to get to the sweet meat of the tags
-	for (size_t i = 0; i < dbResults[0].data.size(); i++)
+	//for (size_t i = 0; i < dbResults[0].data.size(); i++)
+	for (size_t i = 0; i < dbResults.size(); i++)
 	{
-		//TaggedItem nextItem = GetItemFromID( dbResults[i].GetIntValueFromKey("ItemID") );
-		TaggedItem nextItem = GetItemFromID( StringUtils::GetIntFromString(dbResults[0].data[i].second ) );
+		TaggedItem nextItem = GetItemFromID( dbResults[i].GetIntValueFromKey("ItemID") );
+		//TaggedItem nextItem = GetItemFromID( StringUtils::GetIntFromString(dbResults[0].data[i].second ) );
 		ret.push_back(nextItem);
 	}
 	
