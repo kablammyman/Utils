@@ -80,4 +80,7 @@ public:
 	static int HammingDistance(std::string str1, std::string str2);
 	static std::string LongestCommonSubStr(std::string str1, std::string str2);
 	static bool IsSameWord(std::string word1, std::string word2);
+
+	static std::string ConvertToE164(std::string input);
+	static std::string PrettyPhone(std::string phoneToUpdate);
 };

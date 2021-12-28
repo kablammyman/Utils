@@ -1051,3 +1051,65 @@ bool StringUtils::IsSameWord(std::string word1, std::string word2)
 		return true;
 	return false;
 }
+
+std::string StringUtils::ConvertToE164(std::string input)
+{
+	std::string ret;
+	size_t start = 0;
+	if (input[0] == '+')
+	{
+		ret = "+1";
+		start += 2;
+	}
+	else if (input[0] == '1')
+	{
+		start++;
+	}
+	else
+	{
+		ret = "1";
+	}
+
+	for (size_t i = start; i < input.size(); i++)
+	{
+		if (isdigit(input[i]))
+			ret += input[i];
+	}
+	return ret;
+}
+
+//stole this from SMSContact. not sure how to ombine this without adding a ton of other dependencies
+std::string StringUtils::PrettyPhone(std::string phoneToUpdate)
+{
+	//sly text makes phone numbers look like : 3072773219
+	//skip tracer gives phone like : (307) 277 - 3219
+	//so i need to be able to check in anyformat
+
+	//first start from a clean canvas :
+	std::string phone;
+
+	for (size_t i = 0; i < phoneToUpdate.size(); i++)
+	{
+		if (isdigit(phoneToUpdate[i]))
+			phone += phoneToUpdate[i];
+	}
+
+	//if the first digit is a 1 fort he us contry code, then remove it
+	if (phone[0] == '1')
+		phone.erase(0, 1);
+
+	//now the number should be in this format:  3072773219
+	//so lets change it to(307) 277 - 3219
+
+	std::string newPhone = "(";
+	for (size_t i = 0; i < phone.size(); i++)
+	{
+		newPhone += phone[i];
+		if (i == 2)
+			newPhone += ") ";
+		else if (i == 5)
+			newPhone += "-";
+	}
+
+	return newPhone;
+}
