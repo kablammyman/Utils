@@ -1113,3 +1113,26 @@ std::string StringUtils::PrettyPhone(std::string phoneToUpdate)
 
 	return newPhone;
 }
+
+std::string StringUtils::UrlDecode(std::string urlEncoded)
+{
+	std::string ret;
+	char inBytes[2];
+	size_t i = 0;
+	while( i < urlEncoded.size())
+	{
+		if (urlEncoded[i] == '%')
+		{
+			inBytes[0] = urlEncoded[i + 1];
+			inBytes[1] = urlEncoded[i + 2];
+			ret += std::stoul(inBytes, nullptr, 16);
+			i += 3;
+		}
+		else
+		{
+			ret += urlEncoded[i];
+			i++;
+		}
+	}
+	return ret;
+}

@@ -83,4 +83,5 @@ public:
 
 	static std::string ConvertToE164(std::string input);
 	static std::string PrettyPhone(std::string phoneToUpdate);
+	static std::string UrlDecode(std::string urlEncoded);
 };
