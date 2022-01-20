@@ -879,6 +879,16 @@ void DatabaseController::AddDateDataToQuerey(vector<dbDataPair> & data, string c
 	AddStringDataToQuerey(data,  colName, colValue.ToString());
 }
 
+void DatabaseController::AddTimeDataToQuerey(vector<dbDataPair> & data, string colName, DateTime::Time colValue)
+{
+	AddStringDataToQuerey(data, colName, colValue.ToString());
+}
+void DatabaseController::AddDateTimeDataToQuerey(vector<dbDataPair> & data, string colName, DateTime colValue)
+{
+	string col = colValue.ToString() + " " + colValue.myTime.ToString();
+	AddStringDataToQuerey(data, colName, col);
+}
+
 int DatabaseController::GetIdFromQuereyResult(std::string input)
 {
 	if(input.empty())

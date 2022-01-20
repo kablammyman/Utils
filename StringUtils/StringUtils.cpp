@@ -597,6 +597,10 @@ void StringUtils::SanitizeJsonString(std::string& value)
 		{
 			ret += "\\\\";
 		}
+		else if (value[i] == '\t')
+		{
+			ret += "\\t";
+		}
 		else
 			ret += value[i];
 
