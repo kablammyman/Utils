@@ -554,6 +554,19 @@ std::string StringUtils::StringClean(std::string orig, bool includeNewLines = tr
 	//print "done: " + line
 	return orig;
 }
+
+std::string StringUtils::EmailStringClean(std::string orig)
+{
+	for (size_t i = 0; i < orig.size(); i++)
+	{
+		if (orig[i] == '%' || orig[i] == '\n' || orig[i] == '\r' ||
+			orig[i] == '\t' || orig[i] == '<' || orig[i] == '>' || orig[i] == ':')
+			orig[i] = ' ';
+	}	
+	TrimWhiteSpace(orig);
+	return orig;
+}
+
 void StringUtils::SanitizeSQLDataString(std::string& value)
 {
 	std::string ret = "";

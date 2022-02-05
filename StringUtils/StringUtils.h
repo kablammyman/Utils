@@ -48,6 +48,7 @@ public:
 
 	static std::string FindAndReplace(std::string orig, std::string findToken, std::string replaceToken);
 	static std::string StringClean(std::string orig, bool includeNewLines);
+	static std::string EmailStringClean(std::string orig);
 	static void SanitizeSQLDataString(std::string& value);
 	//this may go into its own file....
 	static void SanitizeJsonString(std::string& value);
