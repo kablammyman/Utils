@@ -507,7 +507,7 @@ vector<TaggingUtils::TaggedItem> TaggingUtils::GetAllItemsWithAnyOfTheseTags(vec
 vector<TaggingUtils::TaggedItem> TaggingUtils::GetAllItemsWithALLOfTheseTags(vector<string> tags)
 {
 	vector<TaggedItem> ret;
-	vector<string> itemFields = {"ID","Name","Content"};
+	vector<string> itemFields = {"ID","Name"};
 	string output;
 	string tagsString;
 	//cant use regular flatten becasue we need to surround each keyword with quotes
@@ -517,7 +517,12 @@ vector<TaggingUtils::TaggedItem> TaggingUtils::GetAllItemsWithALLOfTheseTags(vec
 	}
 	tagsString.pop_back();//remove last instance of comma
 
-	string querey = "SELECT b.* FROM ItemTags bt, Items b, Tags t WHERE bt.TagID = t.ID ";
+	string querey;
+	if(itemTableNameOverride.empty())
+		querey = "SELECT b.* FROM ItemTags bt, Items b, Tags t WHERE bt.TagID = t.ID ";
+	else
+		querey = "SELECT b.* FROM ItemTags bt, " + itemTableNameOverride +" b, Tags t WHERE bt.TagID = t.ID ";
+	
 	querey += " AND (t.name IN ( " + tagsString + ")) AND b.ID = bt.ItemID GROUP BY b.ID HAVING COUNT( b.ID )= "+ to_string(tags.size());
 	
 
@@ -543,7 +548,7 @@ vector<TaggingUtils::TaggedItem> TaggingUtils::GetAllItemsWithALLOfTheseTags(vec
 		//TaggedItem nextItem = GetItemFromID( dbResults[i].GetIntValueFromKey("ItemID") );
 		TaggedItem nextItem;
 		nextItem.id = dbResults[i].GetIntValueFromKey("ID");
-		nextItem.content = dbResults[i].GetValueFromKey("Content");
+		//nextItem.content = dbResults[i].GetValueFromKey("Content");
 		nextItem.name = dbResults[i].GetValueFromKey("Name");
 		ret.push_back(nextItem);
 	}
