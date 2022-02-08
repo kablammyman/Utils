@@ -74,4 +74,6 @@ public:
 	static std::string GetDayOfMonthWord(int day);
 	static std::string DigitToString(int num);//add a 0 in from for digits less than 10
 	static int GetDaysInMonth(int month);
+	static std::string GetCurrentDayOfWeekString();
+	static int GetCurrentDayOfWeek();
 };

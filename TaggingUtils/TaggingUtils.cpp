@@ -128,17 +128,17 @@ int TaggingUtils::AddOrUpdateItems(std::string itemName,vector<DatabaseControlle
 	return oldID;
 }
 //---------------------------------------------------------------------------------------------------------------
-int TaggingUtils::AddOrUpdateItem(std::string itemName,std::string content, int id )
+int TaggingUtils::AddOrUpdateItem(std::string itemName,std::string content )
 {
 	string output;
 	vector<DatabaseController::dbDataPair> data;
-	if(id > -1)
-		DatabaseController::AddIntDataToQuerey(data, "ID",id);
-	DatabaseController::AddStringDataToQuerey(data, "Name",itemName);
+
+	int itemID = GetItemId(itemName);
+	
+	DatabaseController::AddStringDataToQuerey(data, "Name", itemName);
 	DatabaseController::AddStringDataToQuerey(data, "Content", content);
 
-	//if thise doesnt exist yet
-	if (id == -1)
+	if (itemID == -1)
 	{
 		if (!dbController->InsertNewDataEntry(ITEMS_TABLE, data, output))
 		{
@@ -152,7 +152,7 @@ int TaggingUtils::AddOrUpdateItem(std::string itemName,std::string content, int 
 	}
 	else
 	{
-		DatabaseController::dbDataPair whereClause = make_pair("ID", to_string(id));
+		DatabaseController::dbDataPair whereClause = make_pair("ID", to_string(itemID));
 		if (!dbController->UpdateEntry(ITEMS_TABLE, data, whereClause, output))
 		{
 			if (dbController->GetLastError() != "")
@@ -161,6 +161,7 @@ int TaggingUtils::AddOrUpdateItem(std::string itemName,std::string content, int 
 				return -1;
 			}
 		}
+		return itemID;
 	}
 }
 //---------------------------------------------------------------------------------------------------------------
@@ -356,7 +357,12 @@ vector<string> TaggingUtils::GetAllTagsForItem(int itemID)
 {
 	string output;
 	vector<string> ret;
-	string querey = "SELECT t.Name FROM "+ITEM_TAGS_TABLE+" it, "+ITEMS_TABLE +" i, "+TAGS_TABLE+" t WHERE ";
+	string querey; 
+	if(itemTableNameOverride.empty())
+		querey = "SELECT t.Name FROM "+ITEM_TAGS_TABLE+" it, "+ITEMS_TABLE +" i, "+TAGS_TABLE+" t WHERE ";
+	else
+		querey = "SELECT t.Name FROM "+ITEM_TAGS_TABLE+" it, "+ itemTableNameOverride +" i, "+TAGS_TABLE+" t WHERE ";
+	
 	querey += " it.ItemID = "+to_string(itemID)+" AND it.TagID = t.ID AND it.ItemID = i.ID";
 
 	if (!dbController->DoDBQuerey(querey,output))

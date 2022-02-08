@@ -26,12 +26,18 @@ public:
 	};
 	using BaseDBInterface::BaseDBInterface;
 	std::string dbName;
+	
+	//i rleaized that often times, I will already have a table for items (customer, owner, etc)
+	//so having a 2nd table with the same info is dumb. 
+	//so before I get rid of item table stuff completely, let me override the code and make sure im right
+	std::string itemTableNameOverride;
+
 	void CreateTagTables();
 	void CreateTagTables(std::vector<DatabaseController::dbDataPair> &extraInfo);
 
 	//the id can be sued to override the auto increment in case you want to "reuse" the id with one another table created
 	int AddOrUpdateItems(std::string itemName,vector<DatabaseController::dbDataPair> &extraInfo, int id = -1 );
-	int AddOrUpdateItem(std::string itemName,std::string content,int id = -1 );
+	int AddOrUpdateItem(std::string itemName,std::string content);
 	int AddTag(std::string tagName );
 
 	int TagItem(std::string itemName, std::string tagName);

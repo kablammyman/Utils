@@ -182,13 +182,59 @@ void DateTime::SetCurrentDateTime()
 	cout << "Day: "<<  ltm->tm_mday << endl;
 	cout << "Time: "<< 1 + ltm->tm_hour << ":";
 	cout << 1 + ltm->tm_min << ":";
-	cout << 1 + ltm->tm_sec << endl;*/
+	cout << 1 + ltm->tm_sec << endl;
+	 int tm_wday;        // day of the week */
 	year = 1900 + buf.tm_year;
 	month = 1 + buf.tm_mon;
 	day = buf.tm_mday;
 	myTime.hour = buf.tm_hour;
 	myTime.minute = buf.tm_min;
 	myTime.second = buf.tm_sec;
+}
+
+//ill see how to calc day of week from a date later
+std::string DateTime::GetCurrentDayOfWeekString()
+{
+	time_t now = time(0);
+	struct tm buf;
+#ifdef _WIN32
+	localtime_s(&buf, &now);
+#else
+	localtime_r(&now, &buf);
+#endif
+
+	switch (buf.tm_wday)
+	{
+	case 1:
+		return "Monday";
+	case 2:
+		return "Tuesday";
+	case 3:
+		return "Wednesday";
+	case 4:
+		return "Thursday";
+	case 5:
+		return "Friday";
+	case 6:
+		return "Saturday";
+	case 7:
+		return "Sunday";
+	default:
+		"Unknown";
+	}
+}
+
+int DateTime::GetCurrentDayOfWeek()
+{
+	time_t now = time(0);
+	struct tm buf;
+#ifdef _WIN32
+	localtime_s(&buf, &now);
+#else
+	localtime_r(&now, &buf);
+#endif
+
+	return buf.tm_wday;
 }
 
 int DateTime::TimeDiff(DateTime& otherDate)
