@@ -21,7 +21,10 @@ public:
 		void SetTimeFromString(std::string timeString);
 		std::string ToString();
 		bool IsEmpty();
+		void IncTime(Time& otherTime);
+		Time TimeDiff(Time& otherTime);
 	};
+
 	int year = 1900;
 	int month = 1;
 	int day = 1;
@@ -61,6 +64,8 @@ public:
 	void IncMonth(int amt);
 	void DecMonth(int amt);
 	
+
+
 	std::string GetMonthAbrv(); //Jan
 	void SetMonthFromAbrv(std::string month); //Jan
 	std::string GetMonthWord(); //January

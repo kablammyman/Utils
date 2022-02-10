@@ -59,6 +59,31 @@ bool DateTime::Time::IsEmpty()
 	return false;
 }
 
+void DateTime::Time::IncTime(DateTime::Time& otherTime)
+{
+	//first convert hours to min
+	int theirMins = (otherTime.hour * 60) + otherTime.minute;
+	int myMins = (hour * 60) + minute;
+
+	//add em' up
+	int totalMins = theirMins + myMins;
+
+	//now convert back to hours and mins
+	float totalHours = totalMins / 60;
+	hour = floor(totalHours);
+	minute = 60 * (totalHours - hour);
+
+}
+
+DateTime::Time DateTime::Time::TimeDiff(DateTime::Time& otherTime)
+{
+	//the times we have should already be in 24hr format...so we aint checking!
+	Time ret;
+	ret.minute = abs(otherTime.minute - minute);
+	ret.hour = abs(otherTime.hour - hour);
+	ret.second = abs(otherTime.second - second);
+	return ret;
+}
 DateTime::DateTime()
 {
 	year = 1900;
@@ -423,6 +448,8 @@ void DateTime::DecMonth(int amt)
 		month += 12;
 	}
 }
+
+
 
 int DateTime::GetDaysInMonth(int mon)
 {
