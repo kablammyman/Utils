@@ -1131,6 +1131,29 @@ std::string StringUtils::PrettyPhone(std::string phoneToUpdate)
 	return newPhone;
 }
 
+
+bool StringUtils::IsValidPhone(std::string phone)
+{
+	//if the string itself is too small, then it cant be valid
+	if (phone.size() < 10)
+		return false;
+
+	int numberCounter = 0;
+	for (size_t i = 0; i < phone.size(); i++)
+	{
+		if (isdigit(phone[i]))
+			numberCounter++;
+	}
+	if (numberCounter == 10)
+		return true;
+
+	//if we have a 1 in front it will be 11 digits
+	if (numberCounter == 11 && phone[0] == '1')
+		return true;
+
+	return false;
+}
+
 std::string StringUtils::UrlDecode(std::string urlEncoded)
 {
 	std::string ret;
@@ -1152,4 +1175,9 @@ std::string StringUtils::UrlDecode(std::string urlEncoded)
 		}
 	}
 	return ret;
+}
+
+std::string StringUtils::UnEscapeString(std::string origString)
+{
+	return "";
 }
