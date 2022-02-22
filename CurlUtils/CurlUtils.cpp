@@ -505,7 +505,52 @@ bool CurlUtils::MoveEmailToFolder(std::string username, std::string password,std
 	
 	return ret;
 }
+bool CurlUtils::DeleteEmail(std::string username, std::string password, std::string emailUrl, std::string uid)
+{
 
+	CURL* curl;
+	CURLcode res = CURLE_OK;
+	readBuffer.clear();
+	curl = curl_easy_init();
+	bool ret = true;
+
+	if (!curl)
+		return false;
+
+	curl_easy_setopt(curl, CURLOPT_USERNAME, username.c_str());
+	curl_easy_setopt(curl, CURLOPT_PASSWORD, password.c_str());
+	curl_easy_setopt(curl, CURLOPT_URL, emailUrl.c_str());
+	//curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+
+	string deleteCommand = "UID STORE " + uid + " Flags \\Deleted";
+
+	curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, deleteCommand.c_str());
+	//curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+	res = curl_easy_perform(curl);
+	if (res != CURLE_OK)
+	{
+		fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+		ret = false;
+		goto cleanup;
+	}
+
+	// Set the EXPUNGE command, although you can use the CLOSE command if you don't want to know the result of the STORE 
+
+	curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "EXPUNGE");
+	res = curl_easy_perform(curl);
+	if (res != CURLE_OK)
+	{
+		fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+		ret = false;
+		goto cleanup;
+	}
+
+cleanup:
+	// Always cleanup 
+	curl_easy_cleanup(curl);
+
+	return ret;
+}
 string CurlUtils::FetchWebpage(string url)
 {
 

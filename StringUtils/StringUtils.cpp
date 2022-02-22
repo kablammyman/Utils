@@ -193,8 +193,9 @@ std::string StringUtils::GetDataBetweenSubStrings(std::string line, std::string 
 	dataStart += str1.size();
 
 	size_t dataEnd = line.find(str2, dataStart);
-	if (dataStart == std::string::npos)
-		dataEnd = line.size();
+	if (dataEnd == std::string::npos)
+		return "";
+		//dataEnd = line.size();
 
 	std::string returnString = "";
 

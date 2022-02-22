@@ -44,5 +44,6 @@ class CurlUtils
 	static int UploadToFTP(std::string ftpUrl, std::string username, std::string password, std::string localFile,std::string fileNameWithoutPath);
 	static EmailStruct ReadEmail(std::string username, std::string password, std::string url, std::string imapArgs);
 	static bool MoveEmailToFolder(std::string username, std::string password, std::string emailUrl,std::string uid, std::string newFolderName);
+	static bool DeleteEmail(std::string username, std::string password, std::string emailUrl,std::string uid);
 	static std::string FetchWebpage(std::string url);
 };
