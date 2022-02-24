@@ -62,17 +62,16 @@ bool DateTime::Time::IsEmpty()
 void DateTime::Time::IncTime(DateTime::Time& otherTime)
 {
 	//first convert hours to min
-	int theirMins = (otherTime.hour * 60) + otherTime.minute;
-	int myMins = (hour * 60) + minute;
+	int theirSeconds = (otherTime.hour * 3600) + (otherTime.minute * 60) + otherTime.second;
+	int mySeconds = (hour * 3600) + (minute * 60) + second;
 
 	//add em' up
-	int totalMins = theirMins + myMins;
+	int totalSeconds = theirSeconds + mySeconds;
 
-	//now convert back to hours and mins
-	float totalHours = totalMins / 60;
-	hour = floor(totalHours);
-	minute = 60 * (totalHours - hour);
 
+	hour = totalSeconds / 3600;
+	minute = (totalSeconds % 3600) / 60;
+	second = totalSeconds % 60;
 }
 
 DateTime::Time DateTime::Time::TimeDiff(DateTime::Time& otherTime)
@@ -105,8 +104,8 @@ DateTime::DateTime(int y, int m, int d, int h, int min, int s)
 }
 DateTime::DateTime(std::string date)
 {
-	ParseDateString(date);
 	myTime.Init(0, 0, 0);
+	ParseDateString(date);
 }
 
 bool DateTime::IsEmpty()
@@ -154,6 +153,14 @@ void DateTime::ParseDateString(std::string dateString)
 			month = atoi(date[1].c_str());
 			day = atoi(date[2].c_str());
 		}
+	}
+	size_t found = dateString.find(":");
+	if (found != std::string::npos)//we have a time component
+	{
+		//lets seperate it from the rest of the string
+		std::vector<std::string> tokens = StringUtils::Tokenize(dateString, " ");
+		//we can assume its the last part of the string
+		myTime.SetTimeFromString(tokens.back());
 	}
 }
 //this is the format that bluehost emails are in...maybe all emails?

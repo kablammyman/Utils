@@ -591,6 +591,9 @@ void StringUtils::SanitizeSQLDataString(std::string& value)
 
 void StringUtils::SanitizeJsonString(std::string& value)
 {
+	if (value.empty())
+		return;
+
 	std::string ret = "";
 	//std::string correct = "lineone\\nline2";
 	for (size_t i = 0; i < value.size(); i++)
