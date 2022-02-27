@@ -62,16 +62,25 @@ bool DateTime::Time::IsEmpty()
 void DateTime::Time::IncTime(DateTime::Time& otherTime)
 {
 	//first convert hours to min
-	int theirSeconds = (otherTime.hour * 3600) + (otherTime.minute * 60) + otherTime.second;
-	int mySeconds = (hour * 3600) + (minute * 60) + second;
+	int theirSeconds = otherTime.GetTimeInSeconds();
+	int mySeconds = GetTimeInSeconds();
 
 	//add em' up
 	int totalSeconds = theirSeconds + mySeconds;
 
+	SetTimeFromSeconds(totalSeconds);
+}
 
-	hour = totalSeconds / 3600;
-	minute = (totalSeconds % 3600) / 60;
-	second = totalSeconds % 60;
+void DateTime::Time::DecTime(DateTime::Time& otherTime)
+{
+	//first convert hours to min
+	int theirSeconds = otherTime.GetTimeInSeconds();
+	int mySeconds = GetTimeInSeconds();
+
+	//not sure if this should be abs or not...
+	int totalSeconds = theirSeconds - mySeconds;
+
+	SetTimeFromSeconds(totalSeconds);
 }
 
 DateTime::Time DateTime::Time::TimeDiff(DateTime::Time& otherTime)
@@ -83,6 +92,20 @@ DateTime::Time DateTime::Time::TimeDiff(DateTime::Time& otherTime)
 	ret.second = abs(otherTime.second - second);
 	return ret;
 }
+
+int DateTime::Time::GetTimeInSeconds()
+{
+	return (hour * 3600) + (minute * 60) + second;
+}
+
+void DateTime::Time::SetTimeFromSeconds(int totalSeconds)
+{
+	hour = totalSeconds / 3600;
+	minute = (totalSeconds % 3600) / 60;
+	second = totalSeconds % 60;
+}
+
+
 DateTime::DateTime()
 {
 	year = 1900;
@@ -224,7 +247,7 @@ void DateTime::SetCurrentDateTime()
 	myTime.second = buf.tm_sec;
 }
 
-//ill see how to calc day of week from a date later
+
 std::string DateTime::GetCurrentDayOfWeekString()
 {
 	time_t now = time(0);
@@ -256,6 +279,7 @@ std::string DateTime::GetCurrentDayOfWeekString()
 	}
 }
 
+//sunday = 0
 int DateTime::GetCurrentDayOfWeek()
 {
 	time_t now = time(0);

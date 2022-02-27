@@ -22,7 +22,10 @@ public:
 		std::string ToString();
 		bool IsEmpty();
 		void IncTime(Time& otherTime);
+		void DecTime(Time& otherTime);
 		Time TimeDiff(Time& otherTime);
+		int GetTimeInSeconds();
+		void SetTimeFromSeconds(int seconds);
 	};
 
 	int year = 1900;
