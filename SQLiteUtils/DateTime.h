@@ -36,6 +36,7 @@ public:
 	DateTime(int y, int m, int d);
 	DateTime(int y, int m, int d, int h, int min, int s);
 	DateTime(std::string date);
+	void Clear();
 	void ParseDateString(std::string dateString);
 	void ParseEmailDateString(std::string dateString);
 	std::string ToString();

@@ -108,11 +108,9 @@ void DateTime::Time::SetTimeFromSeconds(int totalSeconds)
 
 DateTime::DateTime()
 {
-	year = 1900;
-	month = 1;
-	day = 1;
-	myTime.Init(0, 0, 0);
+
 };
+
 DateTime::DateTime(int y, int m, int d)
 {
 	year = y;
@@ -136,6 +134,14 @@ bool DateTime::IsEmpty()
 	if (year == 1900 && month == 1 && day == 1)
 		return true;
 	return false;
+}
+
+void DateTime::Clear()
+{
+	year = 1900;
+	month = 1;
+	day = 1;
+	myTime.Init(0, 0, 0);
 }
 void DateTime::ParseDateString(std::string dateString)
 {
