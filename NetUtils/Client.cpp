@@ -107,7 +107,7 @@ int Client::SendDataTCP(const char *msg)//for stream sockets
 }
 
 //------------------------------------------------------------------------------
-int Client::GetDataTCP(char *msg, int dataSize)//for stream sockets
+int Client::GetDataTCP(unsigned char *msg, int dataSize)//for stream sockets
 {
 	//return NetUtils::GetDataTCP(serverConnection.recvSocket,msg,dataSize);
 	return NetUtils::GetDataTCP(serverConnection.sendSocket,msg,dataSize);
@@ -120,7 +120,7 @@ int Client::SendDataUDP( const char *msg, int dataSize)//for datagram sockets
 
 }
 //------------------------------------------------------------------------------
-int Client::GetDataUDP(char *msg)//for datagram sockets
+int Client::GetDataUDP(unsigned char *msg)//for datagram sockets
 {
 	//return NetUtils::GetDataUDP(serverConnection.recvSocket, msg);
 	return NetUtils::GetDataUDP(serverConnection.sendSocket, msg);

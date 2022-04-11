@@ -73,7 +73,7 @@ protected:
 	fd_set read_fds; // temp file descriptor list for select()
 	
 public:
-	char recvBuffer[MAX_BUFFFER_SIZE];
+	unsigned char recvBuffer[MAX_BUFFFER_SIZE];
 	enum SOCKET_TYPE
 	{
 		DATAGRAM_SOCKET = 0,
@@ -86,12 +86,12 @@ public:
 	
 	
 	int SendDataTCP(SOCKET daSocket, const char *msg);
-	int GetDataTCP(SOCKET daSocket, char *msg, int dataSize);
+	int GetDataTCP(SOCKET daSocket, unsigned char *msg, int dataSize);
 	virtual int ChangeToIsBlocking(SOCKET daSocket, bool isBlocking);
 
 	//for datagram sockets
 	int SendDataUDP(SOCKET daSocket, const char *msg, int dataLen,addrinfo *whomToSend);
-	int GetDataUDP(SOCKET daSocket, char *msg);
+	int GetDataUDP(SOCKET daSocket, unsigned char *msg);
 
 	
 	bool HasRecivedData(SOCKET daSocket);
@@ -99,11 +99,13 @@ public:
 	void Shutdown();
 	void MyCloseSocket(SOCKET daSocket);
 
+	static int ReadShortFromBuffer(unsigned char *buffer, size_t &index);
 	static int ReadIntFromBuffer(unsigned char *buffer, size_t &index);
 	static float ReadFloatFromBuffer(unsigned char *buffer, size_t &index);
 	static void ReadHeaderFromBuffer(unsigned char *buffer,unsigned char header[5]);
 	static unsigned char * ReadStringFromBuffer(unsigned char *buffer,size_t size,size_t &index);
 
+	static void WriteShortToBuffer(short x, unsigned char *buffer, size_t &index);
 	static void WriteIntToBuffer(int x, unsigned char *buffer, size_t &index);
 	static void WriteFloatToBuffer(float x,unsigned char *buffer, size_t &index);
 	static void WriteHeaderToBuffer(unsigned char *header,unsigned  char *buffer);

@@ -24,13 +24,13 @@ public:
 	
 
 	int SendData(size_t socketIndex, const char *msg);//for stream sockets
-	int GetData(size_t socketIndex, char *msg, int dataSize);//for stream sockets
+	int GetData(size_t socketIndex,unsigned char *msg, int dataSize = MAX_BUFFFER_SIZE-1);//for stream sockets
 
 	int ServerBroadcast(const char *msg);
 	int HasRecivedData();
 	
 	
-	int StartServer(/*int numConnections,*/ char* port);
+	int StartServer(/*int numConnections,*/const char* port);
 	
 	int WaitForFirstClientConnect();
 	int WaitForClientAsync();

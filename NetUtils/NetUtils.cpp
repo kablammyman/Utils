@@ -51,9 +51,9 @@ int NetUtils::SendDataTCP(SOCKET daSocket, const char *msg)//for stream sockets
 }
 
 //------------------------------------------------------------------------------
-int NetUtils::GetDataTCP(SOCKET daSocket, char *msg, int dataSize)//for stream sockets
+int NetUtils::GetDataTCP(SOCKET daSocket, unsigned char *msg, int dataSize)//for stream sockets
 {
-	int nret = recv(daSocket, msg, dataSize, 0);// 256 = Complete size of buffer	  
+	int nret = recv(daSocket, (char*)msg, dataSize, 0);
 
 	if (nret == SOCKET_ERROR) 
 	{
@@ -80,11 +80,11 @@ int NetUtils::SendDataUDP(SOCKET daSocket, const char *msg, int dataLen, addrinf
 
 }
 //------------------------------------------------------------------------------
-int NetUtils::GetDataUDP(SOCKET daSocket, char *msg)//for datagram sockets
+int NetUtils::GetDataUDP(SOCKET daSocket, unsigned char *msg)//for datagram sockets
 {
 	sockaddr_storage whosSendingMeStuff;
 	socklen_t addr_len = sizeof whosSendingMeStuff;
-	int numBytes = recvfrom(daSocket, msg, MAX_BUFFFER_SIZE-1, 0, (struct sockaddr *)&whosSendingMeStuff, &addr_len);
+	int numBytes = recvfrom(daSocket, (char*)msg, MAX_BUFFFER_SIZE-1, 0, (struct sockaddr *)&whosSendingMeStuff, &addr_len);
 	
 	if (numBytes == SOCKET_ERROR) 
 	{
@@ -145,6 +145,17 @@ bool NetUtils::HasRecivedData(SOCKET daSocket)
 }
 
 //we def should do some array checking, but ill worry about that later
+int NetUtils::ReadShortFromBuffer(unsigned char* buffer, size_t& index)
+{
+	unsigned char intBuffer[2];
+	intBuffer[0] = buffer[index];
+	intBuffer[1] = buffer[index + 1];
+	int retVal = short((unsigned char)(intBuffer[0]) << 8 | (unsigned char)(intBuffer[1]) );
+	index += 2;
+	return retVal;
+}
+
+//we def should do some array checking, but ill worry about that later
 int NetUtils::ReadIntFromBuffer(unsigned char* buffer, size_t &index)
 {
 	unsigned char intBuffer[4];
@@ -185,6 +196,13 @@ unsigned char* NetUtils::ReadStringFromBuffer(unsigned char* buffer, size_t size
 
 	index += size;
 	return retString;
+}
+
+void NetUtils::WriteShortToBuffer(short x, unsigned char* buffer, size_t& index)
+{
+	buffer[index] = (x >> 8) & 0xFF;
+	buffer[index + 1] = x & 0xFF;
+	index += 2;
 }
 
 void NetUtils::WriteIntToBuffer(int x,  unsigned char* buffer, size_t &index)

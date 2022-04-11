@@ -13,7 +13,7 @@ int TCPServer::SendData(size_t socketIndex, const char *msg)//for stream sockets
 }
 
 //------------------------------------------------------------------------------
-int TCPServer::GetData(size_t socketIndex, char *msg, int dataSize)//for stream sockets
+int TCPServer::GetData(size_t socketIndex, unsigned char *msg, int dataSize)//for stream sockets
 {
 	if (socketIndex >= remoteConnections.size())
 		return NETWORK_ERROR;
@@ -21,7 +21,7 @@ int TCPServer::GetData(size_t socketIndex, char *msg, int dataSize)//for stream 
 	return NetUtils::GetDataTCP(remoteConnections[socketIndex]->theSocket,msg,dataSize);
 }
 //------------------------------------------------------------------------------
-int TCPServer::StartServer(/*int numConnections,*/ char* port)
+int TCPServer::StartServer(/*int numConnections,*/ const char* port)
 {
 	tv.tv_sec = 0;
 	tv.tv_usec = 0;
@@ -108,6 +108,7 @@ void TCPServer::ShutdownServer()
 	Shutdown();
 }
 //------------------------------------------------------------------------------
+//this is a bloacking method that should run only once!
 int TCPServer::WaitForFirstClientConnect()
 {
 	int yes = 1;
@@ -142,7 +143,8 @@ int TCPServer::WaitForFirstClientConnect()
 	
 	return NETWORK_OK;
 }
-//------------------------------------------------------------------------------   
+//------------------------------------------------------------------------------
+//this should run once a loop
 int TCPServer::WaitForClientAsync()
 {
 	// See if connection pending
