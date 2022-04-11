@@ -26,6 +26,7 @@ public:
 		Time TimeDiff(Time& otherTime);
 		int GetTimeInSeconds();
 		void SetTimeFromSeconds(int seconds);
+		void Clear();
 	};
 
 	int year = 1900;

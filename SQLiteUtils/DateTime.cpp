@@ -59,6 +59,13 @@ bool DateTime::Time::IsEmpty()
 	return false;
 }
 
+void DateTime::Time::Clear()
+{
+	hour = 0; 
+	minute = 0; 
+	second = 0;
+}
+
 void DateTime::Time::IncTime(DateTime::Time& otherTime)
 {
 	//first convert hours to min
@@ -87,9 +94,15 @@ DateTime::Time DateTime::Time::TimeDiff(DateTime::Time& otherTime)
 {
 	//the times we have should already be in 24hr format...so we aint checking!
 	Time ret;
-	ret.minute = abs(otherTime.minute - minute);
+	/*ret.minute = abs(otherTime.minute - minute);
 	ret.hour = abs(otherTime.hour - hour);
-	ret.second = abs(otherTime.second - second);
+	ret.second = abs(otherTime.second - second);*/
+	//first convert hours to min
+	int theirSeconds = otherTime.GetTimeInSeconds();
+	int mySeconds = GetTimeInSeconds();
+	int totalSeconds = abs(theirSeconds - mySeconds);
+	ret.SetTimeFromSeconds(totalSeconds);
+
 	return ret;
 }
 
@@ -141,7 +154,7 @@ void DateTime::Clear()
 	year = 1900;
 	month = 1;
 	day = 1;
-	myTime.Init(0, 0, 0);
+	myTime.Clear();
 }
 void DateTime::ParseDateString(std::string dateString)
 {
