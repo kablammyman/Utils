@@ -66,6 +66,99 @@ void DateTime::Time::Clear()
 	second = 0;
 }
 
+//DateTime DateTime::operator=(const DateTime& d)
+
+bool DateTime::Time::operator==(const Time& t)
+{
+	if (hour == t.hour && minute == t.minute && second == t.second)
+		return true;
+	return false;
+}
+bool DateTime::Time::operator!=(const Time& t)
+{
+	if (hour != t.hour || minute != t.minute || second != t.second)
+		return true;
+	return false;
+}
+
+bool DateTime::Time::operator>(const Time& t)
+{
+	if (hour > t.hour)
+		return true;
+	else if(hour < t.hour) 
+		return false;
+	else if (hour == t.hour)
+	{
+		if (minute > t.minute)
+			return true;
+		else if (minute < t.minute)
+			return false;
+		else if (minute == t.minute)
+		{
+			if (second > t.second)
+				return true;
+			else if (second < t.second)
+				return false;
+		}
+	}
+	return false;
+}
+
+bool DateTime::Time::operator<(const Time& t)
+{
+	if (hour > t.hour)
+		return false;
+	else if (hour < t.hour)
+		return true;
+	else if (hour == t.hour)
+	{
+		if (minute > t.minute)
+			return false;
+		else if (minute < t.minute)
+			return true;
+		else if (minute == t.minute)
+		{
+			if (second > t.second)
+				return false;
+			else if (second < t.second)
+				return true;
+		}
+	}
+	return false;
+}
+
+bool DateTime::Time::operator>=(const Time& t)
+{
+	if (hour >= t.hour)
+		return true;
+
+	
+	if (minute >= t.minute)
+		return true;
+
+	
+	if (second >= t.second)
+		return true;
+	
+		
+	return false;
+}
+bool  DateTime::Time::operator<=(const Time& t)
+{
+	if (hour <= t.hour)
+		return true;
+	
+	if (minute <= t.minute)
+		return true;
+
+	if (second <= t.second)
+		return true;
+	
+
+	return false;
+}
+
+
 void DateTime::Time::IncTime(DateTime::Time& otherTime)
 {
 	//first convert hours to min
@@ -331,8 +424,32 @@ int DateTime::TimeDiff(DateTime& otherDate)
 	}
 
 	return abs(otherNumDays - myNumDays);
-
 }
+
+DateTime DateTime::TimeDiffAsObj(DateTime& otherDate)
+{
+	int daysDiff = TimeDiff(otherDate);
+	DateTime::Time timeDiff = myTime.TimeDiff(otherDate.myTime);
+	timeDiff.GetTimeInSeconds();
+	int totalSeconds = ConvertDaysIntoSeconds(daysDiff) + timeDiff.GetTimeInSeconds();
+
+	DateTime ret;
+
+	/*int day = 86400;
+	int hour = 3600;
+	int minute = 60;*/
+
+	ret.year = 0;
+	ret.month = 0;
+
+	ret.day = floor(totalSeconds / 86400);
+	ret.myTime.hour = floor((totalSeconds - ret.day * 86400) / 3600);
+	ret.myTime.minute = floor((totalSeconds - ret.day * 86400 - ret.myTime.hour * 3600) / 60);
+	ret.myTime.second = totalSeconds - ret.day * 86400 - ret.myTime.hour * 3600 - ret.myTime.minute * 60;
+
+	return ret;
+}
+
 int DateTime::GetDayOfYear()
 {
 	int numDays = 0;
@@ -382,6 +499,9 @@ bool DateTime::operator==(const DateTime& d)
 		this->month == d.month &&
 		this->day == d.day)
 		return true;
+	
+	if (myTime == d.myTime)
+		return true;
 
 	return false;
 }
@@ -391,7 +511,8 @@ bool DateTime::operator!=(const DateTime& d)
 		this->month != d.month ||
 		this->day != d.day)
 		return true;
-
+	if (myTime != d.myTime)
+		return true;
 	return false;
 }
 bool DateTime::operator>(const DateTime& d)
@@ -409,6 +530,9 @@ bool DateTime::operator>(const DateTime& d)
 	//else the year and the month is the same
 
 	if (this->day > d.day)
+		return true;
+
+	if (myTime > d.myTime)
 		return true;
 
 	return false;
@@ -431,6 +555,9 @@ bool DateTime::operator<(const DateTime& d)
 	if (this->day < d.day)
 		return true;
 
+	if (myTime < d.myTime)
+		return true;
+
 	return false;
 }
 
@@ -439,6 +566,9 @@ bool DateTime::operator>=(const DateTime& d)
 	if (*this == d)
 		return true;
 	else if (*this > d)
+		return true;
+	
+	if (myTime >= d.myTime)
 		return true;
 
 	return false;
@@ -449,6 +579,9 @@ bool DateTime::operator<=(const DateTime& d)
 	if (*this == d)
 		return true;
 	else if (*this < d)
+		return true;
+
+	if (myTime <= d.myTime)
 		return true;
 
 	return false;
@@ -707,4 +840,16 @@ std::string DateTime::PrintFormattedString(std::string format)
 		i++;
 	}
 	return ret;
+}
+
+int DateTime::ConvertDaysIntoSeconds(int days)
+{
+	return 86400 * days;
+}
+
+int DateTime::ConvertDateTimeIntoSeconds()
+{
+	int dateAsSeconds = ConvertDaysIntoSeconds(GetDayOfYear());
+	int intTimeAsSeconds = myTime.GetTimeInSeconds();
+	return dateAsSeconds + intTimeAsSeconds;
 }

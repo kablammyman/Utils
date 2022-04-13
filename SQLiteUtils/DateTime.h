@@ -27,6 +27,15 @@ public:
 		int GetTimeInSeconds();
 		void SetTimeFromSeconds(int seconds);
 		void Clear();
+		bool operator==(const Time& t);
+		bool operator!=(const Time& t);
+
+		bool operator>(const Time& t);
+
+		bool operator<(const Time& t);
+
+		bool operator>=(const Time& t);
+		bool operator<=(const Time& t);
 	};
 
 	int year = 1900;
@@ -45,6 +54,8 @@ public:
 	void SetCurrentDateTime();
 	
 	int TimeDiff(DateTime& otherDate);
+	DateTime TimeDiffAsObj(DateTime& otherDate);
+
 	//convert a date string that looks like mon/day/year to my format
 	static std::string ConvertSlashDate(std::string slashDate);
 
@@ -69,7 +80,7 @@ public:
 	void IncMonth(int amt);
 	void DecMonth(int amt);
 	
-
+	int ConvertDateTimeIntoSeconds();
 
 	std::string GetMonthAbrv(); //Jan
 	void SetMonthFromAbrv(std::string month); //Jan
@@ -86,4 +97,5 @@ public:
 	static int GetDaysInMonth(int month);
 	static std::string GetCurrentDayOfWeekString();
 	static int GetCurrentDayOfWeek();
+	static int ConvertDaysIntoSeconds(int days);
 };
