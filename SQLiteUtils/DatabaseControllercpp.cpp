@@ -119,12 +119,8 @@ bool DatabaseController::DoDBQuerey(string table, vector<string> data, string &o
 {
 	string querey = "SELECT "; 
 
-	for (size_t i = 0; i < data.size(); i++)
-	{
-		querey += data[i];
-		if (i < data.size() - 1)
-			querey += ",";
-	}
+	querey += StringUtils::FlattenVector(data);
+
 	querey += (" FROM " + table + ";");
 	return db->ExecuteSQL(querey, output);
 }
@@ -188,6 +184,31 @@ bool DatabaseController::DoDBQuerey(string table, string selectData, vector<dbDa
 	return db->ExecuteSQL(querey + fromString + whereString, output);
 }
 
+bool DatabaseController::DoDBQuerey(string table, vector<string> selectData,  vector<dbDataPair> whereData, string &output, bool useAnd)
+{
+	string querey = "SELECT ";
+	string whereString = " WHERE ";
+	string fromString = (" FROM " + table);
+
+
+	querey += StringUtils::FlattenVector(selectData);
+
+	for (size_t i = 0; i < whereData.size(); i++)
+	{
+		if (i > 0)
+		{
+			if(useAnd)
+				whereString += " AND ";
+			else
+				whereString += " OR ";
+		}
+		whereString += (whereData[i].first + " = \"" + whereData[i].second + "\"");
+	}
+	whereString += ";";
+
+	return db->ExecuteSQL(querey + fromString + whereString, output);
+}
+
 bool DatabaseController::DoDBQuerey(string table, vector<string> selectData, dbDataPair whereData, string &output)
 {
 	string querey = "SELECT ";
@@ -229,43 +250,6 @@ bool DatabaseController::DoDBQuerey(string table, vector<string> selectData, str
 
 	}
 	
-	whereString += ";";
-
-	return db->ExecuteSQL(querey + fromString + whereString, output);
-}
-
-
-bool DatabaseController::DoDBQuerey(string table, vector<string> selectData, vector<dbDataPair> whereData, string &output, bool useAnd)
-{
-	string querey = "SELECT ";
-	string whereString = " WHERE ";
-	string fromString = (" FROM " + table);
-
-	//count how many specific items to querey
-	//ex select * from table where name ="bla" and age = "bla"; \\2 whereArgs here
-	
-	for (size_t i = 0; i < selectData.size(); i++)
-	{
-		if (i > 0)
-			querey += ",";
-
-
-		querey += selectData[i];
-
-	}
-	
-
-	for (size_t i = 0; i < whereData.size(); i++)
-	{
-		if (i > 0)
-		{
-			if(useAnd)
-				whereString += " AND ";
-			else
-				whereString += " OR ";
-		}
-		whereString += (whereData[i].first + " = \"" + whereData[i].second + "\"");
-	}
 	whereString += ";";
 
 	return db->ExecuteSQL(querey + fromString + whereString, output);

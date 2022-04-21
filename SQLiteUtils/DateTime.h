@@ -20,7 +20,7 @@ public:
 		void Init(int h, int m, int s);
 		void SetTimeFromString(std::string timeString);
 		std::string ToString();
-		bool IsEmpty();
+		bool IsEmpty() const;
 		void IncTime(Time& otherTime);
 		void DecTime(Time& otherTime);
 		Time TimeDiff(Time& otherTime);

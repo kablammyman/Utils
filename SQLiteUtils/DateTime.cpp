@@ -52,7 +52,7 @@ std::string DateTime::Time::ToString()
 	return ret;
 }
 
-bool DateTime::Time::IsEmpty()
+bool DateTime::Time::IsEmpty() const
 {
 	if (hour == 0 && minute == 0 && second == 0)
 		return true;
@@ -495,24 +495,36 @@ DateTime DateTime::operator=(const DateTime& d)
 }
 bool DateTime::operator==(const DateTime& d)
 {
+	if (myTime.IsEmpty() || d.myTime.IsEmpty())
+	{
+		if (this->year == d.year &&
+			this->month == d.month &&
+			this->day == d.day)
+			return true;
+	}
 	if (this->year == d.year &&
 		this->month == d.month &&
-		this->day == d.day)
-		return true;
-	
-	if (myTime == d.myTime)
+		this->day == d.day && 
+		this->myTime == d.myTime)
 		return true;
 
 	return false;
 }
 bool DateTime::operator!=(const DateTime& d)
 {
+	if (this->myTime.IsEmpty() || d.myTime.IsEmpty())
+	{
+		if (this->year != d.year ||
+			this->month != d.month ||
+			this->day != d.day)
+			return true;
+	}
 	if (this->year != d.year ||
 		this->month != d.month ||
-		this->day != d.day)
+		this->day != d.day ||
+		this->myTime != d.myTime)
 		return true;
-	if (myTime != d.myTime)
-		return true;
+
 	return false;
 }
 bool DateTime::operator>(const DateTime& d)
@@ -532,8 +544,9 @@ bool DateTime::operator>(const DateTime& d)
 	if (this->day > d.day)
 		return true;
 
-	if (myTime > d.myTime)
-		return true;
+	if (!this->myTime.IsEmpty() && !d.myTime.IsEmpty())
+		if (myTime > d.myTime)
+			return true;
 
 	return false;
 }
@@ -555,8 +568,9 @@ bool DateTime::operator<(const DateTime& d)
 	if (this->day < d.day)
 		return true;
 
-	if (myTime < d.myTime)
-		return true;
+	if (!this->myTime.IsEmpty() && !d.myTime.IsEmpty())
+		if (myTime < d.myTime)
+			return true;
 
 	return false;
 }
@@ -566,9 +580,6 @@ bool DateTime::operator>=(const DateTime& d)
 	if (*this == d)
 		return true;
 	else if (*this > d)
-		return true;
-	
-	if (myTime >= d.myTime)
 		return true;
 
 	return false;
@@ -580,9 +591,7 @@ bool DateTime::operator<=(const DateTime& d)
 		return true;
 	else if (*this < d)
 		return true;
-
-	if (myTime <= d.myTime)
-		return true;
+	
 
 	return false;
 }

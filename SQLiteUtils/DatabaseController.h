@@ -135,12 +135,13 @@ public:
 	bool DoDBQuerey(string table, vector<string> data, string &output);
 	bool DoDBQuerey(string table, vector<dbDataPair> data, string &output);
 	bool DoDBQuerey(string table, string selectData, vector<dbDataPair> whereData, string &output, bool useAnd = true );
+	bool DoDBQuerey(string table, vector<string> selectData, vector<dbDataPair> whereData, string &output, bool useAnd = true );
 	
 	//select x,y,z from table where dbpair.first = dbpair.second
 	bool DoDBQuerey(string table, vector<string> selectData, dbDataPair whereData, string &output);
 	
-	// SELECT x,y,x FROM Table WHERE dbpair[0].first = dbpair[0].second  AND dbpair[1].first = dbpair[1].second ;
-	bool DoDBQuerey(string table, vector<string> selectData, vector<dbDataPair> whereData, string &output, bool useAnd = true);
+
+
 	//this is good whe we have a multi select, but need to use LIKE instead of =. provide the whole like string, "data like LIKE %someVale%"
 	bool DoDBQuerey(string table, vector<string> selectData, string whereString, string &output);
 	bool UpdateEntry(string table, dbDataPair data, dbDataPair WhereClause, string &output);
