@@ -543,6 +543,8 @@ bool DateTime::operator>(const DateTime& d)
 
 	if (this->day > d.day)
 		return true;
+	else if (this->day < d.day)
+		return false;
 
 	if (!this->myTime.IsEmpty() && !d.myTime.IsEmpty())
 		if (myTime > d.myTime)
@@ -567,6 +569,8 @@ bool DateTime::operator<(const DateTime& d)
 
 	if (this->day < d.day)
 		return true;
+	else if (this->day > d.day)
+		return false;
 
 	if (!this->myTime.IsEmpty() && !d.myTime.IsEmpty())
 		if (myTime < d.myTime)
