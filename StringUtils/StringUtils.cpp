@@ -928,9 +928,8 @@ int StringUtils::GetIntFromString(std::string str)
 //prettyprint adds commas and shit
 std::string StringUtils::ToMoneyString(float amount, bool prettyPrint)
 {
-	
-	char ret[15];//15 is enoguh to squeeze in 3 commas
-	
+	char charBuffer[15];//15 is enoguh to squeeze in 3 commas
+	std::string ret;
 
 	if (prettyPrint)
 	{
@@ -939,37 +938,49 @@ std::string StringUtils::ToMoneyString(float amount, bool prettyPrint)
 		int numExtraSpaces = 0;
 		//see how many extra chars we need when adding in commas:
 		if (strlen(temp) > 6)
-			numExtraSpaces = 1;
+			numExtraSpaces++;
+		if(amount < 0)//need space for neg sign
+			numExtraSpaces++;
 
 		int comma = 0;
 		int retIndex = strlen(temp) + numExtraSpaces;
 
-		//add the commas
-		ret[retIndex] = '\0';
-		ret[retIndex - 1] = temp[strlen(temp) - 1];
-		ret[retIndex - 2] = temp[strlen(temp) - 2];
-		ret[retIndex - 3] = temp[strlen(temp) - 3];
+		//add the decimal numbers and decimal point
+		charBuffer[retIndex] = '\0';
+		charBuffer[retIndex - 1] = temp[strlen(temp) - 1];
+		charBuffer[retIndex - 2] = temp[strlen(temp) - 2];
+		charBuffer[retIndex - 3] = temp[strlen(temp) - 3];
 		retIndex -= 3;
+
 		for (int i = strlen(temp) - 3; i >= 0; i--)//start from the whole dollar amount
 		{
-			if (comma < 4)
+			if (comma < 4 || i == 0)
 			{
-				ret[retIndex] = temp[i];
+				charBuffer[retIndex] = temp[i];
 				retIndex--;
 			}
-			else
+			else if (comma >= 4 && i > 0)
 			{
-				ret[retIndex] = ',';
-				ret[retIndex - 1] = temp[i];
+				charBuffer[retIndex] = ',';
+				charBuffer[retIndex - 1] = temp[i];
 				retIndex -= 2;
 				comma = 0;
 			}
 			comma++;
 		}
+
+		//now only return the good parts of the char array
+		if ((amount >= 1000 && amount < 10000) || amount < 0 && amount > -1000 )
+		{
+			std::string newVer = charBuffer;
+			size_t start = newVer.find(temp);
+			ret = newVer.substr(start);
+		}
+		else ret = charBuffer;
 	}
 	else
 	{
-		sprintf(ret, "%.2f", amount);
+		sprintf(charBuffer, "%.2f", amount);
 	}
 	return ret;
 }
