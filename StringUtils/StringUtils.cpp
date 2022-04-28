@@ -654,6 +654,12 @@ void StringUtils::DesanitizeJsonString(std::string& value)
 					i += 2;
 					continue;
 				}
+				else if (value[i + 1] == '/')
+				{
+					ret += '/';
+					i += 2;
+					continue;
+				}
 			}
 		}
 		else if (i < size - 3)
