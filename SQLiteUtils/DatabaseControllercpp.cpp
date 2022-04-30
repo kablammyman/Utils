@@ -442,13 +442,13 @@ void DatabaseController::ParseDBOutput(string &inputData, int numFields, vector<
 	DBResult curRow;
 	while ( i < tokens.size())
 	{
-		if (numFields == 1)
+		if (numFields == 1 && i < tokens.size()-1)
 		{
 			curRow.insert(tokens[i], tokens[i + 1]);
 			returnData.push_back(curRow);
 			curRow.clear();
 		}
-		else if (curField < tokens.size() -1 )
+		else if (numFields > 1 && curField < tokens.size() -1 )
 		{
 			curRow.insert(tokens[i], tokens[i + 1]);
 			curField++;
