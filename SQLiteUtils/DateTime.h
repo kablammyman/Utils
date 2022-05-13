@@ -49,7 +49,7 @@ public:
 	void Clear();
 	void ParseDateString(std::string dateString);
 	void ParseEmailDateString(std::string dateString);
-	std::string ToString();
+	std::string ToString(bool includeTime = false);
 	
 	void SetCurrentDateTime();
 	

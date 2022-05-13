@@ -317,7 +317,8 @@ std::string DateTime::DigitToString(int num)
 
 	return std::to_string(num);
 }
-std::string DateTime::ToString()
+
+std::string DateTime::ToString(bool includeTime)
 {
 	std::string ret = std::to_string(year) + " ";
 
@@ -325,6 +326,10 @@ std::string DateTime::ToString()
 
 	ret += DigitToString(day);
 
+	if (includeTime)
+	{
+		ret += " " + myTime.ToString();
+	}
 	return ret;
 }
 

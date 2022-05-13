@@ -869,7 +869,7 @@ void DatabaseController::AddTimeDataToQuerey(vector<dbDataPair> & data, string c
 }
 void DatabaseController::AddDateTimeDataToQuerey(vector<dbDataPair> & data, string colName, DateTime colValue)
 {
-	string col = colValue.ToString() + " " + colValue.myTime.ToString();
+	string col = colValue.ToString(true);
 	AddStringDataToQuerey(data, colName, col);
 }
 
