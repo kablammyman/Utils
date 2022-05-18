@@ -24,7 +24,7 @@ public:
 	static std::string GetDataBetweenChars(std::string line,char char1, char char2, size_t &start);//no default valuer here
 	static std::string GetDataBetweenSubStrings(std::string line, std::string str1, std::string str2, size_t start =0);
 	
-	
+	static void StringSplit(std::string orig, std::string &str1, std::string &str2, size_t index);
 	static std::string CopyCharsBetweenQuotes(std::string word, size_t index = 0);
 	static std::string WrapStringInSingleQuotes(std::string text);
 	static std::string WrapStringInDoubleQuotes(std::string text);

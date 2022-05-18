@@ -110,9 +110,15 @@ bool ArgParser::ParseArgs(int argc, const char* argv[])
 		}
 		if (args[index].action == Action::PATH)//store file path
 		{
-			StoreFilePath(args[index], argv[i + 1]);
-			i++;
-			argsCounted++;
+			//size_t numArgs = sizeof(argv) / sizeof(argv[0]);
+			if (argc > i + 1)
+			{
+				StoreFilePath(args[index], argv[i + 1]);
+				i++;
+				argsCounted++;
+			}
+			else
+				cout << "path arg: " << curArg << " doesnt have a path or file to go with it!\n";
 		}
 		else if (args[index].action == Action::STORE)//store file path
 		{
