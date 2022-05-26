@@ -658,3 +658,4 @@ void SQLiteUtils::GetAllColsInTable(string tableName,std::vector<std::string> &r
 	GetAllValuesFromCol(output, "name", retData);
 
 }
+

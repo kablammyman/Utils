@@ -191,6 +191,9 @@ public:
 	int GetIdFromQuereyResult(std::string input);
 	void CreateTable(string tableName, string fields);
 	bool CreateTable(string tableName, vector<dbDataPair> fields, string& output);
+	bool CheckIfTableExists(string tableName);
+	bool AddColToExistingTable(string tableName, string colName, string attrib);
+
 	//test methods
 	void testGetTable();
 	void testDBEntry();

@@ -59,6 +59,7 @@ public:
 	int GetLatestID();
 	void GetAllTablesInDB(std::vector<std::string> &retData);
 	void SplitDataIntoResults(std::vector<std::string> &returnData, std::string allData,std::string firstField, bool removeNewline = true);
+
 private:
 	std::string GetUpdateQuereyString(std::vector<dbDataPair> data, dbDataPair WhereClause);
 };

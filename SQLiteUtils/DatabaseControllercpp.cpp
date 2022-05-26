@@ -921,6 +921,30 @@ string DatabaseController::GetIsNullOREmptyString(string fieldName)
 {
 	return "(" + fieldName + " IS NULL OR " + fieldName + " = \"\")";
 }
+
+bool DatabaseController::CheckIfTableExists(string tableName)
+{
+	string output;
+	//TABLE_NAME_TO_CHECK';
+	ExecuteSQL("SELECT count(type) from sqlite_master WHERE type='table' and name=\"" + tableName + "\";", output);
+
+	RemoveTableNameFromOutput(output);
+
+	if (output == "0")
+		return false;
+	return true;
+
+}
+
+bool DatabaseController::AddColToExistingTable(string tableName, string colName, string attrib)
+{
+	string output;
+	//TABLE_NAME_TO_CHECK';
+	return ExecuteSQL("ALTER TABLE \""+ tableName+"\" ADD COLUMN \"" + colName +"\" " + "\"" + attrib + "\";", output);
+
+
+}
+
 ///////////////////////////////////////////////////////////test methods
 void DatabaseController::testGetTable()
 {
