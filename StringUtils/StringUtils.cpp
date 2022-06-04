@@ -917,7 +917,26 @@ float StringUtils::GetFloatFromString(std::string str)
 	if(IsNumber(str))
 		return stof(str);
 
-	return 0.0;
+	return 0.0f;
+}
+
+double StringUtils::GetDoubleFromString(std::string str)
+{
+	if(str.empty())
+		return 0.0;
+	
+	size_t f = str.find(",");
+	if (f != std::string::npos)
+		str.erase(f, 1);
+	f = str.find("$");
+	if (f != std::string::npos)
+		str.erase(f, 1);
+	TrimWhiteSpace(str);
+
+	if(IsNumber(str))
+		return stod(str);
+
+	return 0.0l;
 }
 
 int StringUtils::GetIntFromString(std::string str)
