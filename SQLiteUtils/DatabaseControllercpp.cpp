@@ -840,6 +840,7 @@ bool DatabaseController::CreateTable(string tableName, vector<dbDataPair> fields
 
 void DatabaseController::AddStringDataToQuerey(vector<dbDataPair> & data, string colName, string colValue)
 {
+	StringUtils::SanitizeSQLDataString(colValue);
 	data.push_back(make_pair(colName,colValue));
 }
 void DatabaseController::AddFloatDataToQuerey(vector<dbDataPair> & data, string colName, float colValue)

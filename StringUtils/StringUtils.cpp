@@ -581,17 +581,37 @@ void StringUtils::SanitizeSQLDataString(std::string& value)
 	//std::string correct = "lineone\\nline2";
 	for (size_t i = 0; i < value.size(); i++)
 	{
-		if (value[i] == '"')
+		//the different tyepes of double quotes...including the fancy unicode ones
+		if (value[i] == '"' || value[i] == '\u201c'|| value[i] == '\u201d')
 		{
-			ret += "'";
+			ret += "\"\"";
+		}
+		else if (value[i] == '\'' || value[i] == '\u2019')
+		{
+			ret += "''";
 		}
 		else if (value[i] == '\r\n')
 		{
 			ret += "\n";
 		}
+		else if (value[i] == '\r')
+		{
+			continue;
+		}
+		else if (value[i] == '\u2026')
+		{
+			ret += "...";
+		}
 		else
 			ret += value[i];
 	}
+	//sometimes the unicde chars value gets turned into a string...so we gotta check for that too
+	ret = FindAndReplace(ret, "\\u201c", "\"\"");
+	ret = FindAndReplace(ret, "\\u201d", "\"\"");
+	ret = FindAndReplace(ret, "\\u2019", "''");
+	ret = FindAndReplace(ret, "\\u2026", "...");
+
+
 	value = ret;
 }
 
@@ -817,8 +837,26 @@ std::string StringUtils::GetJsonEntryValue(std::string& json, std::string name)
 	size_t brace = json.find("}", start);
 	if (quote < comma)//we have a std::string valua, aka wrapped in quotes
 	{
-		//if this is true, then find the comma that singals the end of tis line int he json,a nd not a comma inside the quotes
+		//if this is true, then find the comma that singals the end of tis line in the json, and not a comma inside the quotes
 		size_t endQuote = json.find("\"", quote + 1);
+
+		while (endQuote != std::string::npos)
+		{
+			//GOTTA MAKE SURE THIS ISNT A QUOTE WITHIN THE STRING!!
+			if (endQuote != std::string::npos && endQuote > 0)
+			{
+				//if this is an escaped quote string, then this isnt the end of the string
+				if (json[endQuote - 1] != '\\')
+					break;
+				else
+					endQuote = json.find("\"", endQuote + 1);
+			}
+		}
+
+		//bad formatting of the json string?
+		if(endQuote == std::string::npos)
+			return ret;
+
 		comma = json.find(",", endQuote);
 	}
 
@@ -828,12 +866,12 @@ std::string StringUtils::GetJsonEntryValue(std::string& json, std::string name)
 
 	size_t end = (comma < brace) ? comma : brace;
 
-	//cop the chars to the output, fuck substr
-	for (size_t i = start; i < end; i++)
-	{
-		if (json[i] != quoteType)
-			ret += json[i];
-	}
+	//chop the chars to the output, fuck substr
+	for (size_t i = start+1; i < end-1; i++)
+		ret += json[i];
+
+	//ret = substr(start+1, end - start);
+
 	StringUtils::TrimWhiteSpace(ret);
 	DesanitizeJsonString(ret);
 	return ret;
