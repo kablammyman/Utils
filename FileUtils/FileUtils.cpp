@@ -8,7 +8,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #endif
-#include <random>
+//#include <random>
+#include <time.h>
 #include <cstring>
 #include <fstream>
 #include <vector>
@@ -22,10 +23,16 @@ static DirectoryTree dirTree;//can't use it as a member variable due to the stat
 //---------------------------------------------------------------------------------------
 int FileUtils::GetRandomInt(int min, int max)
 {
+	//this may not be a good way to go, since i keep seeding the num each time...reg rand may be OK
+	/*
 	std::random_device rd;
     std::mt19937 mt(rd());
     std::uniform_int_distribution<int> dist(min, max);
-	return dist(mt);
+	return dist(mt);*/
+
+	srand(time(nullptr));
+	return min + rand() % max;
+
 }
 //--------------------------------------------------------------------------------------------------
 bool FileUtils::DoesPathExist(string &path)

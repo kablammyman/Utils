@@ -1,7 +1,7 @@
 #include "DocumentTags.h"
 #include "StringUtils.h"
-
-
+#include "FileUtils.h"
+#include <time.h>
 #include <fstream>
 
 using namespace std;
@@ -27,7 +27,7 @@ void DocumentTags::AddOrUpdateTagAndValue(std::string tagName, std::string value
 		tags[index].second = value;
 	}
 }
-
+//---------------------------------------------------------------------------------------------------------------
 void DocumentTags::AddOrUpdateTagAndValue(std::string tagName, int value)
 {
 	size_t index = GetTagValueIndex(tagName); 
@@ -40,7 +40,7 @@ void DocumentTags::AddOrUpdateTagAndValue(std::string tagName, int value)
 		tags[index].second = to_string(value);
 	}
 }
-
+//---------------------------------------------------------------------------------------------------------------
 void DocumentTags::AddOrUpdateTagAndValue(std::string tagName, float value)
 {
 	size_t index = GetTagValueIndex(tagName); 
@@ -53,7 +53,7 @@ void DocumentTags::AddOrUpdateTagAndValue(std::string tagName, float value)
 		tags[index].second = StringUtils::ToMoneyString(value);
 	}
 }
-
+//---------------------------------------------------------------------------------------------------------------
 string DocumentTags::GetTagValue(string tagName)
 {
 	for (size_t i = 0; i < tags.size(); i++)
@@ -65,7 +65,7 @@ string DocumentTags::GetTagValue(string tagName)
 	}
 	return "";
 }
-
+//---------------------------------------------------------------------------------------------------------------
 size_t DocumentTags::GetTagValueIndex(string tagName)
 {
 	for (size_t i = 0; i < tags.size(); i++)
@@ -77,23 +77,26 @@ size_t DocumentTags::GetTagValueIndex(string tagName)
 	}
 	return string::npos;
 }
-
+//---------------------------------------------------------------------------------------------------------------
 size_t DocumentTags::GetDistinctTagCount()
 {
 	return tags.size();
 }
+//---------------------------------------------------------------------------------------------------------------
 string DocumentTags::GetTagNameAt(size_t index)
 {
 	if(index > tags.size())
 		return "";
 	return tags[index].first;
 }
+//---------------------------------------------------------------------------------------------------------------
 string DocumentTags::GetTagValueAt(size_t index)
 {
 	if(index > tags.size())
 		return "";
 	return tags[index].second;
 }
+//---------------------------------------------------------------------------------------------------------------
 vector<string> DocumentTags::GetMissingFields()
 {
 	vector<string> retList;
@@ -104,7 +107,15 @@ vector<string> DocumentTags::GetMissingFields()
 	}
 	return retList;
 }
-
+//---------------------------------------------------------------------------------------------------------------
+std::string Tags::GetRandomWord(std::vector <std::string> &words)
+{
+	//srand(time(0));
+	//int index = rand() % words.size();
+	int index = FileUtils::GetRandomInt(0, words.size() - 1);
+	return words[index];
+}
+//---------------------------------------------------------------------------------------------------------------
 int Tags::InsertMultilineInput(string replaceMe, string lines, int index, std::string newText)
 {
 	/*linez = PropertyHelper.CreateRTFLineBreak(addy)
@@ -125,8 +136,7 @@ int Tags::InsertMultilineInput(string replaceMe, string lines, int index, std::s
 		return index*/
 	return 0;
 }
-
-	
+//---------------------------------------------------------------------------------------------------------------
 string Tags::ReplaceTagForValue(string input, DocumentTags tagMap)
 {
 	//no need to do anything if theres no tags on this line
@@ -142,7 +152,19 @@ string Tags::ReplaceTagForValue(string input, DocumentTags tagMap)
 			if (curTag.empty())//empty tag
 				found++;
 			else
-				input = StringUtils::FindAndReplace(input, "[" + curTag + "]", tagMap.GetTagValue(curTag));
+			{
+				string newWord;
+				//now tags can have words that we can "rotate" or get a random one from the list.
+				//this word does not have to be in the map
+				if (curTag.find('|') != string::npos)
+				{
+					vector<string>words = StringUtils::Tokenize(curTag, '|');
+					newWord = GetRandomWord(words);
+				}
+				else
+					newWord = tagMap.GetTagValue(curTag);
+				input = StringUtils::FindAndReplace(input, "[" + curTag + "]", newWord);
+			}
 
 			found = input.find("[", found+1);
 		}
@@ -160,9 +182,7 @@ string Tags::ReplaceTagForValue(string input, DocumentTags tagMap)
 	}
 	return input;
 }
-
-
-	
+//---------------------------------------------------------------------------------------------------------------
 void Tags::CreateNewFileFromTagTemaplateFile(string templatePath, string newFilePath, DocumentTags tagMap)
 {
 
@@ -202,7 +222,7 @@ void Tags::CreateNewFileFromTagTemaplateFile(string templatePath, string newFile
 	templateFile.close();
 	newFile.close();
 }
-	
+//---------------------------------------------------------------------------------------------------------------
 std::map<string,int> Tags::GetAllTagsInFile(string filePath)
 {
 	std::map<string,int> tagMap;
@@ -252,4 +272,37 @@ std::map<string,int> Tags::GetAllTagsInFile(string filePath)
 	templateFile.close();
 	return tagMap;
 }
-	
+//---------------------------------------------------------------------------------------------------------------
+void Tags::LoadRotatorMessagesFromFile(std::string file, std::vector<std::string> &messages)
+{
+
+	ifstream templateFile;
+
+	templateFile.open(file, std::fstream::in);
+
+	if (!templateFile.is_open())
+	{
+		printf("LoadRotatorMessagesFromFile error 1: couldnt open template: %s\n", file.c_str());
+		return;
+	}
+
+
+	//put all of the file into 1 string for easy parsing
+	std::string data((std::istreambuf_iterator<char>(templateFile)),
+	std::istreambuf_iterator<char>());
+	size_t i = 0;
+
+
+	while (i < data.size())
+	{
+		i = data.find("<START>", i);
+
+		if (i != string::npos)
+		{
+			string curMessage = StringUtils::GetDataBetweenSubStrings(data, "<START>", "<END>", i);
+			i += 8;//move it passed the start token to find the next start
+			messages.push_back(curMessage);
+		}
+	}
+	templateFile.close();
+}

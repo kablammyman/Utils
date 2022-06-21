@@ -30,4 +30,6 @@ public:
 	static int InsertMultilineInput(std::string replaceMe, std::string lines, int index, std::string newText);
 	static void CreateNewFileFromTagTemaplateFile(std::string templatePath, std::string newFilePath, DocumentTags tagMap);
 	static std::map<std::string,int> GetAllTagsInFile(std::string filePath);
+	static std::string GetRandomWord(std::vector <std::string> &lists);
+	static void LoadRotatorMessagesFromFile(std::string file, std::vector<std::string> &messages);
 };
