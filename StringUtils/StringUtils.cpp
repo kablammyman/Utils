@@ -1009,8 +1009,9 @@ std::string StringUtils::ToMoneyString(float amount, bool prettyPrint)
 		//see how many extra chars we need when adding in commas:
 		if (strlen(temp) > 6)
 			numExtraSpaces++;
-		if(amount < 0)//need space for neg sign
-			numExtraSpaces++;
+		//neg sign is already included!
+		//if(amount < 0)//need space for neg sign
+		//	numExtraSpaces++;
 
 		int comma = 0;
 		int retIndex = strlen(temp) + numExtraSpaces;
