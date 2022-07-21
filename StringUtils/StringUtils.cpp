@@ -1007,8 +1007,17 @@ std::string StringUtils::ToMoneyString(float amount, bool prettyPrint)
 		sprintf(temp, "%.2f", amount);
 		int numExtraSpaces = 0;
 		//see how many extra chars we need when adding in commas:
+		//first 6 chars are 123.45
 		if (strlen(temp) > 6)
+		{
 			numExtraSpaces++;
+			//if we have over amillion, add another comma
+			//1234567.00
+			if (strlen(temp) > 10)
+				numExtraSpaces++;
+		}
+		
+
 		//neg sign is already included!
 		//if(amount < 0)//need space for neg sign
 		//	numExtraSpaces++;
