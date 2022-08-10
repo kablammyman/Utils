@@ -1061,6 +1061,7 @@ std::string StringUtils::ToMoneyString(float amount, bool prettyPrint)
 	else
 	{
 		sprintf(charBuffer, "%.2f", amount);
+		ret = charBuffer;
 	}
 	return ret;
 }
