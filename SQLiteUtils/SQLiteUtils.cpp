@@ -4,6 +4,13 @@
 #include <iostream>
 #include <string>
 
+//need this for a sleep call
+#ifdef _WIN32
+#include <Windows.h>
+#else
+#include <unistd.h>
+#endif
+
  
 using namespace std;
 string SQLiteUtils::returnData;
@@ -197,19 +204,42 @@ bool SQLiteUtils::ExecuteSQL(string command, string &output)
 	}
 	char *error;
 	returnData = "";
-	returnCode = sqlite3_exec(db, command.c_str(), callback, 0, &error);
-	if (returnCode)
+	bool good = false;
+	for (size_t i = 0; i < 3; i++)
 	{
-		//output = "Error executing SQLite3 statement: " + sqlite3_errmsg(db);
-		output =  sqlite3_errmsg(db);
-		lastError = error;
-		sqlite3_free(error);
-		return false;
+		returnCode = sqlite3_exec(db, command.c_str(), callback, 0, &error);
+		
+		if (returnCode == SQLITE_BUSY || returnCode == SQLITE_LOCKED)
+		{
+#ifdef _WIN32
+			Sleep(1000);
+#else
+			sleep(1000);
+#endif
+			continue;
+		}
+		else if (returnCode != SQLITE_OK)
+		{
+			output = sqlite3_errmsg(db);
+			lastError = error;
+			sqlite3_free(error);
+			//return false;
+		}
+		else if (returnCode == SQLITE_OK)
+		{
+			good = true;
+			break;
+		}
 	}
-	while(gettingData){}//wait until return data is no longer empty
-	output = returnData;
-	lastError.clear();
-	return true;
+	if (good)
+	{
+		while (gettingData) {}//wait until return data is no longer empty
+		output = returnData;
+		lastError.clear();
+		return true;
+	}
+	return false;
+
 }
 //--------------------------------------------------------------------------------------------------
 bool SQLiteUtils::createTable(string name, string query)
