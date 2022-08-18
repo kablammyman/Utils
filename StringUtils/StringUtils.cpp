@@ -160,7 +160,12 @@ void StringUtils::TrimWhiteSpace(std::string &input)
 		return;
 
 	input.erase(0, input.find_first_not_of(' '));       //prefixing spaces
+	input.erase(0, input.find_first_not_of('\n'));       //prefixing new lines
+	input.erase(0, input.find_first_not_of('\t'));       //prefixing tabs
+
 	input.erase(input.find_last_not_of(' ')+1);         //surfixing spaces
+	input.erase(input.find_last_not_of('\n')+1);         //surfixing new lines
+	input.erase(input.find_last_not_of('\t')+1);         //surfixing tabs
 }
 
 std::string StringUtils::GetDataBetweenChars(std::string line, char char1, char char2, size_t &start)
@@ -829,7 +834,11 @@ std::string StringUtils::GetJsonEntryValue(std::string& json, std::string name)
 
 
 	//mopve the cursor off the key, and onto the value
-	start = json.find(":", start) + 1;
+	//we have to find the first non space char (should be a quote or a number)
+
+	start = json.find(":", start) +1;
+	
+
 	//first check if this is a std::string value
 	size_t quote = json.find("\"", start);
 	size_t comma = json.find(",", start);
@@ -837,6 +846,9 @@ std::string StringUtils::GetJsonEntryValue(std::string& json, std::string name)
 	size_t brace = json.find("}", start);
 	if (quote < comma)//we have a std::string valua, aka wrapped in quotes
 	{
+		while (json[start] == ' ' || json[start] == '\t')
+			start++;
+
 		//if this is true, then find the comma that singals the end of tis line in the json, and not a comma inside the quotes
 		size_t endQuote = json.find("\"", quote + 1);
 
@@ -865,9 +877,11 @@ std::string StringUtils::GetJsonEntryValue(std::string& json, std::string name)
 		return ret;
 
 	size_t end = (comma < brace) ? comma : brace;
+	if (json[end - 1] == '"')
+		end--;
 
 	//chop the chars to the output, fuck substr
-	for (size_t i = start+1; i < end-1; i++)
+	for (size_t i = start+1; i < end; i++)
 		ret += json[i];
 
 	//ret = substr(start+1, end - start);
