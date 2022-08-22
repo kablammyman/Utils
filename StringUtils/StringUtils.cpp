@@ -1,4 +1,6 @@
 #include "StringUtils.h"
+#include <fstream>
+
 #include <ctime>//for time  in random string method
 #ifndef _WIN32
 #include <cstring> //strtok_r
@@ -1290,4 +1292,165 @@ std::string StringUtils::UrlDecode(std::string urlEncoded)
 std::string StringUtils::UnEscapeString(std::string origString)
 {
 	return "";
+}
+std::string StringUtils::GetRandomWord(std::vector <std::string> &words)
+{
+	//srand(time(0));
+	//int index = rand() % words.size();
+	srand(time(nullptr));
+	int index = rand() % words.size() - 1;
+
+	return words[index];
+}
+//---------------------------------------------------------------------------------------------------------------
+int StringUtils::InsertMultilineInput(std::string replaceMe, std::string lines, int index, std::string newText)
+{
+	/*linez = PropertyHelper.CreateRTFLineBreak(addy)
+
+	for i in range(0, len(linez)) :
+	line = lines[index]
+
+	if i == 0 :
+	line = line.replace(replaceMe, linez[i])
+
+	else:
+	line = lines[index] + linez[i]
+
+	index += 1
+
+	offerLetter.write(line + "\n")
+
+	return index*/
+	return 0;
+}
+//---------------------------------------------------------------------------------------------------------------
+std::string StringUtils::ReplaceTagForValue(std::string input, DocumentTags tagMap)
+{
+	//no need to do anything if theres no tags on this line
+	if (input.find("[") == std::string::npos)
+		return input;
+	for (size_t i = 0; i < tagMap.GetDistinctTagCount(); i++)
+	{
+		//now get rid of html tags
+		size_t found = input.find("[");
+		while (found != std::string::npos)
+		{
+			std::string curTag = CopyCharsBetweenChars(input, '[', ']', found);
+			if (curTag.empty())//empty tag
+				found++;
+			else
+			{
+				std::string newWord;
+				//now tags can have words that we can "rotate" or get a random one from the list.
+				//this word does not have to be in the map
+				if (curTag.find('|') != std::string::npos)
+				{
+					std::vector<std::string>words = Tokenize(curTag, '|');
+					newWord = GetRandomWord(words);
+				}
+				else
+					newWord = tagMap.GetTagValue(curTag);
+				input = FindAndReplace(input, "[" + curTag + "]", newWord);
+			}
+
+			found = input.find("[", found + 1);
+		}
+
+		/*std::size_t found = input.find(tagMap.GetTagNameAt(i));
+		if (found != string::npos)
+		{
+		string newValue = tagMap.GetTagValueAt(i);
+
+		//if type(newValue) is float :
+		//newValue = "{:,.2f}".format(newValue)
+
+		input.replace(found, newValue.size(),newValue );
+		}*/
+	}
+	return input;
+}
+
+//---------------------------------------------------------------------------------------------------------------
+std::map<std::string, int> StringUtils::GetAllTagsInFile(std::string filePath)
+{
+	std::map<std::string, int> tagMap;
+	std::map<std::string, int>::iterator it;
+
+	std::string	line;
+	int index = 0;
+	int lineNum = 0;
+	std::ifstream templateFile;
+	templateFile.open(filePath, std::fstream::in);
+	if (!templateFile.is_open())
+	{
+		templateFile.close();
+		printf("CountTagsInFile: couldnt open: %s", filePath.c_str());
+		return tagMap;
+	}
+
+	size_t tagOpen;
+	while (getline(templateFile, line))
+	{
+		lineNum++;
+		index = 0;
+		tagOpen = 0;
+		while (tagOpen < line.size())
+		{
+			std::string tag = GetDataBetweenChars(line, '[', ']', tagOpen);
+
+			if (tag.empty())
+				continue;
+
+			it = tagMap.find(tag);
+
+			//not int he map, add it
+			if (it != tagMap.end())
+			{
+				tagMap[tag] = 1;
+			}
+			//else add to num times we seen this tag
+			else
+			{
+				tagMap[tag]++;
+			}
+		}
+
+	}
+
+	templateFile.close();
+	return tagMap;
+}
+//---------------------------------------------------------------------------------------------------------------
+void StringUtils::LoadRotatorMessagesFromFile(std::string file, std::vector<std::string> &messages)
+{
+
+	std::ifstream templateFile;
+
+	templateFile.open(file, std::fstream::in);
+
+	if (!templateFile.is_open())
+	{
+		printf("LoadRotatorMessagesFromFile error 1: couldnt open template: %s\n", file.c_str());
+		return;
+	}
+
+
+	//put all of the file into 1 string for easy parsing
+	std::string data((std::istreambuf_iterator<char>(templateFile)),
+		std::istreambuf_iterator<char>());
+	size_t i = 0;
+
+
+	while (i < data.size())
+	{
+		i = data.find("<START>", i);
+
+		if (i != std::string::npos)
+		{
+			std::string curMessage = StringUtils::GetDataBetweenSubStrings(data, "<START>", "<END>", i);
+			i += 8;//move it passed the start token to find the next start
+			messages.push_back(curMessage);
+		}
+	}
+	templateFile.close();
 }

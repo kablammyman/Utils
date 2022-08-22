@@ -2,6 +2,8 @@
 
 #include <vector>
 #include <string>
+#include <map>
+#include "DocumentTags.h"
 
 class StringUtils
 {
@@ -88,4 +90,10 @@ public:
 	static bool IsValidPhone(std::string phone);
 	static std::string UrlDecode(std::string urlEncoded);
 	static std::string UnEscapeString(std::string origString);
+
+	static std::map<std::string, int> GetAllTagsInFile(std::string filePath);
+	static void LoadRotatorMessagesFromFile(std::string file, std::vector<std::string> &messages);
+	static std::string ReplaceTagForValue(std::string input, DocumentTags tagMap);
+	static int InsertMultilineInput(std::string replaceMe, std::string lines, int index, std::string newText);
+	static std::string GetRandomWord(std::vector <std::string> &lists);
 };

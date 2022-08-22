@@ -1,5 +1,6 @@
 #include "FileUtils.h"
 #include "directory.h"
+#include "StringUtils.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -615,4 +616,45 @@ int FileUtils::Test()
 		return 3;
 
 	return 2;
+}
+
+//---------------------------------------------------------------------------------------------------------------
+void FileUtils::CreateNewFileFromTagTemaplateFile(string templatePath, string newFilePath, DocumentTags tagMap)
+{
+
+	//if not os.path.exists(outputFolderBase):
+	//	os.makedirs(outputFolderBase)
+
+	ifstream templateFile;
+	ofstream newFile;
+
+	templateFile.open(templatePath, std::fstream::in);
+	newFile.open(newFilePath, std::fstream::out);
+
+	if (!templateFile.is_open())
+	{
+		templateFile.close();
+		printf("CreateNewFileFromTagTemaplateFile error 1: couldnt open template: %s\n", templatePath.c_str());
+		return;
+	}
+
+	//when you ha e 2 paercels in one deal, this needs to change, otherwise you get this:
+	//\\SERVER\documents\land investing\parcels\Texas\Henderson\R000054401 R000054402\Documents\sellDeed_Frances A. Moinet.rtf
+	if (!newFile.is_open())
+	{
+		newFile.close();
+		printf("CreateNewFileFromTagTemaplateFile error 2: couldnt open new file: %s\n", newFilePath.c_str());
+		return;
+	}
+
+	string line;
+	int wordListIndex = 0;
+	while (getline(templateFile, line))
+	{
+		string newLine = StringUtils::ReplaceTagForValue(line, tagMap);
+		newFile << newLine << endl;
+	}
+
+	templateFile.close();
+	newFile.close();
 }

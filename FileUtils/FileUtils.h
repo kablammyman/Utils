@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <list>
+#include "DocumentTags.h"
 
 using namespace std;
 
@@ -76,5 +77,7 @@ public:
 
 	static bool CreateNewDir(string path);
 	static  int Test();
+
+	static void CreateNewFileFromTagTemaplateFile(std::string templatePath, std::string newFilePath, DocumentTags tagMap);
 		
 };
