@@ -15,6 +15,10 @@ class TaggingUtils : public BaseDBInterface
 	static const std::string TAGS_TABLE;
 	static const std::string ITEMS_TABLE;
 	static const std::string ITEM_TAGS_TABLE;
+	
+	std::string itemTableName;
+	std::string itemNameColName;
+	std::string itemContentColName;
 	//bool hasCustomItemFields;
 public:
 	//inherit from me if you use a custom item table (meaning you have more than a content field)
@@ -24,14 +28,14 @@ public:
 		int id;
 		std::string content;
 	};
+	TaggingUtils();
 	using BaseDBInterface::BaseDBInterface;
-	std::string dbName;
-	
+	//std::string dbName;
+	void OverrideItemTable(std::string newItemTable, std::string newNameCol, std::string newCotentName);
 	//i rleaized that often times, I will already have a table for items (customer, owner, etc)
 	//so having a 2nd table with the same info is dumb. 
 	//so before I get rid of item table stuff completely, let me override the code and make sure im right
-	std::string itemTableNameOverride;
-
+	
 	void CreateTagTables();
 	void CreateTagTables(std::vector<DatabaseController::dbDataPair> &extraInfo);
 

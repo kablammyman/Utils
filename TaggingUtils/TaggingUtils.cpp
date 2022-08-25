@@ -7,11 +7,26 @@ const std::string TaggingUtils::TAGS_TABLE = "Tags";
 const std::string TaggingUtils::ITEMS_TABLE = "Items";
 const std::string TaggingUtils::ITEM_TAGS_TABLE = "ItemTags";
 
+TaggingUtils::TaggingUtils()
+{
+	itemTableName = "Items";
+	itemNameColName = "Name";
+	itemContentColName = "Content";
+}
+
+void TaggingUtils::OverrideItemTable(std::string newItemTable, std::string newNameCol, std::string newCotentName)
+{
+	itemTableName = newItemTable;
+	itemNameColName = newNameCol;
+	itemContentColName = newCotentName;
+}
 void TaggingUtils::CreateTagTables()
 {
 	vector<DatabaseController::dbDataPair> extraInfo;
 	CreateTagTables(extraInfo);
 }
+
+
 
 void TaggingUtils::CreateTagTables(vector<DatabaseController::dbDataPair> &extraInfo)
 {
@@ -92,7 +107,7 @@ int TaggingUtils::AddOrUpdateItems(std::string itemName,vector<DatabaseControlle
 	vector<DatabaseController::dbDataPair> data;
 	if(id > -1)
 		DatabaseController::AddIntDataToQuerey(data, "ID",id);
-	DatabaseController::AddStringDataToQuerey(data, "Name",itemName);
+	DatabaseController::AddStringDataToQuerey(data, itemNameColName,itemName);
 	for(size_t i = 0; i < extraInfo.size(); i++)
 	{
 		data.push_back(extraInfo[i]);
@@ -102,7 +117,7 @@ int TaggingUtils::AddOrUpdateItems(std::string itemName,vector<DatabaseControlle
 	int oldID = GetItemId(itemName);
 	if (oldID == -1)
 	{
-		if (!dbController->InsertNewDataEntry(ITEMS_TABLE, data, output))
+		if (!dbController->InsertNewDataEntry(itemTableName, data, output))
 		{
 			if (dbController->GetLastError() != "")
 			{
@@ -116,7 +131,7 @@ int TaggingUtils::AddOrUpdateItems(std::string itemName,vector<DatabaseControlle
 	else
 	{
 		DatabaseController::dbDataPair whereClause = make_pair("ID",to_string(oldID));
-		if (!dbController->UpdateEntry(ITEMS_TABLE, data, whereClause, output))
+		if (!dbController->UpdateEntry(itemTableName, data, whereClause, output))
 		{
 			if (dbController->GetLastError() != "")
 			{
@@ -135,12 +150,12 @@ int TaggingUtils::AddOrUpdateItem(std::string itemName,std::string content )
 
 	int itemID = GetItemId(itemName);
 	
-	DatabaseController::AddStringDataToQuerey(data, "Name", itemName);
-	DatabaseController::AddStringDataToQuerey(data, "Content", content);
+	DatabaseController::AddStringDataToQuerey(data, itemNameColName, itemName);
+	DatabaseController::AddStringDataToQuerey(data, itemContentColName, content);
 
 	if (itemID == -1)
 	{
-		if (!dbController->InsertNewDataEntry(ITEMS_TABLE, data, output))
+		if (!dbController->InsertNewDataEntry(itemTableName, data, output))
 		{
 			if (dbController->GetLastError() != "")
 			{
@@ -153,7 +168,7 @@ int TaggingUtils::AddOrUpdateItem(std::string itemName,std::string content )
 	else
 	{
 		DatabaseController::dbDataPair whereClause = make_pair("ID", to_string(itemID));
-		if (!dbController->UpdateEntry(ITEMS_TABLE, data, whereClause, output))
+		if (!dbController->UpdateEntry(itemTableName, data, whereClause, output))
 		{
 			if (dbController->GetLastError() != "")
 			{
@@ -169,7 +184,7 @@ bool TaggingUtils::DeleteItem(int itemID)
 {
 
 	string output;
-	string querey = "DELETE FROM " + ITEMS_TABLE + " WHERE ID = " + to_string(itemID);
+	string querey = "DELETE FROM " + itemTableName + " WHERE ID = " + to_string(itemID);
 	
 
 	if (itemID < 1)
@@ -203,7 +218,7 @@ bool TaggingUtils::DeleteItem(int itemID)
 //---------------------------------------------------------------------------------------------------------------
 bool TaggingUtils::DeleteItem(string itemName)
 {
-	int itemID = GetId(ITEMS_TABLE, itemName);
+	int itemID = GetId(itemTableName, itemName);
 	return DeleteItem(itemID);
 }
 //---------------------------------------------------------------------------------------------------------------
@@ -335,7 +350,7 @@ int TaggingUtils::GetTagId(std::string tagName)
 //---------------------------------------------------------------------------------------------------------------
 int TaggingUtils::GetItemId(std::string itemName)
 {
-	return GetId(ITEMS_TABLE, itemName);
+	return GetId(itemTableName, itemName);
 }
 //---------------------------------------------------------------------------------------------------------------
 int TaggingUtils::GetItemTagId(int itemID,int tagID)
@@ -357,12 +372,7 @@ vector<string> TaggingUtils::GetAllTagsForItem(int itemID)
 {
 	string output;
 	vector<string> ret;
-	string querey; 
-	if(itemTableNameOverride.empty())
-		querey = "SELECT t.Name FROM "+ITEM_TAGS_TABLE+" it, "+ITEMS_TABLE +" i, "+TAGS_TABLE+" t WHERE ";
-	else
-		querey = "SELECT t.Name FROM "+ITEM_TAGS_TABLE+" it, "+ itemTableNameOverride +" i, "+TAGS_TABLE+" t WHERE ";
-	
+	string querey = "SELECT t.Name FROM "+ITEM_TAGS_TABLE+" it, "+ itemTableName +" i, "+TAGS_TABLE+" t WHERE ";
 	querey += " it.ItemID = "+to_string(itemID)+" AND it.TagID = t.ID AND it.ItemID = i.ID";
 
 	if (!dbController->DoDBQuerey(querey,output))
@@ -398,7 +408,7 @@ TaggingUtils::TaggedItem TaggingUtils::GetItemFromID(int id)
 {
 	TaggedItem ret;
 	string output;
-	vector<string> itemFields = {"ID","Name","Content"};
+	vector<string> itemFields = {"ID",itemNameColName,itemContentColName };
 	string fields = StringUtils::FlattenVector(itemFields);
 	string querey = "SELECT " + fields +" FROM " + ITEMS_TABLE + " WHERE ID = " + to_string(id);
 	
@@ -418,8 +428,8 @@ TaggingUtils::TaggedItem TaggingUtils::GetItemFromID(int id)
 	DatabaseController::ParseDBOutput(output,itemFields, dbResults);
 
 	ret.id = id;
-	ret.content = dbResults[0].GetValueFromKey("Content");
-	ret.name = dbResults[0].GetValueFromKey("Name");
+	ret.content = dbResults[0].GetValueFromKey(itemContentColName);
+	ret.name = dbResults[0].GetValueFromKey(itemNameColName);
 
 	return ret;
 }
@@ -427,7 +437,7 @@ TaggingUtils::TaggedItem TaggingUtils::GetItemFromID(int id)
 vector<TaggingUtils::TaggedItem> TaggingUtils::GetAllItemsWithTag(string tag)
 {
 	vector<TaggedItem> ret;
-	//vector<string> itemFields = {"ID","Name","Content"};
+
 	int tagID = GetTagId(tag);
 	string output;
 	string querey = "SELECT ItemID FROM " + ITEM_TAGS_TABLE + " WHERE TagID = " + to_string(tagID);
@@ -507,7 +517,7 @@ vector<TaggingUtils::TaggedItem> TaggingUtils::GetAllItemsWithAnyOfTheseTags(vec
 vector<TaggingUtils::TaggedItem> TaggingUtils::GetAllItemsWithALLOfTheseTags(vector<string> tags)
 {
 	vector<TaggedItem> ret;
-	vector<string> itemFields = {"ID","Name"};
+	vector<string> itemFields = {"ID",itemNameColName };
 	string output;
 	string tagsString;
 	//cant use regular flatten becasue we need to surround each keyword with quotes
@@ -517,12 +527,7 @@ vector<TaggingUtils::TaggedItem> TaggingUtils::GetAllItemsWithALLOfTheseTags(vec
 	}
 	tagsString.pop_back();//remove last instance of comma
 
-	string querey;
-	if(itemTableNameOverride.empty())
-		querey = "SELECT b.* FROM ItemTags bt, Items b, Tags t WHERE bt.TagID = t.ID ";
-	else
-		querey = "SELECT b.* FROM ItemTags bt, " + itemTableNameOverride +" b, Tags t WHERE bt.TagID = t.ID ";
-	
+	string querey = "SELECT b.* FROM ItemTags bt, " + itemTableName +" b, Tags t WHERE bt.TagID = t.ID ";
 	querey += " AND (t.name IN ( " + tagsString + ")) AND b.ID = bt.ItemID GROUP BY b.ID HAVING COUNT( b.ID )= "+ to_string(tags.size());
 	
 
@@ -549,7 +554,7 @@ vector<TaggingUtils::TaggedItem> TaggingUtils::GetAllItemsWithALLOfTheseTags(vec
 		TaggedItem nextItem;
 		nextItem.id = dbResults[i].GetIntValueFromKey("ID");
 		//nextItem.content = dbResults[i].GetValueFromKey("Content");
-		nextItem.name = dbResults[i].GetValueFromKey("Name");
+		nextItem.name = dbResults[i].GetValueFromKey(itemNameColName);
 		ret.push_back(nextItem);
 	}
 
