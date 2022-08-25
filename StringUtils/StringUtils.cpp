@@ -1299,7 +1299,10 @@ std::string StringUtils::GetRandomWord(std::vector <std::string> &words)
 	//int index = rand() % words.size();
 	srand(time(nullptr));
 	int index = rand() % words.size() - 1;
-
+	if (index < 0)
+		index = 0;
+	if (index >= words.size())
+		index = words.size() - 1;
 	return words[index];
 }
 //---------------------------------------------------------------------------------------------------------------
