@@ -183,6 +183,20 @@ void DateTime::Time::DecTime(DateTime::Time& otherTime)
 	SetTimeFromSeconds(totalSeconds);
 }
 
+void DateTime::Time::IncTime(std::string timeString)
+{
+	DateTime::Time time;
+	time.SetTimeFromString(timeString);
+	IncTime(time);
+}
+
+void DateTime::Time::DecTime(std::string timeString)
+{
+	DateTime::Time time;
+	time.SetTimeFromString(timeString);
+	DecTime(time);
+}
+
 DateTime::Time DateTime::Time::TimeDiff(DateTime::Time& otherTime)
 {
 	//the times we have should already be in 24hr format...so we aint checking!

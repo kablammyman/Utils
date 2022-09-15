@@ -23,6 +23,10 @@ public:
 		bool IsEmpty() const;
 		void IncTime(Time& otherTime);
 		void DecTime(Time& otherTime);
+		void IncTime(std::string timeString);
+		void DecTime(std::string timeString);
+
+
 		Time TimeDiff(Time& otherTime);
 		int GetTimeInSeconds();
 		void SetTimeFromSeconds(int seconds);
