@@ -75,6 +75,7 @@ public:
 	static int GetJsonEntryIntValue(std::string& json, std::string name);
 	static float GetJsonEntryFloatValue(std::string& json, std::string name);
 	static bool GetJsonEntryBoolValue(std::string& json, std::string name);
+	static void RemoveLastCommaFromJson(std::string &json);
 
 	static float GetFloatFromString(std::string str);
 	static double GetDoubleFromString(std::string str);

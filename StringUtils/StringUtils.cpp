@@ -927,7 +927,15 @@ bool StringUtils::GetJsonEntryBoolValue(std::string& json, std::string name)
 	return false;
 }
 
-
+void StringUtils::RemoveLastCommaFromJson(std::string &json)
+{
+	size_t comma = json.find_last_of(',');
+	//size_t bracket = json.find_last_of('[');
+	if (comma != std::string::npos/* && comma > bracket*/)
+	{
+		json[comma] = ' ';
+	}
+}
 std::string StringUtils::CreateJsonNestedObjectEntry(std::string name, std::vector<std::pair <std::string, std::string>> entries, bool noQuotes)
 {
 	std::string ret;
