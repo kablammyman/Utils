@@ -1090,6 +1090,20 @@ std::string StringUtils::ToMoneyString(float amount, bool prettyPrint)
 	return ret;
 }
 
+std::string StringUtils::ToPercentString(float amount, bool convertFloatToPercet)
+{
+	char charBuffer[8];//xx.xx%
+	std::string ret;
+	
+	if(convertFloatToPercet)
+		amount *= 100;
+
+	sprintf(charBuffer, "%.2f", amount);
+	ret = charBuffer;
+	ret += "%";
+	return ret;
+}
+
 std::string StringUtils::GetRandomAlphaNumericString(int size)
 {
 
