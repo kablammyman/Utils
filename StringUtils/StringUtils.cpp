@@ -881,9 +881,10 @@ std::string StringUtils::GetJsonEntryValue(std::string& json, std::string name)
 	size_t end = (comma < brace) ? comma : brace;
 	if (json[end - 1] == '"')
 		end--;
-
+	if (quote < comma)
+		start++;
 	//chop the chars to the output, fuck substr
-	for (size_t i = start+1; i < end; i++)
+	for (size_t i = start; i < end; i++)
 		ret += json[i];
 
 	//ret = substr(start+1, end - start);
