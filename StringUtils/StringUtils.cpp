@@ -1273,17 +1273,21 @@ bool StringUtils::IsValidPhone(std::string phone)
 	if (phone.size() < 10)
 		return false;
 
-	int numberCounter = 0;
+	//you can trick the system by padding the spaces between numbers with any char. is this a problem?
+	std::string acutalPhone;
+
 	for (size_t i = 0; i < phone.size(); i++)
 	{
 		if (isdigit(phone[i]))
-			numberCounter++;
+		{
+			acutalPhone += phone[i];
+		}
 	}
-	if (numberCounter == 10)
+	if (acutalPhone.size() == 10)
 		return true;
 
 	//if we have a 1 in front it will be 11 digits
-	if (numberCounter == 11 && phone[0] == '1')
+	if (acutalPhone.size() == 11 && acutalPhone[0] == '1')
 		return true;
 
 	return false;
