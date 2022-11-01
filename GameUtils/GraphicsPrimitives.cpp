@@ -326,6 +326,7 @@ void PIXMAP::DrawScaledCopy(PIXMAP *dest, int xPos, int yPos, unsigned int Width
 	debugPixel.g = 0;
 	debugPixel.b = 255;
 	debugPixel.a = 255;
+	int pixSize = w*h;
 	for (int y = startY; y < vertSPanOfPix; y++) //Run across all Y pixels.
 	{
 		for (int x = startX; x < numHorizPixelsToDraw; x++) //Run across all X pixels.
@@ -337,7 +338,10 @@ void PIXMAP::DrawScaledCopy(PIXMAP *dest, int xPos, int yPos, unsigned int Width
 					destX = xPos + ((_stretch_factor_x * x) + o_x);
 					destY = yPos + ((_stretch_factor_y * y) + o_y);
 
-					if (destX > dest->w || destY > dest->h || destX < 0 || destY < 0)
+					//if (destX > dest->w || destY > dest->h || destX < 0 || destY < 0)
+					//	continue;
+					
+					if ((y * w + x) > (w*h))
 						continue;
 
 					curPixel = &pixels[y * w + x];
