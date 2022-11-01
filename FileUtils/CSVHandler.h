@@ -49,5 +49,6 @@ public:
 	bool IsEntryInCSV(std::string headerName, std::string value);
 	int GetHeaderIndex(std::string headerName);
 	//void SetSaveDataInMemFlag(bool saveInMem);//not sure if this is needed
-
+	void DeleteAllEntriesInMem();
+	void DeleteEntry(int index);
 };

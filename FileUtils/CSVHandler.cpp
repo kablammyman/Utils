@@ -336,3 +336,14 @@ bool CSVHandler::IsEntryInCSV(std::string headerName, std::string value)
 	}
 	return false;
 }
+
+void CSVHandler::DeleteAllEntriesInMem()
+{
+	csvEntry.clear();
+}
+void CSVHandler::DeleteEntry(int index)
+{
+	if (index < 0 || index > csvEntry.size() - 1)
+		return;
+	csvEntry.erase(csvEntry.begin() + (index - 1));
+}

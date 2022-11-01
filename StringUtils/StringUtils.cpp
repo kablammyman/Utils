@@ -886,9 +886,10 @@ std::string StringUtils::GetJsonEntryValue(std::string& json, std::string name)
 	size_t end = (comma < brace) ? comma : brace;
 	if (json[end - 1] == '"')
 		end--;
-
+	if (quote < comma)
+		start++;
 	//chop the chars to the output, fuck substr
-	for (size_t i = start+1; i < end; i++)
+	for (size_t i = start; i < end; i++)
 		ret += json[i];
 
 	//ret = substr(start+1, end - start);
@@ -1095,6 +1096,20 @@ std::string StringUtils::ToMoneyString(float amount, bool prettyPrint)
 	return ret;
 }
 
+std::string StringUtils::ToPercentString(float amount, bool convertFloatToPercet)
+{
+	char charBuffer[8];//xx.xx%
+	std::string ret;
+	
+	if(convertFloatToPercet)
+		amount *= 100;
+
+	sprintf(charBuffer, "%.2f", amount);
+	ret = charBuffer;
+	ret += "%";
+	return ret;
+}
+
 std::string StringUtils::GetRandomAlphaNumericString(int size)
 {
 
@@ -1263,17 +1278,21 @@ bool StringUtils::IsValidPhone(std::string phone)
 	if (phone.size() < 10)
 		return false;
 
-	int numberCounter = 0;
+	//you can trick the system by padding the spaces between numbers with any char. is this a problem?
+	std::string acutalPhone;
+
 	for (size_t i = 0; i < phone.size(); i++)
 	{
 		if (isdigit(phone[i]))
-			numberCounter++;
+		{
+			acutalPhone += phone[i];
+		}
 	}
-	if (numberCounter == 10)
+	if (acutalPhone.size() == 10)
 		return true;
 
 	//if we have a 1 in front it will be 11 digits
-	if (numberCounter == 11 && phone[0] == '1')
+	if (acutalPhone.size() == 11 && acutalPhone[0] == '1')
 		return true;
 
 	return false;

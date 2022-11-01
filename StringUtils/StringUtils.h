@@ -81,6 +81,7 @@ public:
 	static double GetDoubleFromString(std::string str);
 	static int GetIntFromString(std::string str);
 	static std::string ToMoneyString(float amount, bool prettyPrint = true);
+	static std::string ToPercentString(float amount, bool convertFloatToPercet = true);
 	static std::string GetRandomAlphaNumericString(int size);
 	static int HammingDistance(std::string str1, std::string str2);
 	static std::string LongestCommonSubStr(std::string str1, std::string str2);
