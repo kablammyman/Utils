@@ -267,8 +267,7 @@ int StringUtils::GetStandAloneWordInLineIndex(std::string line,std::string word)
 		}
 		else
 		{
-			//why am i doing this if statement???
-		//	if (! isalpha(line[start]) && !isalpha(line[end]))							
+			if (  !isalpha(line[start]) && !isalpha(line[end]))
 				return (int)start;
 		}
 	}
@@ -627,6 +626,12 @@ void StringUtils::SanitizeJsonString(std::string& value)
 {
 	if (value.empty())
 		return;
+
+	if (value.size() == 1 && value[0] == '\0')
+	{
+		value.clear();
+		return;
+	}
 
 	std::string ret = "";
 	//std::string correct = "lineone\\nline2";
@@ -1290,7 +1295,10 @@ std::string StringUtils::UrlDecode(std::string urlEncoded)
 		}
 		else
 		{
-			ret += urlEncoded[i];
+			if (urlEncoded[i] == '+')
+				ret += " ";
+			else
+				ret += urlEncoded[i];
 			i++;
 		}
 	}

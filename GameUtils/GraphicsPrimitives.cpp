@@ -321,6 +321,11 @@ void PIXMAP::DrawScaledCopy(PIXMAP *dest, int xPos, int yPos, unsigned int Width
 	unsigned int destX;
 	unsigned int destY;
 	RGBA *curPixel;
+	RGBA debugPixel;
+	debugPixel.r = 255;
+	debugPixel.g = 0;
+	debugPixel.b = 255;
+	debugPixel.a = 255;
 	for (int y = startY; y < vertSPanOfPix; y++) //Run across all Y pixels.
 	{
 		for (int x = startX; x < numHorizPixelsToDraw; x++) //Run across all X pixels.
@@ -336,11 +341,17 @@ void PIXMAP::DrawScaledCopy(PIXMAP *dest, int xPos, int yPos, unsigned int Width
 						continue;
 
 					curPixel = &pixels[y * w + x];
-
-					newPixLoc = destY * dest->w + destX;
-					if (newPixLoc < dest->GetNumPixels()-1)
-						dest->pixels[newPixLoc] = *curPixel;
-					//std::memcpy(curPixel, &dest->pixels[destY * dest->w + destX], _stretch_factor_x * sizeof(RGBA));
+					if (curPixel != nullptr)
+					{
+						newPixLoc = destY * dest->w + destX;
+						if (newPixLoc < dest->GetNumPixels() - 1)
+							dest->pixels[newPixLoc] = *curPixel;
+						//std::memcpy(curPixel, &dest->pixels[destY * dest->w + destX], _stretch_factor_x * sizeof(RGBA));
+					}
+					else
+					{
+						dest->pixels[newPixLoc] = debugPixel;
+					}
 				}
 			}
 		}
