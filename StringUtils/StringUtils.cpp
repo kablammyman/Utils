@@ -214,9 +214,11 @@ std::string StringUtils::GetDataBetweenSubStrings(std::string line, std::string 
 	return returnString;
 }
 
-void StringUtils::StringSplit(std::string orig, std::string &str1, std::string &str2, size_t index)
+void StringUtils::StringSplit(std::string orig, std::string &str1, std::string &str2, size_t index, bool removeIndexChar)
 {
 	str1 = orig.substr(0, index);
+	if (removeIndexChar)
+		index++;
 	str2 = orig.substr(index, orig.size());
 }
 

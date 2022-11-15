@@ -312,6 +312,34 @@ void DateTime::ParseDateString(std::string dateString)
 		myTime.SetTimeFromString(tokens.back());
 	}
 }
+
+void DateTime::ParseISO8601DateString(std::string dateString)
+{
+	//2022-10-31T22:28:02.746037Z
+	std::string date, time,hrMin,s,minStr,hrStr,secStr,mili;
+
+
+	StringUtils::StringSplit(dateString, date, time, 10, true);//10 is pos of the 'T' seperator
+	
+	StringUtils::StringSplit(time, hrMin, secStr, 5,true);//5 is pos of the '.' seperator
+	StringUtils::StringSplit(hrMin, hrStr, minStr, 2, true);//5 is pos of the ':' seperator
+	size_t pos = secStr.find('.');
+	if (pos != std::string::npos)
+		StringUtils::StringSplit(secStr, s, mili, pos, true);//5 is pos of the '.' seperator
+	else
+		s = "0";
+
+	std::vector<std::string> dateTokens = StringUtils::Tokenize(date,'-');
+	year = StringUtils::GetIntFromString(dateTokens[0]);
+	month = StringUtils::GetIntFromString(dateTokens[1]); 
+	day = StringUtils::GetIntFromString(dateTokens[2]);
+
+	myTime.hour = StringUtils::GetIntFromString(hrStr);
+	myTime.minute = StringUtils::GetIntFromString(minStr);
+	myTime.second = StringUtils::GetIntFromString(s);
+	//myTime.SetTimeFromString(dateTokens[4]);
+}
+
 //this is the format that bluehost emails are in...maybe all emails?
 void DateTime::ParseEmailDateString(std::string dateString)
 {
