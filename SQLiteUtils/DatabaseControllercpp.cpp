@@ -758,7 +758,7 @@ void DatabaseController::RemoveTableNameFromOutput(string &inputData, int numCol
 	for (size_t i = 0; i < temp.size(); i++)
 	{
 		if (counter == colToUse)
-			returnData.push_back(atoi(temp[i].c_str()));
+			returnData.push_back(StringUtils::GetIntFromString(temp[i]));
 		//x2 becasue it goes colName|data, we only want the data, not the col name
 		if (counter < (numCols * 2))
 			counter++;

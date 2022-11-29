@@ -1299,15 +1299,20 @@ bool StringUtils::IsValidPhone(std::string phone)
 
 	return false;
 }
-
-std::string StringUtils::UrlDecode(std::string urlEncoded)
+bool IsCharHexValue(char val)
+{
+	if ((val >= 48 && val <= 57) || (val >= 65 && val <= 70))
+		return true;
+	return false;
+}
+std::string StringUtils::UrlDecode(std::string urlEncoded,char delim)
 {
 	std::string ret;
 	char inBytes[2];
 	size_t i = 0;
 	while( i < urlEncoded.size())
 	{
-		if (urlEncoded[i] == '%')
+		if (urlEncoded[i] == delim && IsCharHexValue(urlEncoded[i+1]) && IsCharHexValue(urlEncoded[i + 2]))
 		{
 			inBytes[0] = urlEncoded[i + 1];
 			inBytes[1] = urlEncoded[i + 2];
