@@ -240,7 +240,9 @@ DateTime::DateTime(int y, int m, int d)
 }
 DateTime::DateTime(int y, int m, int d, int h, int min, int s)
 {
-	DateTime(y, m, d);
+	year = y;
+	month = m;
+	day = d;
 	myTime.Init(h,min,s);
 }
 DateTime::DateTime(std::string date)
@@ -892,6 +894,8 @@ std::string DateTime::PrintFormattedString(std::string format)
 				ret += DigitToString(myTime.hour);
 			else if (format[i] == 'M') //big M is minute? okay python...
 				ret += DigitToString(myTime.minute);
+			else if (format[i] == 's') //
+				ret += DigitToString(myTime.second);
 			else
 				ret += format[i];
 		}
