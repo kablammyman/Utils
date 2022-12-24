@@ -225,6 +225,12 @@ void DateTime::Time::SetTimeFromSeconds(int totalSeconds)
 	second = totalSeconds % 60;
 }
 
+void DateTime::Time::SetTimeFromMilis(int mili)
+{
+	float totalSeconds = ((float)mili / (float)1000);
+	SetTimeFromSeconds((int) std::round(totalSeconds));
+}
+
 
 DateTime::DateTime()
 {
@@ -542,14 +548,19 @@ DateTime DateTime::operator=(const DateTime& d)
 	this->myTime.second = d.myTime.second;
 	return *this;
 }
+bool DateTime::IsDateEqual(const DateTime& d)
+{
+	if (this->year == d.year &&
+		this->month == d.month &&
+		this->day == d.day)
+		return true;
+	return false;
+}
 bool DateTime::operator==(const DateTime& d)
 {
 	if (myTime.IsEmpty() || d.myTime.IsEmpty())
 	{
-		if (this->year == d.year &&
-			this->month == d.month &&
-			this->day == d.day)
-			return true;
+		return IsDateEqual(d);
 	}
 	if (this->year == d.year &&
 		this->month == d.month &&

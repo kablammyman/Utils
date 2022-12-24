@@ -30,6 +30,7 @@ public:
 		Time TimeDiff(Time& otherTime);
 		int GetTimeInSeconds();
 		void SetTimeFromSeconds(int seconds);
+		void SetTimeFromMilis(int mili);
 		void Clear();
 		bool operator==(const Time& t);
 		bool operator!=(const Time& t);
@@ -66,6 +67,8 @@ public:
 
 	static std::string Now();
 	static std::string PrettyPrintNow();
+	
+	bool IsDateEqual(const DateTime& d);//use this for comparing dates only when the objs has a time element
 
 	DateTime operator=(const DateTime& d);
 	bool operator==(const DateTime& d);
@@ -86,6 +89,7 @@ public:
 	void DecMonth(int amt);
 	
 	int ConvertDateTimeIntoSeconds();
+	
 
 	std::string GetMonthAbrv(); //Jan
 	void SetMonthFromAbrv(std::string month); //Jan
