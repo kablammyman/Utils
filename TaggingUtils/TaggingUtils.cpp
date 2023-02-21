@@ -6,10 +6,11 @@ using namespace std;
 const std::string TaggingUtils::TAGS_TABLE = "Tags";
 const std::string TaggingUtils::ITEMS_TABLE = "Items";
 const std::string TaggingUtils::ITEM_TAGS_TABLE = "ItemTags";
+const std::string TaggingUtils::DEFAULT_ITEM_TABLE_NAME = TaggingUtils::ITEMS_TABLE;
 
 TaggingUtils::TaggingUtils()
 {
-	itemTableName = "Items";
+	itemTableName = DEFAULT_ITEM_TABLE_NAME;
 	itemNameColName = "Name";
 	itemContentColName = "Content";
 }
@@ -145,40 +146,49 @@ int TaggingUtils::AddOrUpdateItems(std::string itemName,vector<DatabaseControlle
 //---------------------------------------------------------------------------------------------------------------
 int TaggingUtils::AddOrUpdateItem(std::string itemName,std::string content )
 {
+	
 	string output;
 	vector<DatabaseController::dbDataPair> data;
-
-	int itemID = GetItemId(itemName);
 	
-	DatabaseController::AddStringDataToQuerey(data, itemNameColName, itemName);
-	DatabaseController::AddStringDataToQuerey(data, itemContentColName, content);
-
-	if (itemID == -1)
+	//the issue is when this is used for a table that is not "item" it causes problems!
+	//it should not add to a table not named DEFAULT_ITEM_TABLE_NAME
+	if (itemTableName == DEFAULT_ITEM_TABLE_NAME)
 	{
-		if (!dbController->InsertNewDataEntry(itemTableName, data, output))
-		{
-			if (dbController->GetLastError() != "")
-			{
-				lastError.errorMessage = "AddOrUpdateItem error: " + dbController->GetLastError();
-			}
-		}
+		int itemID = GetItemId(itemName);
 
-		return dbController->GetLatestRowID();
-	}
-	else
-	{
-		DatabaseController::dbDataPair whereClause = make_pair("ID", to_string(itemID));
-		if (!dbController->UpdateEntry(itemTableName, data, whereClause, output))
+		DatabaseController::AddStringDataToQuerey(data, itemNameColName, itemName);
+		DatabaseController::AddStringDataToQuerey(data, itemContentColName, content);
+
+		if (itemID == -1)
 		{
-			if (dbController->GetLastError() != "")
+			if (!dbController->InsertNewDataEntry(itemTableName, data, output))
 			{
-				lastError.errorMessage = "AddOrUpdateItems error: " + dbController->GetLastError();
-				return -1;
+				if (dbController->GetLastError() != "")
+				{
+					lastError.errorMessage = "AddOrUpdateItem error: " + dbController->GetLastError();
+				}
 			}
+
+			return dbController->GetLatestRowID();
 		}
-		return itemID;
+		else
+		{
+			DatabaseController::dbDataPair whereClause = make_pair("ID", to_string(itemID));
+			if (!dbController->UpdateEntry(itemTableName, data, whereClause, output))
+			{
+				if (dbController->GetLastError() != "")
+				{
+					lastError.errorMessage = "AddOrUpdateItems error: " + dbController->GetLastError();
+					return -1;
+				}
+			}
+			return itemID;
+		}
 	}
+	//if we get here, then we didnt do anything
+	return 0;
 }
+
 //---------------------------------------------------------------------------------------------------------------
 bool TaggingUtils::DeleteItem(int itemID)
 {

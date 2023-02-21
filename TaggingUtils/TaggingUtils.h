@@ -14,6 +14,7 @@ class TaggingUtils : public BaseDBInterface
 	int AddItemTagsEntry(int itemID,int tagID);
 	static const std::string TAGS_TABLE;
 	static const std::string ITEMS_TABLE;
+	static const std::string DEFAULT_ITEM_TABLE_NAME;
 	static const std::string ITEM_TAGS_TABLE;
 	
 	std::string itemTableName;
