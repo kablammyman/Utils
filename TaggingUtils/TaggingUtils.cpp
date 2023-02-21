@@ -216,6 +216,50 @@ bool TaggingUtils::DeleteItem(int itemID)
 	return true;
 }
 //---------------------------------------------------------------------------------------------------------------
+bool TaggingUtils::DeleteAllTagsForItem(int itemID)
+{
+
+	string output;
+	string querey = "DELETE FROM " + ITEM_TAGS_TABLE + " WHERE ItemID = " + to_string(itemID);
+	if (!dbController->DoDBQuerey(querey, output))
+	{
+		if (dbController->GetLastError() != "")
+		{
+			lastError.errorMessage = "delete item-tag error: " + dbController->GetLastError();
+			return false;
+		}
+	}
+
+	return true;
+}
+//---------------------------------------------------------------------------------------------------------------
+bool TaggingUtils::DeleteTagFromDB(int tagID)
+{
+
+	string output;
+	string querey = "DELETE FROM " + TAGS_TABLE + " WHERE ID = " + to_string(tagID);
+	if (!dbController->DoDBQuerey(querey, output))
+	{
+		if (dbController->GetLastError() != "")
+		{
+			lastError.errorMessage = "1st delete tag error: " + dbController->GetLastError();
+			return false;
+		}
+	}
+
+	querey = "DELETE FROM " + ITEM_TAGS_TABLE + " WHERE TagID = " + to_string(tagID);
+	if (!dbController->DoDBQuerey(querey, output))
+	{
+		if (dbController->GetLastError() != "")
+		{
+			lastError.errorMessage = "2nd delete tag error: " + dbController->GetLastError();
+			return false;
+		}
+	}
+
+	return true;
+}
+//---------------------------------------------------------------------------------------------------------------
 bool TaggingUtils::DeleteItem(string itemName)
 {
 	int itemID = GetId(itemTableName, itemName);
