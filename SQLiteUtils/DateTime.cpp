@@ -228,7 +228,7 @@ void DateTime::Time::SetTimeFromSeconds(int totalSeconds)
 void DateTime::Time::SetTimeFromMilis(int mili)
 {
 	float totalSeconds = ((float)mili / (float)1000);
-	SetTimeFromSeconds((int) std::round(totalSeconds));
+	SetTimeFromSeconds((int) /*std*/::round(totalSeconds));
 }
 
 
