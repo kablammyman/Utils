@@ -6,6 +6,11 @@
 #include <chrono>
 #include <thread>
 
+#ifndef _WIN32
+#include <cstring> //for strlen
+#include <sys/stat.h> //struct stat
+#endif
+
 using namespace std;
 vector<string> CurlUtils::curEmail;
 string CurlUtils::readBuffer = "";
@@ -35,7 +40,7 @@ int CurlUtils::HttpsPost(string url,vector<string> &headerOptions,  string postF
 		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postFields.c_str());
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-		
+
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
 
 		res = curl_easy_perform(curl);
@@ -94,13 +99,13 @@ int CurlUtils::DumpToFile(string filename, string data)
 /* NOTE: if you want this example to work on Windows with libcurl as a
 DLL, you MUST also provide a read callback with CURLOPT_READFUNCTION.
 Failing to do so will give you a crash since a DLL may not use the
-variable's memory when passed in to it from an app like this. */ 
+variable's memory when passed in to it from an app like this. */
 size_t CurlUtils::ftp_read_callback(void *ptr, size_t size, size_t nmemb, void *stream)
 {
 	curl_off_t nread;
 	/* in real-world cases, this would probably get this data differently
 	as this fread() stuff is exactly what the library already would do
-	by default internally */ 
+	by default internally */
 	size_t retcode = fread(ptr, size, nmemb, (FILE*)stream);
 
 	nread = (curl_off_t)retcode;
@@ -126,8 +131,8 @@ int CurlUtils::UploadToFTP(string ftpUrl, string username, string password, stri
 	string buf_1 = "RNFR " + whileUpload;
 	string buf_2 = "RNTO " + fileNameWithoutPath;
 
-	/* get the file size of the local file */ 
-	if(stat(localFile.c_str(), &file_info)) 
+	/* get the file size of the local file */
+	if(stat(localFile.c_str(), &file_info))
 	{
 		//cout << "Couldn't open " << localFile << endl;
 		return -1;
@@ -136,26 +141,29 @@ int CurlUtils::UploadToFTP(string ftpUrl, string username, string password, stri
 
 	printf("Local file size: %" CURL_FORMAT_CURL_OFF_T " bytes.\n", fsize);
 
-	/* get a FILE * of the same file */ 
+	/* get a FILE * of the same file */
+#if _WIN32
 	fopen_s(&hd_src,localFile.c_str(), "rb");
-
-	/* In windows, this will init the winsock stuff */ 
+#else
+    hd_src = fopen(localFile.c_str(), "rb");
+#endif
+	/* In windows, this will init the winsock stuff */
 	curl_global_init(CURL_GLOBAL_ALL);
 
-	/* get a curl handle */ 
+	/* get a curl handle */
 	curl = curl_easy_init();
 	if(curl) {
-		/* build a list of commands to pass to libcurl */ 
+		/* build a list of commands to pass to libcurl */
 		headerlist = curl_slist_append(headerlist, buf_1.c_str());
 		headerlist = curl_slist_append(headerlist, buf_2.c_str());
 
-		/* we want to use our own read function */ 
+		/* we want to use our own read function */
 		curl_easy_setopt(curl, CURLOPT_READFUNCTION, ftp_read_callback);
 
-		/* enable uploading */ 
+		/* enable uploading */
 		curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
 
-		/* specify target */ 
+		/* specify target */
 		curl_easy_setopt(curl, CURLOPT_URL, ftpUrl.c_str());
 
 		//create the dirs iof they dont exist
@@ -165,33 +173,33 @@ int CurlUtils::UploadToFTP(string ftpUrl, string username, string password, stri
 		string userPass = username + ":" + password;
 		curl_easy_setopt( curl, CURLOPT_USERPWD, userPass.c_str());
 
-		/* pass in that last of FTP commands to run after the transfer */ 
+		/* pass in that last of FTP commands to run after the transfer */
 		curl_easy_setopt(curl, CURLOPT_POSTQUOTE, headerlist);
 
-		/* now specify which file to upload */ 
+		/* now specify which file to upload */
 		curl_easy_setopt(curl, CURLOPT_READDATA, hd_src);
 
 		/* Set the size of the file to upload (optional).  If you give a *_LARGE
 		option you MUST make sure that the type of the passed-in argument is a
 		curl_off_t. If you use CURLOPT_INFILESIZE (without _LARGE) you must
-		make sure that to pass in a type 'long' argument. */ 
+		make sure that to pass in a type 'long' argument. */
 		curl_easy_setopt(curl, CURLOPT_INFILESIZE_LARGE,(curl_off_t)fsize);
 
-		/* Now run off and do what you've been told! */ 
+		/* Now run off and do what you've been told! */
 		res = curl_easy_perform(curl);
-		/* Check for errors */ 
+		/* Check for errors */
 		if (res != CURLE_OK)
 		{
 			fprintf(stderr, "curl_easy_perform() failed: %s\n",
 			curl_easy_strerror(res));
 		}
-		/* clean up the FTP commands list */ 
+		/* clean up the FTP commands list */
 		curl_slist_free_all(headerlist);
 
-		/* always cleanup */ 
+		/* always cleanup */
 		curl_easy_cleanup(curl);
 	}
-	fclose(hd_src); /* close the local file */ 
+	fclose(hd_src); /* close the local file */
 
 	curl_global_cleanup();
 	return (int)res;
@@ -199,7 +207,7 @@ int CurlUtils::UploadToFTP(string ftpUrl, string username, string password, stri
 
 //////////////////////////send email code/////////////////////////////////////////////////////
 //got this from stactoverflow
-const std::string CurrentDateTime() 
+const std::string CurrentDateTime()
 {
 	time_t     now = time(0);
 	struct tm  tstruct;
@@ -258,7 +266,7 @@ size_t CurlUtils::payload_source(void *ptr, size_t size, size_t nmemb, void *use
 	}*/
 	data = curEmail[upload_ctx->lines_read].c_str();
 
-	if(data) 
+	if(data)
 	{
 		size_t len = strlen(data);
 		memcpy(ptr, data, len);
@@ -279,12 +287,12 @@ int CurlUtils::SendEmail(string toEmailAddress, string fromEmailAddress, string 
 	upload_ctx.lines_read = 0;
 
 	curl = curl_easy_init();
-	if(curl) 
+	if(curl)
 	{
 		curEmail.clear();
 		curEmail = CreatePayloadText(toEmailAddress, fromEmailAddress, sendingDomain, subject, message);
 
-		/* This is the URL for your mailserver */ 
+		/* This is the URL for your mailserver */
 
 		//curl_easy_setopt(curl, CURLOPT_USERNAME, "victor@victorsvacantland.com");
 		curl_easy_setopt(curl, CURLOPT_USERNAME, fromEmailAddress.c_str());
@@ -298,19 +306,19 @@ int CurlUtils::SendEmail(string toEmailAddress, string fromEmailAddress, string 
 		* to the address in the reverse-path which triggered them. Otherwise,
 		* they could cause an endless loop. See RFC 5321 Section 4.5.5 for more
 		* details.
-		*/ 
+		*/
 		curl_easy_setopt(curl, CURLOPT_MAIL_FROM, fromEmailAddress.c_str());
 
 		/* Add two recipients, in this particular case they correspond to the
 		* To: and Cc: addressees in the header, but they could be any kind of
-		* recipient. */ 
+		* recipient. */
 		recipients = curl_slist_append(recipients, toEmailAddress.c_str());
 		//recipients = curl_slist_append(recipients, CC_ADDR);
 		curl_easy_setopt(curl, CURLOPT_MAIL_RCPT, recipients);
 
 		/* We're using a callback function to specify the payload (the headers and
 		* body of the message). You could just use the CURLOPT_READDATA option to
-		* specify a FILE pointer to read from. */ 
+		* specify a FILE pointer to read from. */
 		curl_easy_setopt(curl, CURLOPT_READFUNCTION, payload_source);
 		curl_easy_setopt(curl, CURLOPT_READDATA, &upload_ctx);
 		curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
@@ -321,16 +329,16 @@ int CurlUtils::SendEmail(string toEmailAddress, string fromEmailAddress, string 
 		//when debugging, turn this back on
 		//curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
 
-		/* Send the message */ 
+		/* Send the message */
 		res = curl_easy_perform(curl);
 
-		/* Check for errors */ 
+		/* Check for errors */
 		if (res != CURLE_OK)
 		{
 			fprintf(stderr, "curl_easy_perform() failed: %s\n",
 			curl_easy_strerror(res));
 		}
-		/* Free the list of recipients */ 
+		/* Free the list of recipients */
 		curl_slist_free_all(recipients);
 
 		/* curl won't send the QUIT command until you call cleanup, so you should
@@ -340,7 +348,7 @@ int CurlUtils::SendEmail(string toEmailAddress, string fromEmailAddress, string 
 		* connection open for a very long time though (more than a few minutes
 		* may result in the server timing out the connection), and you do want to
 		* clean up in the end.
-		*/ 
+		*/
 		curl_easy_cleanup(curl);
 	}
 
@@ -361,7 +369,7 @@ CurlUtils::EmailStruct CurlUtils::ReadEmail(string username, string password,str
 	readBuffer.clear();
 	curl = curl_easy_init();
 	CurlUtils::EmailStruct email;
-	if (curl) 
+	if (curl)
 	{
 		/* Set username and password */
 		curl_easy_setopt(curl, CURLOPT_USERNAME, username.c_str());
@@ -371,7 +379,7 @@ CurlUtils::EmailStruct CurlUtils::ReadEmail(string username, string password,str
 		//curl_easy_setopt(curl, CURLOPT_URL,"imap://imap.example.com/INBOX/;UID=1");
 		//string completeUrl = "imap://" + url + ":" + port + "/INBOX/;UID=1";
 
-		
+
 		string completeUrl = "imap://" + url + "/" + imapArgs;
 		curl_easy_setopt(curl, CURLOPT_URL, completeUrl.c_str());
 
@@ -455,21 +463,21 @@ bool CurlUtils::MoveEmailToFolder(std::string username, std::string password,std
 
 	if (!curl)
 		return false;
-	
+
 	curl_easy_setopt(curl, CURLOPT_USERNAME, username.c_str());
 	curl_easy_setopt(curl, CURLOPT_PASSWORD, password.c_str());
 	curl_easy_setopt(curl, CURLOPT_URL, emailUrl.c_str());
 	//curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
 
-	// Set the COPY command specifying the message ID and destination folder 
+	// Set the COPY command specifying the message ID and destination folder
 	//curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "COPY 1 FOLDER");
 	string copyCommand = "UID COPY " + uid +" "+ newFolderName;
 	string deleteCommand = "UID STORE " + uid + " Flags \\Deleted";
-	
+
 	curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, copyCommand.c_str());
 
 	res = curl_easy_perform(curl);
-	// Check for errors 
+	// Check for errors
 	if (res != CURLE_OK)
 	{
 		fprintf(stderr, "curl_easy_perform() failed: %s\n",curl_easy_strerror(res));
@@ -477,7 +485,7 @@ bool CurlUtils::MoveEmailToFolder(std::string username, std::string password,std
 		goto cleanup;
 	}
 
-	
+
 	curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, deleteCommand.c_str());
 	//curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
 	res = curl_easy_perform(curl);
@@ -487,9 +495,9 @@ bool CurlUtils::MoveEmailToFolder(std::string username, std::string password,std
 		ret = false;
 		goto cleanup;
 	}
-	
-	// Set the EXPUNGE command, although you can use the CLOSE command if you don't want to know the result of the STORE 
-	
+
+	// Set the EXPUNGE command, although you can use the CLOSE command if you don't want to know the result of the STORE
+
 	curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "EXPUNGE");
 	res = curl_easy_perform(curl);
 	if (res != CURLE_OK)
@@ -497,12 +505,12 @@ bool CurlUtils::MoveEmailToFolder(std::string username, std::string password,std
 		fprintf(stderr, "curl_easy_perform() failed: %s\n",curl_easy_strerror(res));
 		ret = false;
 		goto cleanup;
-	}		
+	}
 
-	cleanup:	
-	// Always cleanup 
+	cleanup:
+	// Always cleanup
 	curl_easy_cleanup(curl);
-	
+
 	return ret;
 }
 bool CurlUtils::DeleteEmail(std::string username, std::string password, std::string emailUrl, std::string uid)
@@ -534,7 +542,7 @@ bool CurlUtils::DeleteEmail(std::string username, std::string password, std::str
 		goto cleanup;
 	}
 
-	// Set the EXPUNGE command, although you can use the CLOSE command if you don't want to know the result of the STORE 
+	// Set the EXPUNGE command, although you can use the CLOSE command if you don't want to know the result of the STORE
 
 	curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "EXPUNGE");
 	res = curl_easy_perform(curl);
@@ -546,7 +554,7 @@ bool CurlUtils::DeleteEmail(std::string username, std::string password, std::str
 	}
 
 cleanup:
-	// Always cleanup 
+	// Always cleanup
 	curl_easy_cleanup(curl);
 
 	return ret;
@@ -577,17 +585,17 @@ string CurlUtils::FetchWebpage(string url)
 	//curl_easy_setopt(curl, CURLOPT_USERAGENT, "libcurl-agent/1.0");
 	curl_easy_setopt(curl, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36");
 
-	// get it! 
+	// get it!
 	res = curl_easy_perform(curl);
 
-	// check for errors 
+	// check for errors
 	if (res != CURLE_OK)
 	{
 		fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
 		return "";
 	}
-	
-	// Always cleanup 
+
+	// Always cleanup
 	curl_easy_cleanup(curl);
 
 	return readBuffer;

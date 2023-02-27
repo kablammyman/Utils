@@ -1,5 +1,7 @@
 #include "DateTime.h"
-
+#ifndef _WIN32
+#include <cmath> //linux needs this for floor
+#endif // _WIN32
 DateTime::Time::Time(int h, int m, int s)
 {
 	Init(h, m, s);
@@ -61,8 +63,8 @@ bool DateTime::Time::IsEmpty() const
 
 void DateTime::Time::Clear()
 {
-	hour = 0; 
-	minute = 0; 
+	hour = 0;
+	minute = 0;
 	second = 0;
 }
 
@@ -85,7 +87,7 @@ bool DateTime::Time::operator>(const Time& t)
 {
 	if (hour > t.hour)
 		return true;
-	else if(hour < t.hour) 
+	else if(hour < t.hour)
 		return false;
 	else if (hour == t.hour)
 	{
@@ -132,28 +134,28 @@ bool DateTime::Time::operator>=(const Time& t)
 	if (hour >= t.hour)
 		return true;
 
-	
+
 	if (minute >= t.minute)
 		return true;
 
-	
+
 	if (second >= t.second)
 		return true;
-	
-		
+
+
 	return false;
 }
 bool  DateTime::Time::operator<=(const Time& t)
 {
 	if (hour <= t.hour)
 		return true;
-	
+
 	if (minute <= t.minute)
 		return true;
 
 	if (second <= t.second)
 		return true;
-	
+
 
 	return false;
 }
@@ -328,7 +330,7 @@ void DateTime::ParseISO8601DateString(std::string dateString)
 
 
 	StringUtils::StringSplit(dateString, date, time, 10, true);//10 is pos of the 'T' seperator
-	
+
 	StringUtils::StringSplit(time, hrMin, secStr, 5,true);//5 is pos of the '.' seperator
 	StringUtils::StringSplit(hrMin, hrStr, minStr, 2, true);//5 is pos of the ':' seperator
 	size_t pos = secStr.find('.');
@@ -339,7 +341,7 @@ void DateTime::ParseISO8601DateString(std::string dateString)
 
 	std::vector<std::string> dateTokens = StringUtils::Tokenize(date,'-');
 	year = StringUtils::GetIntFromString(dateTokens[0]);
-	month = StringUtils::GetIntFromString(dateTokens[1]); 
+	month = StringUtils::GetIntFromString(dateTokens[1]);
 	day = StringUtils::GetIntFromString(dateTokens[2]);
 
 	myTime.hour = StringUtils::GetIntFromString(hrStr);
@@ -395,7 +397,7 @@ void DateTime::SetCurrentDateTime()
 	localtime_r(&now,&buf);
 #endif
 
-	
+
 
 
 	// print various components of tm structure.
@@ -470,11 +472,11 @@ int DateTime::TimeDiff(DateTime& otherDate)
 	//convert dates into days
 	int otherNumDays = otherDate.GetDayOfYear();
 	int myNumDays = GetDayOfYear();
-		
+
 	if(year != otherDate.year)
 	{
 		//get the difference in days from the years
-		int yearDiff = abs(otherDate.year - year) * 365; 
+		int yearDiff = abs(otherDate.year - year) * 365;
 		otherNumDays += yearDiff;
 	}
 
@@ -564,7 +566,7 @@ bool DateTime::operator==(const DateTime& d)
 	}
 	if (this->year == d.year &&
 		this->month == d.month &&
-		this->day == d.day && 
+		this->day == d.day &&
 		this->myTime == d.myTime)
 		return true;
 
@@ -655,7 +657,7 @@ bool DateTime::operator<=(const DateTime& d)
 		return true;
 	else if (*this < d)
 		return true;
-	
+
 
 	return false;
 }
@@ -681,7 +683,7 @@ void DateTime::DecDay(int amt)
 	{
 		DecMonth(1);
 		daysInCurMonth = GetDaysInMonth(month);
-		day += daysInCurMonth;	
+		day += daysInCurMonth;
 	}
 }
 
@@ -727,7 +729,7 @@ int DateTime::GetDaysInMonth(int mon)
 }
 
 
-std::string DateTime::GetMonthAbrv() 
+std::string DateTime::GetMonthAbrv()
 {
 	return GetMonthAbrv(month);
 }

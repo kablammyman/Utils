@@ -268,7 +268,7 @@ vector<string> FileUtils::GetAllFileNamesInDir(string path)
 		return fileList;
 	string curDir = DirectoryTree::PrepPathForTraversal(path);
 	string sTmp = "";
-
+#if _WIN32
 	HANDLE hFind;
 	WIN32_FIND_DATA FindFileData;
 
@@ -292,7 +292,7 @@ vector<string> FileUtils::GetAllFileNamesInDir(string path)
 
 		} while (FindNextFile(hFind, &FindFileData));
 		FindClose(hFind);
-
+#endif
 	return fileList;
 }
 //--------------------------------------------------------------------------------------------------
@@ -587,7 +587,7 @@ bool FileUtils::CreateNewDir(string path)
 	strCommand = "mkdir - p \"" + path + "\"";
 #endif
 
-	
+
 	int iResult = system(strCommand.c_str());
 	if (iResult != 0)
 	{
