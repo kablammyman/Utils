@@ -44,8 +44,8 @@ public:
 	static bool IsPostCharNonAlpha(std::string line,std::string word);
 	static bool IsPrevCharNonAlpha(std::string line,std::string word);
 	static bool IsNumber(std::string word);
-	static std::string GetAlphaNumericString(std::string line,int index, std::string bonusChars = "");
-	static std::string CopyUntilChar(std::string line,int index, char delim);
+	static std::string GetAlphaNumericString(std::string line, size_t index, std::string bonusChars = "");
+	static std::string CopyUntilChar(std::string line,size_t index, char delim);
 	static std::string GetRandomString(int size);
 
 	static std::string FindAndReplace(std::string orig, std::string findToken, std::string replaceToken);
@@ -96,6 +96,6 @@ public:
 	static std::map<std::string, int> GetAllTagsInFile(std::string filePath);
 	static void LoadRotatorMessagesFromFile(std::string file, std::vector<std::string> &messages);
 	static std::string ReplaceTagForValue(std::string input, DocumentTags tagMap);
-	static int InsertMultilineInput(std::string replaceMe, std::string lines, int index, std::string newText);
+	static int InsertMultilineInput(std::string replaceMe, std::string lines, size_t index, std::string newText);
 	static std::string GetRandomWord(std::vector <std::string> &lists);
 };

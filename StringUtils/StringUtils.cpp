@@ -461,7 +461,7 @@ bool StringUtils::IsPostCharNonAlpha(std::string line,std::string word)
 }
 //copy all apha numeric values until the pattern is broken by puncation or space\tab
 //bonus chars are teh non alpha numeric chars we want to include as well
-std::string StringUtils::GetAlphaNumericString(std::string line,int index,std::string bonusChars)
+std::string StringUtils::GetAlphaNumericString(std::string line, size_t index,std::string bonusChars)
 {
 	std::string ret = "";
 	for(size_t i = index; i < line.size();i++)
@@ -486,7 +486,7 @@ std::string StringUtils::GetAlphaNumericString(std::string line,int index,std::s
 	}
 	return ret;
 }
-std::string StringUtils::CopyUntilChar(std::string line,int index, char delim)
+std::string StringUtils::CopyUntilChar(std::string line, size_t index, char delim)
 {
 	std::string ret = "";
 	for(size_t i = index; i < line.size();i++)
@@ -1348,7 +1348,7 @@ std::string StringUtils::GetRandomWord(std::vector <std::string> &words)
 	return words[index];
 }
 //---------------------------------------------------------------------------------------------------------------
-int StringUtils::InsertMultilineInput(std::string replaceMe, std::string lines, int index, std::string newText)
+int StringUtils::InsertMultilineInput(std::string replaceMe, std::string lines, size_t index, std::string newText)
 {
 	/*linez = PropertyHelper.CreateRTFLineBreak(addy)
 
