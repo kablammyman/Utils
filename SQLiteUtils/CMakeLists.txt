@@ -12,8 +12,8 @@ ELSEIF(APPLE)
 set(SQLITE3_LIB_DEBUG ${PROJECT_SOURCE_DIR}/SQLite3/osx/lib/x86/sqlite3.a)
 set(SQLITE3_LIB_RELEASE ${PROJECT_SOURCE_DIR}/SQLite3/osx/lib/x86/sqlite3.a)
 ELSE()
-set(SQLITE3_LIB_DEBUG ${PROJECT_SOURCE_DIR}/SQLite3/lin/lib/x86/sqlite3.a)
-set(SQLITE3_LIB_RELEASE ${PROJECT_SOURCE_DIR}/SQLite3/lin/lib/x86/sqlite3.a)
+set(SQLITE3_LIB_DEBUG ${PROJECT_SOURCE_DIR}/SQLite3/linux/lib/libsqlite3.a)
+set(SQLITE3_LIB_RELEASE ${PROJECT_SOURCE_DIR}/SQLite3/linux/lib/libsqlite3.a)
 ENDIF()
 
 file(GLOB SOURCES
@@ -24,7 +24,7 @@ file(GLOB SOURCES
 ADD_LIBRARY(SQLiteUtils ${SOURCES})
 
 #link_directories(StringUtils)
-#target_link_libraries (SQLiteUtils debug sqlite3 ${SQLITE3_LIB_DEBUG} release ${SQLITE3_LIB_RELEASE})
+#target_link_libraries (SQLiteUtils debug ${SQLITE3_LIB_DEBUG} )
 #looks like i will have to add the sqlite lib manually in vis studio->Librarian\General\AdditionalDependencies
 
-target_link_libraries (SQLiteUtils debug ${SQLITE3_LIB_DEBUG} release ${SQLITE3_LIB_RELEASE})
+target_link_libraries (SQLiteUtils release  ${SQLITE3_LIB_RELEASE})
