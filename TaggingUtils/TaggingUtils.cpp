@@ -1,5 +1,5 @@
 #include "TaggingUtils.h"
- 
+
 using namespace std;
 //http://howto.philippkeller.com/2005/04/24/Tags-Database-schemas/
 
@@ -31,12 +31,12 @@ void TaggingUtils::CreateTagTables()
 
 void TaggingUtils::CreateTagTables(vector<DatabaseController::dbDataPair> &extraInfo)
 {
-	
+
 	string output;
 	vector<DatabaseController::dbDataPair> fields;
 	std::vector<std::string> currentTables;
 	dbController->GetAllTablesInDB(currentTables);
-	
+
 	//if we already made TAGS_TABLE then we prob have the other 2...and that menas no need to create anything
 	for(size_t i = 0; i < currentTables.size(); i++)
 	{
@@ -88,7 +88,7 @@ int TaggingUtils::AddTag(std::string tagName )
 {
 	string output;
 	DatabaseController::dbDataPair data = make_pair("Name",tagName);
-	
+
 	if (!dbController->InsertNewDataEntry(TAGS_TABLE,data ,output))
 	{
 		if(dbController->GetLastError() != "")
@@ -103,7 +103,7 @@ int TaggingUtils::AddTag(std::string tagName )
 //---------------------------------------------------------------------------------------------------------------
 int TaggingUtils::AddOrUpdateItems(std::string itemName,vector<DatabaseController::dbDataPair> &extraInfo, int id )
 {
-	
+
 	string output;
 	vector<DatabaseController::dbDataPair> data;
 	if(id > -1)
@@ -113,7 +113,7 @@ int TaggingUtils::AddOrUpdateItems(std::string itemName,vector<DatabaseControlle
 	{
 		data.push_back(extraInfo[i]);
 	}
-	
+
 	//if thise doesnt exist yet
 	int oldID = GetItemId(itemName);
 	if (oldID == -1)
@@ -146,10 +146,10 @@ int TaggingUtils::AddOrUpdateItems(std::string itemName,vector<DatabaseControlle
 //---------------------------------------------------------------------------------------------------------------
 int TaggingUtils::AddOrUpdateItem(std::string itemName,std::string content )
 {
-	
+
 	string output;
 	vector<DatabaseController::dbDataPair> data;
-	
+
 	//the issue is when this is used for a table that is not "item" it causes problems!
 	//it should not add to a table not named DEFAULT_ITEM_TABLE_NAME
 	if (itemTableName == DEFAULT_ITEM_TABLE_NAME)
@@ -195,14 +195,14 @@ bool TaggingUtils::DeleteItem(int itemID)
 
 	string output;
 	string querey = "DELETE FROM " + itemTableName + " WHERE ID = " + to_string(itemID);
-	
+
 
 	if (itemID < 1)
 	{
 		return false;
 	}
 
-	//first delete the item 
+	//first delete the item
 	if (!dbController->DoDBQuerey(querey, output))
 	{
 		if (dbController->GetLastError() != "")
@@ -339,7 +339,7 @@ int TaggingUtils::TagItem(std::string itemName, std::vector<std::string> tags)
 //---------------------------------------------------------------------------------------------------------------
 int TaggingUtils::TagItem(int itemID, std::string tagName)
 {
-	
+
 	int tagID =  GetTagId(tagName);
 	if(tagID < 1)
 	{
@@ -376,7 +376,7 @@ int TaggingUtils::TagItem(int itemID, std::vector<std::string> tags)
 int TaggingUtils::GetId(string table, string itemName)
 {
 	string output;
-	string querey = "SELECT ID FROM "+ table + " WHERE Name = '" + itemName + "'"; 
+	string querey = "SELECT ID FROM "+ table + " WHERE Name = '" + itemName + "'";
 
 	if (!dbController->DoDBQuerey(querey, output))
 	{
@@ -441,12 +441,12 @@ vector<string> TaggingUtils::GetAllTagsForItem(int itemID)
 	vector <DatabaseController::DBResult>  dbResults;
 	//notice the differnte PArseDBOutput method (i think this was original one)
 	DatabaseController::ParseDBOutput(output,1, dbResults);
-	
+
 
 	if(!dbResults.empty())
 	{
 		//notice we have to crack open the 1 dbResult oject to get to the sweet meat of the tags
-		for (int i = 0; i < dbResults.size(); i++)
+		for (size_t i = 0; i < dbResults.size(); i++)
 		{
 			for (size_t j = 0; j < dbResults[i].data.size(); j++)
 			{
@@ -465,7 +465,7 @@ TaggingUtils::TaggedItem TaggingUtils::GetItemFromID(int id)
 	vector<string> itemFields = {"ID",itemNameColName,itemContentColName };
 	string fields = StringUtils::FlattenVector(itemFields);
 	string querey = "SELECT " + fields +" FROM " + ITEMS_TABLE + " WHERE ID = " + to_string(id);
-	
+
 	if (!dbController->DoDBQuerey(querey,output))
 	{
 		if(dbController->GetLastError() != "")
@@ -510,7 +510,7 @@ vector<TaggingUtils::TaggedItem> TaggingUtils::GetAllItemsWithTag(string tag)
 
 	if(dbResults.empty())
 		return ret;
-	
+
 	//notice we have to crack open the 1 dbResult oject to get to the sweet meat of the tags
 	//for (size_t i = 0; i < dbResults[0].data.size(); i++)
 	for (size_t i = 0; i < dbResults.size(); i++)
@@ -519,7 +519,7 @@ vector<TaggingUtils::TaggedItem> TaggingUtils::GetAllItemsWithTag(string tag)
 		//TaggedItem nextItem = GetItemFromID( StringUtils::GetIntFromString(dbResults[0].data[i].second ) );
 		ret.push_back(nextItem);
 	}
-	
+
 
 	return ret;
 }
@@ -540,7 +540,7 @@ vector<TaggingUtils::TaggedItem> TaggingUtils::GetAllItemsWithAnyOfTheseTags(vec
 			querey += " OR Name = '" + tags[i] + "'";
 
 	}
-	
+
 	if (!dbController->DoDBQuerey(querey,output))
 	{
 		if(dbController->GetLastError() != "")
@@ -583,7 +583,7 @@ vector<TaggingUtils::TaggedItem> TaggingUtils::GetAllItemsWithALLOfTheseTags(vec
 
 	string querey = "SELECT b.* FROM ItemTags bt, " + itemTableName +" b, Tags t WHERE bt.TagID = t.ID ";
 	querey += " AND (t.name IN ( " + tagsString + ")) AND b.ID = bt.ItemID GROUP BY b.ID HAVING COUNT( b.ID )= "+ to_string(tags.size());
-	
+
 
 	if (!dbController->DoDBQuerey(querey,output))
 	{

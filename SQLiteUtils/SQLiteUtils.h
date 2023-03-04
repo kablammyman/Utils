@@ -4,7 +4,8 @@
 #include <string>
 #include <vector>
 #include <utility>      // std::pair
-#include "SQLite3/src/sqlite3.h"
+//#include "SQLite3/src/sqlite3.h"
+#include "sqlite3.h"
 
 class SQLiteUtils
 {
@@ -17,10 +18,10 @@ class SQLiteUtils
 	static std::string returnData;
 	static bool gettingData;
 	std::string DataGrabber(std::string &word, std::size_t &startPos);
-	
+
 public:
 	typedef std::pair <std::string, std::string> dbDataPair;
-	
+
 	SQLiteUtils(std::string name);
 	SQLiteUtils();
 	~SQLiteUtils();
@@ -32,12 +33,12 @@ public:
 
 	bool createTable(std::string name, std::string query);
 	//std::vector<std::string> displayTable();
-	
+
 	std::vector<std::string> viewData() ;
 	std::vector<std::string> query(char* query);
 	std::vector<std::vector<std::string>> queryV2(char* query);
 	//std::vector<std::string> getAllTables();
-	bool insertData(std::string query); 
+	bool insertData(std::string query);
 	void setTableName(std::string name);
 	int GetLatestRowID();
 	std::string GetDataFromID(int id, std::string table = "");

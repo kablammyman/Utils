@@ -10,5 +10,5 @@ ipch/
 *release*/
 *.db
 build_vs20*
-build_linux/
+build_*/
 build_Android_vs2019/

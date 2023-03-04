@@ -1,7 +1,7 @@
 
 project(SQLiteUtils)
 include_directories(${PROJECT_SOURCE_DIR}/../StringUtils)
-include_directories(./SQLite3/src)
+include_directories(${PROJECT_SOURCE_DIR}/SQLite3/src)
 
 
 IF(WIN32)
@@ -23,8 +23,8 @@ file(GLOB SOURCES
 	${PROJECT_SOURCE_DIR}/*.cpp)
 ADD_LIBRARY(SQLiteUtils ${SOURCES})
 
-#link_directories(StringUtils)
-#target_link_libraries (SQLiteUtils debug ${SQLITE3_LIB_DEBUG} )
+
+target_link_libraries (SQLiteUtils debug ${SQLITE3_LIB_DEBUG} )
 #looks like i will have to add the sqlite lib manually in vis studio->Librarian\General\AdditionalDependencies
 
-target_link_libraries (SQLiteUtils release  ${SQLITE3_LIB_RELEASE})
+#target_link_libraries (SQLiteUtils release  ${SQLITE3_LIB_RELEASE})

@@ -36,7 +36,7 @@ std::vector<std::string> StringUtils::Tokenize2(std::string path, std::string de
 {
 	std::vector<std::string> returnVec;
 	size_t start = 0;
-	size_t i = 0; 
+	size_t i = 0;
 	while(i < path.size())
 	{
 		i = path.find(delim,start);
@@ -125,7 +125,7 @@ bool StringUtils::IsLower(std::string input)
 
 bool StringUtils::IsProperNoun(std::string input)
 {
-	bool caps = true;
+	//bool caps = true;
 	if (input.empty())
 		return false;
 
@@ -208,7 +208,7 @@ std::string StringUtils::GetDataBetweenSubStrings(std::string line, std::string 
 
 	//i like loops better thans substring for this...its easier to understand
 	for (size_t i = dataStart; i < dataEnd; i++)
-	{		
+	{
 		returnString += line[i];
 	}
 	return returnString;
@@ -226,7 +226,7 @@ void StringUtils::StringSplit(std::string orig, std::string &str1, std::string &
 int StringUtils::GetStandAloneWordInLineIndex(std::string line,std::string word)
 {
 	size_t index = 0;
-			
+
 	while (index < line.size())
 	{
 		size_t start = line.find(word,index);
@@ -234,18 +234,18 @@ int StringUtils::GetStandAloneWordInLineIndex(std::string line,std::string word)
 		if (start == std::string::npos)
 			return -1;
 		index += start +1;
-		
+
 		size_t end = start + word.size()-1;
 		bool startIsFirst = false;
 		bool endIsLast = false;
-		
+
 		if (start == 0)
 			startIsFirst = true;
 		else if( start > 0)
 			start--;
 		else //the word is not in here at all!
 			return -1;
-			
+
 		if (end >= line.size()-1)
 		{
 			endIsLast = true;
@@ -253,7 +253,7 @@ int StringUtils::GetStandAloneWordInLineIndex(std::string line,std::string word)
 		}
 		else
 			end++;
-				
+
 		if(	!startIsFirst && endIsLast)
 		{
 			if (! isalpha(line[start]))
@@ -261,7 +261,7 @@ int StringUtils::GetStandAloneWordInLineIndex(std::string line,std::string word)
 		}
 		else if( startIsFirst && endIsLast)
 			return (int)start;
-			
+
 		else if( startIsFirst && !endIsLast)
 		{
 			if (! isalpha(line[end]))
@@ -355,12 +355,12 @@ std::string StringUtils::CopyCharsBetweenQuotes(std::string word, size_t index)
 {
 	std::string retString;
 	index = word.find('"',index);
-	
+
 	if(index == std::string::npos)
 		return "";
 
 	index++;
-	
+
 	while (index < word.size())
 	{
 		if (word[index] == '"')
@@ -403,7 +403,7 @@ std::vector<std::string> StringUtils::CopyStringBetweenIdenticalTags(std::string
 		//i dont want the tag included in the final string
 		//ande some tags are long...there are the "<tr>" or there can be "<td class="currency">"...this takes care of both
 		start = html.find('>', start)+1;
-		
+
 		end = html.find(closeTag, start);
 		std::string curData = html.substr(start, end - start);
 		ret.push_back(curData);
@@ -417,12 +417,12 @@ std::string StringUtils::CopyCharsBetweenChars(std::string word, char open,char 
 {
 	std::string retString;
 	index = word.find(open,index);
-	
+
 	if(index == std::string::npos)
 		return "";
 
 	index++;
-	
+
 	while (index < word.size())
 	{
 		if (word[index] == closed)
@@ -454,7 +454,7 @@ bool StringUtils::IsPostCharNonAlpha(std::string line,std::string word)
 {
 	size_t start = line.find(word);
 	size_t end = start + word.size();
-	
+
 	if (! isalpha(line[end + 1]))
 		return true;
 	return false;
@@ -517,10 +517,10 @@ std::string StringUtils::FindAndReplace(std::string orig, std::string findToken,
 	std::string ret = "";
 	size_t i = 0;
 	size_t index = orig.find(findToken);
-	
+
 	if(index == std::string::npos)
 		return orig;
-	
+
 	while( i < orig.size())
 	{
 		index = orig.find(findToken,i);
@@ -539,7 +539,7 @@ std::string StringUtils::FindAndReplace(std::string orig, std::string findToken,
 			ret += orig[i];
 			i++;
 		}
-				
+
 	}
 	return ret;
 }
@@ -578,7 +578,7 @@ std::string StringUtils::EmailStringClean(std::string orig)
 		if (orig[i] == '%' || orig[i] == '\n' || orig[i] == '\r' ||
 			orig[i] == '\t' || orig[i] == '<' || orig[i] == '>' || orig[i] == ':')
 			orig[i] = ' ';
-	}	
+	}
 	TrimWhiteSpace(orig);
 	return orig;
 }
@@ -784,7 +784,7 @@ std::string StringUtils::CreateJsonArrayEntry(std::string name, std::vector<std:
 	ret += "]";
 	size_t found = ret.find_last_of(",");
 	if (found != std::string::npos)
-		ret.replace(found,1,""); 
+		ret.replace(found,1,"");
 
 	return ret;
 }
@@ -802,7 +802,7 @@ std::string StringUtils::CreateJsonArrayEntry(std::string name, std::vector<int>
 	//remove last comma
 	size_t found = ret.find_last_of(",");
 	if (found != std::string::npos)
-		ret.replace(found,1,""); 
+		ret.replace(found,1,"");
 
 	return ret;
 }
@@ -846,7 +846,7 @@ std::string StringUtils::GetJsonEntryValue(std::string& json, std::string name)
 	//we have to find the first non space char (should be a quote or a number)
 
 	start = json.find(":", start) +1;
-	
+
 
 	//first check if this is a std::string value
 	size_t quote = json.find("\"", start);
@@ -975,7 +975,7 @@ float StringUtils::GetFloatFromString(std::string str)
 {
 	if(str.empty())
 		return 0.0;
-	
+
 	size_t f = str.find(",");
 	if (f != std::string::npos)
 		str.erase(f, 1);
@@ -994,7 +994,7 @@ double StringUtils::GetDoubleFromString(std::string str)
 {
 	if(str.empty())
 		return 0.0;
-	
+
 	size_t f = str.find(",");
 	if (f != std::string::npos)
 		str.erase(f, 1);
@@ -1048,7 +1048,7 @@ std::string StringUtils::ToMoneyString(float amount, bool prettyPrint)
 			if (strlen(temp) > 10)
 				numExtraSpaces++;
 		}
-		
+
 
 		//neg sign is already included!
 		//if(amount < 0)//need space for neg sign
@@ -1082,7 +1082,7 @@ std::string StringUtils::ToMoneyString(float amount, bool prettyPrint)
 		}
 
 		//now only return the good parts of the char array
-		if ((amount >= 1000 && amount < 10000) || amount < 0 && amount > -1000 )
+		if ((amount >= 1000 && amount < 10000) || (amount < 0 && amount > -1000) )
 		{
 			std::string newVer = charBuffer;
 			size_t start = newVer.find(temp);
@@ -1102,7 +1102,7 @@ std::string StringUtils::ToPercentString(float amount, bool convertFloatToPercet
 {
 	char charBuffer[8];//xx.xx%
 	std::string ret;
-	
+
 	if(convertFloatToPercet)
 		amount *= 100;
 
@@ -1145,7 +1145,7 @@ int StringUtils::HammingDistance(std::string str1, std::string str2)
 		diff = str2.size() - str1.size();
 	}
 
-	for (int i = 0; i < len; i++)
+	for (size_t i = 0; i < len; i++)
 	{
 		if (str1[i] != str2[i])
 			difference++;
@@ -1168,12 +1168,12 @@ std::string StringUtils::LongestCommonSubStr(std::string str1, std::string str2)
 	memset(lookup, 0, sizeof(lookup));
 
 
-	// Following steps build lookup[m+1][n+1] in bottom up fashion. 
+	// Following steps build lookup[m+1][n+1] in bottom up fashion.
 	for (int i = 1; i <= m; i++)
 	{
 		for (int j = 1; j <= n; j++)
 		{
-			if (str1[i - 1] ==str2[j - 1]) 
+			if (str1[i - 1] ==str2[j - 1])
 			{
 				lookup[i * n + j] = lookup[(i-1) * n + (j-1)] + 1;
 				// update the maximum length and ending index
@@ -1429,7 +1429,7 @@ std::map<std::string, int> StringUtils::GetAllTagsInFile(std::string filePath)
 	if (!templateFile.is_open())
 	{
 		templateFile.close();
-		printf("CountTagsInFile: couldnt open: %s", filePath.c_str());
+		//printf("CountTagsInFile: couldnt open: %s", filePath.c_str());
 		return tagMap;
 	}
 
