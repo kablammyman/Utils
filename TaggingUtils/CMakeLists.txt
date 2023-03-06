@@ -1,5 +1,6 @@
 project(TaggingUtils)
 include_directories($ENV{MY_STRING_UTILS} )
+include_directories($ENV{MY_SQLITE3_UTILS}/SQLiteUtils/SQLite3/src)
 include_directories($ENV{MY_SQLITE3_UTILS} )
 
 
