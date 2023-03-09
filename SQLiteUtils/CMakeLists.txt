@@ -1,6 +1,6 @@
 
 project(SQLiteUtils)
-include_directories(${PROJECT_SOURCE_DIR}/../StringUtils)
+include_directories(${CMAKE_SOURCE_DIR}/StringUtils)
 include_directories(${PROJECT_SOURCE_DIR}/SQLite3/src)
 
 
