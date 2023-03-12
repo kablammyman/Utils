@@ -1,8 +1,6 @@
-
 project(SQLiteUtils)
 include_directories(${CMAKE_SOURCE_DIR}/StringUtils)
 include_directories(${PROJECT_SOURCE_DIR}/SQLite3/src)
-
 
 IF(WIN32)
 set(SQLITE3_LIB_DEBUG ${PROJECT_SOURCE_DIR}/SQLite3/win32/lib/x86/sqlite3.lib)
