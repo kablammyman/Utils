@@ -256,7 +256,11 @@ DateTime::DateTime(int y, int m, int d, int h, int min, int s)
 DateTime::DateTime(std::string date)
 {
 	myTime.Init(0, 0, 0);
-	ParseDateString(date);
+	StringUtils::ToLower(date);
+	if (date == "today")
+		SetCurrentDateTime();
+	else
+		ParseDateString(date);
 }
 
 bool DateTime::IsEmpty()
