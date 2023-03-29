@@ -43,6 +43,8 @@ public:
 		bool operator<=(const Time& t);
 	};
 
+	static const std::string NOW;
+
 	int year = 1900;
 	int month = 1;
 	int day = 1;

@@ -2,6 +2,8 @@
 #ifndef _WIN32
 #include <cmath> //linux needs this for floor
 #endif // _WIN32
+
+const std::string  DateTime::NOW = "NOW";
 DateTime::Time::Time(int h, int m, int s)
 {
 	Init(h, m, s);
@@ -256,8 +258,8 @@ DateTime::DateTime(int y, int m, int d, int h, int min, int s)
 DateTime::DateTime(std::string date)
 {
 	myTime.Init(0, 0, 0);
-	StringUtils::ToLower(date);
-	if (date == "today")
+
+	if (date == NOW)
 		SetCurrentDateTime();
 	else
 		ParseDateString(date);
