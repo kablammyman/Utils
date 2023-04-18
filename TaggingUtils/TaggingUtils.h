@@ -59,8 +59,10 @@ public:
 	bool DeleteItem(int itemID);
 	bool DeleteAllTagsForItem(int itemID);
 	bool DeleteTagFromDB(int tagID);
-	
-	
+	//not sure if this is needed
+	//void DeleteUnusedTags(int tagID)
+	void ResetItemTags(int itemID, std::vector<std::string> &curTags);
+
 	std::vector<std::string> GetAllTagsForItem(int itemID);
 	std::vector<TaggedItem> GetAllItemsWithAnyOfTheseTags(std::vector<std::string> tags);
 	std::vector<TaggedItem> GetAllItemsWithALLOfTheseTags(std::vector<std::string> tags);

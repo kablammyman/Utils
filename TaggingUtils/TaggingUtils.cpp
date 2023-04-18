@@ -422,6 +422,17 @@ int TaggingUtils::GetItemTagId(int itemID,int tagID)
 	return dbController->GetIdFromQuereyResult(output);
 }
 //---------------------------------------------------------------------------------------------------------------
+void TaggingUtils::ResetItemTags(int itemID, vector<string> &curTags)
+{
+	std::vector<std::string> oldTags = GetAllTagsForItem(itemID);
+	//dont do nothing if the tags hasnt changed
+	if (curTags == oldTags)
+		return;
+
+	DeleteAllTagsForItem(itemID);
+	TagItem(itemID, curTags);
+}
+//---------------------------------------------------------------------------------------------------------------
 vector<string> TaggingUtils::GetAllTagsForItem(int itemID)
 {
 	string output;
