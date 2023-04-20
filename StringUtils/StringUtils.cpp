@@ -1283,7 +1283,7 @@ std::string StringUtils::PrettyPhone(std::string phoneToUpdate)
 bool StringUtils::IsValidPhone(std::string phone)
 {
 	//if the string itself is too small, then it cant be valid
-	if (phone.size() < 10)
+	if (phone.size() < 10 )
 		return false;
 
 	//you can trick the system by padding the spaces between numbers with any char. is this a problem?
@@ -1291,7 +1291,9 @@ bool StringUtils::IsValidPhone(std::string phone)
 
 	for (size_t i = 0; i < phone.size(); i++)
 	{
-		if (isdigit(phone[i]))
+		//to make sure strange chars dont crash this, cast to unsigned char
+		unsigned char curDigit = (unsigned char)phone[i];
+		if (isdigit(curDigit))
 		{
 			acutalPhone += phone[i];
 		}
