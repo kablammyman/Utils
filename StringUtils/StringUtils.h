@@ -62,6 +62,8 @@ public:
 	static std::string CreateJsonEntry(std::string name, bool val,bool lastEntry=false);
 	static std::string CreateJsonEntry(std::string name, std::string val,bool lastEntry=false);
 	static std::string CreateJsonEntry(std::string name, const char* val,bool lastEntry=false);
+	static std::string CreateCompleteErrorJson(std::string message, std::string methodName = "");
+	static std::string CreateCompleteOKJson(std::string message ="");
 
 	static std::string CreateJsonArrayEntry(std::string name, std::vector<std::string> value, bool noQuotes = false);
 	static std::string CreateJsonArrayEntry(std::string name, std::vector<int> value);

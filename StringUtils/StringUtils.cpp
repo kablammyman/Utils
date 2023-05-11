@@ -767,6 +767,25 @@ std::string StringUtils::CreateJsonEntry(std::string name, const char* val, bool
 	return CreateJsonEntry( name, value,false,lastEntry);
 }
 
+std::string StringUtils::CreateCompleteErrorJson(std::string message, std::string methodName)
+{
+	std::string ret = "{" + CreateJsonEntry("status", "ERROR");
+	if(!methodName.empty())
+		ret += CreateJsonEntry("Method", methodName);
+	ret += CreateJsonEntry("Error", message,true) +"}"; 
+	return ret;
+}
+
+std::string StringUtils::CreateCompleteOKJson(std::string message)
+{
+	if(message.empty())
+		return "{" +CreateJsonEntry("status", "OK", true) + "}";
+	std::string ret = "{" + CreateJsonEntry("status", "OK");
+	ret += CreateJsonEntry("Details", message,true) + "}";
+	return ret;
+}
+
+
 std::string StringUtils::CreateJsonArrayEntry(std::string name, std::vector<std::string> value, bool noQuotes)
 {
 	std::string ret = "\"";
