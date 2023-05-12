@@ -14,6 +14,7 @@ public:
 	}
 	
 	DatabaseController::Error lastError;
+	std::string GetLastErrorMessage() { return lastError.errorMessage; }
 protected:
 		DatabaseController *dbController;
 };

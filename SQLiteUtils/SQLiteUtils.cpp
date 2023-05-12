@@ -92,7 +92,7 @@ SQLiteUtils::SQLiteUtils()
 {
 	returnCode = 0;
 	db = 0;
-	lastError ="";
+	innerLastError ="";
 	DBName="";
 	curTableName="";
 	returnData ="";
@@ -102,7 +102,7 @@ SQLiteUtils::SQLiteUtils()
 SQLiteUtils::SQLiteUtils(string name)
 {
 	returnCode = 0;
-	lastError = "";
+	innerLastError = "";
 	DBName = "";
 	curTableName = "";
 	gettingData = false;
@@ -134,14 +134,14 @@ SQLiteUtils::~SQLiteUtils()
    {
       string  errMsg = sqlite3_errmsg(db);
 	  output += ("Error opening SQLite3 SQLiteUtils: " +errMsg + "\n");
-	  lastError = output;
+	  SetLastError(output);
 	  sqlite3_close(db);
 	  db = nullptr;
 	  return false;
    }
 
    output += ("Opened " + name + "\n");
-   lastError.clear();
+   innerLastError.clear();
    return true;
  }
 //--------------------------------------------------------------------------------------------------
@@ -164,9 +164,14 @@ SQLiteUtils::~SQLiteUtils()
 	 return true;
  }
 //--------------------------------------------------------------------------------------------------
- string SQLiteUtils::getLastError()
+ string SQLiteUtils::GetLastError()
  {
-	 return lastError;
+	 return innerLastError;
+ }
+ //--------------------------------------------------------------------------------------------------
+ void SQLiteUtils::SetLastError(string errMsg)
+ {
+	 innerLastError = errMsg;
  }
 //--------------------------------------------------------------------------------------------------
 void SQLiteUtils::setTableName(std::string name)
@@ -199,7 +204,7 @@ bool SQLiteUtils::ExecuteSQL(string command, string &output)
 	if (db == nullptr)
 	{
 		output = "the database hasnt been opened!";
-		lastError = "the database hasnt been opened!";
+		SetLastError("the database hasnt been opened!");
 		return false;
 	}
 	char *error;
@@ -221,7 +226,7 @@ bool SQLiteUtils::ExecuteSQL(string command, string &output)
 		else if (returnCode != SQLITE_OK)
 		{
 			output = sqlite3_errmsg(db);
-			lastError = error;
+			SetLastError(error);
 			sqlite3_free(error);
 			//return false;
 		}
@@ -235,7 +240,7 @@ bool SQLiteUtils::ExecuteSQL(string command, string &output)
 	{
 		while (gettingData) {}//wait until return data is no longer empty
 		output = returnData;
-		lastError.clear();
+		innerLastError.clear();
 		return true;
 	}
 	return false;
@@ -303,9 +308,9 @@ vector<string> SQLiteUtils::query(char* query)
 	
 	string curError = sqlite3_errmsg(db);
 	if(curError != "not an error") 
-		lastError = curError;
+		SetLastError(curError);
 	else
-		lastError.clear();
+		innerLastError.clear();
 
 	return results;  
 }
@@ -343,9 +348,9 @@ vector<vector<string>> SQLiteUtils::queryV2(char* query)
 	
 	string curError = sqlite3_errmsg(db);
 	if(curError != "not an error") 
-		lastError = curError;
+		SetLastError( curError);
 	else
-		lastError.clear();
+		innerLastError.clear();
 
 	return results;  
 }

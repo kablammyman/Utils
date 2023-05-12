@@ -85,7 +85,7 @@ bool DatabaseController::CreateNewDB(string newDBName, string createCommand)
 
 string DatabaseController::GetLastError()
 {
-	return db->getLastError();
+	return db->GetLastError();
 }
 
 string DatabaseController::GetTable(string tableName)

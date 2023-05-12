@@ -11,7 +11,7 @@ class SQLiteUtils
 {
 	int returnCode;
 	sqlite3 *db;
-	std::string lastError;
+	std::string innerLastError;
 	std::string DBName;
 	std::string curTableName;
 	static int callback(void *data, int argc, char **argv, char **azColName);
@@ -28,7 +28,8 @@ public:
 	bool openSQLiteDB(std::string name, std::string &output);
 	void closeSQLiteDB(std::string &output);
 	bool IsOpen();
-	std::string getLastError();
+	std::string GetLastError();
+	void SetLastError(std::string errMsg);
 	bool ExecuteSQL(std::string command, std::string &output);
 
 	bool createTable(std::string name, std::string query);
