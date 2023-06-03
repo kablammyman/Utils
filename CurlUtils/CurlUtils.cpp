@@ -583,7 +583,7 @@ string CurlUtils::FetchWebpage(string url)
 	/* some servers don't like requests that are made without a user-agent
 	field, so we provide one */
 	//curl_easy_setopt(curl, CURLOPT_USERAGENT, "libcurl-agent/1.0");
-	curl_easy_setopt(curl, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36");
+	curl_easy_setopt(curl, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36");
 
 	// get it!
 	res = curl_easy_perform(curl);

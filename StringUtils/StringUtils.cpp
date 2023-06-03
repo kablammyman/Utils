@@ -445,7 +445,7 @@ bool StringUtils::IsNumber(std::string word)
 {
 	for (size_t i = 0; i < word.size(); i++)
 		//should I include the $ or %?
-		if (!isdigit(word[i]) && word[i] != '.' && word[i] != '-' && word[i] != '$')
+		if (!isdigit(word[i]) && word[i] != '.' && word[i] != '-' && word[i] != '$' && word[i] != ',')
 			return false;
 	return true;
 }
@@ -1000,17 +1000,33 @@ std::string StringUtils::CreateJsonNestedObjectEntry(std::string name, std::vect
 	return ret;
 }
 
+void RemoveNumberDressing(std::string &str)
+{
+	size_t f = 0;
+
+	while (f != std::string::npos)
+	{
+		f = str.find(",");
+		if (f != std::string::npos)
+			str.erase(f, 1);
+	}
+
+	//prob wont be more than 1 dollar sign
+	//while (f != string::npos)
+	{
+		f = str.find("$");
+		if (f != std::string::npos)
+			str.erase(f, 1);
+	}
+}
+
 float StringUtils::GetFloatFromString(std::string str)
 {
 	if(str.empty())
 		return 0.0;
 
-	size_t f = str.find(",");
-	if (f != std::string::npos)
-		str.erase(f, 1);
-	f = str.find("$");
-	if (f != std::string::npos)
-		str.erase(f, 1);
+	RemoveNumberDressing(str);
+
 	TrimWhiteSpace(str);
 
 	if(IsNumber(str))
@@ -1019,17 +1035,15 @@ float StringUtils::GetFloatFromString(std::string str)
 	return 0.0f;
 }
 
+
+
 double StringUtils::GetDoubleFromString(std::string str)
 {
 	if(str.empty())
 		return 0.0;
+	
+	RemoveNumberDressing(str);
 
-	size_t f = str.find(",");
-	if (f != std::string::npos)
-		str.erase(f, 1);
-	f = str.find("$");
-	if (f != std::string::npos)
-		str.erase(f, 1);
 	TrimWhiteSpace(str);
 
 	if(IsNumber(str))
@@ -1043,12 +1057,8 @@ int StringUtils::GetIntFromString(std::string str)
 	if(str.empty())
 		return 0;
 
-	size_t f = str.find(",");
-	if (f != std::string::npos)
-		str.erase(f, 1);
-	f = str.find("$");
-	if (f != std::string::npos)
-		str.erase(f, 1);
+	RemoveNumberDressing(str);
+
 	TrimWhiteSpace(str);
 
 	if(IsNumber(str))
