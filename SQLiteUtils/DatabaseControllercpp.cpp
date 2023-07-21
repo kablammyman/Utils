@@ -864,6 +864,11 @@ void DatabaseController::AddDateDataToQuerey(vector<dbDataPair> & data, string c
 	AddStringDataToQuerey(data,  colName, colValue.ToString());
 }
 
+void DatabaseController::AddDateAndTimeDataToQuerey(vector<dbDataPair> & data, string colName, DateTime colValue)
+{
+	AddStringDataToQuerey(data,  colName, colValue.ToString(true));
+}
+
 void DatabaseController::AddTimeDataToQuerey(vector<dbDataPair> & data, string colName, DateTime::Time colValue)
 {
 	AddStringDataToQuerey(data, colName, colValue.ToString());
@@ -944,6 +949,50 @@ bool DatabaseController::AddColToExistingTable(string tableName, string colName,
 	return ExecuteSQL("ALTER TABLE \""+ tableName+"\" ADD COLUMN \"" + colName +"\" " + "\"" + attrib + "\";", output);
 
 
+}
+
+std::vector<std::string> DatabaseController::GetMissingCols(std::string tableName, std::vector<DatabaseController::dbDataPair>& masterColList)
+{
+	std::vector<std::string> ret;
+	std::vector<std::string> cols;
+	GetAllColsInTable(tableName, cols);
+	bool foundCol;
+	for (size_t i = 0; i < masterColList.size(); i++)
+	{
+		foundCol = false;
+		for (size_t j = 0; j < cols.size(); j++)
+		{
+			if (masterColList[i].first == cols[j])
+			{
+				foundCol = true;
+				break;
+			}
+		}
+		if (!foundCol)
+			ret.push_back(masterColList[i].first);
+	}
+	return ret;
+}
+
+void DatabaseController::CreateOrUpdateTable(string tableName, vector<DatabaseController::dbDataPair>& fields)
+{
+	string output;
+	if (!CheckIfTableExists(tableName))
+		CreateTable(tableName, fields, output);
+	else
+	{
+		std::vector<std::string> missingCols = GetMissingCols(tableName, fields);
+		for (size_t i = 0; i < missingCols.size(); i++)
+		{
+			for (size_t j = 0; j < fields.size(); j++)
+			{
+				if (fields[j].first == missingCols[i])
+				{
+					AddColToExistingTable(tableName, fields[j].first, fields[j].second);
+				}
+			}
+		}
+	}
 }
 
 ///////////////////////////////////////////////////////////test methods

@@ -175,6 +175,7 @@ public:
 	static void AddIntDataToQuerey(vector<dbDataPair> & data, string colName, int valValue);
 	static void AddBoolDataToQuerey(vector<dbDataPair> & data, string colName, bool valValue);
 	static void AddDateDataToQuerey(vector<dbDataPair> & data, string colName, DateTime colValue);
+	static void AddDateAndTimeDataToQuerey(vector<dbDataPair> & data, string colName, DateTime colValue);
 	static void AddTimeDataToQuerey(vector<dbDataPair> & data, string colName, DateTime::Time colValue);
 	static void AddDateTimeDataToQuerey(vector<dbDataPair> & data, string colName, DateTime colValue);
 
@@ -193,8 +194,10 @@ public:
 	bool CreateTable(string tableName, vector<dbDataPair> fields, string& output);
 	bool CheckIfTableExists(string tableName);
 	bool AddColToExistingTable(string tableName, string colName, string attrib);
-
-	//test methods
+	std::vector<std::string> GetMissingCols(std::string tableName, std::vector<DatabaseController::dbDataPair>& masterColList);
+	void CreateOrUpdateTable(string tableName, vector<DatabaseController::dbDataPair>& fields);
+	
+		//test methods
 	void testGetTable();
 	void testDBEntry();
 	void testDBQuerey();
