@@ -42,10 +42,15 @@ void DateTime::Time::SetTimeFromString(std::string timeString)
 
 std::string DateTime::Time::ToString()
 {
-	std::string ret = std::to_string(hour) + ":";
+	std::string ret;
+	if (hour < 10)
+		ret += "0";
+	ret += std::to_string(hour) + ":";
+	
 	if (minute < 10)
 		ret += "0";
 	ret += std::to_string(minute) + ":";
+	
 	if (second > 0)
 	{
 		if (second < 10)
