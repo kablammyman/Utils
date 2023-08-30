@@ -86,7 +86,14 @@ void TaggingUtils::CreateTagTables(vector<DatabaseController::dbDataPair> &extra
 //---------------------------------------------------------------------------------------------------------------
 int TaggingUtils::AddTag(std::string tagName )
 {
+	//dont add duplicate tags!
+	int tagID = GetTagId(tagName);
+	if (tagID > 0)
+		return tagID;
+
 	string output;
+
+	StringUtils::ToLower(tagName);
 	DatabaseController::dbDataPair data = make_pair("Name",tagName);
 
 	if (!dbController->InsertNewDataEntry(TAGS_TABLE,data ,output))
@@ -376,6 +383,7 @@ int TaggingUtils::TagItem(int itemID, std::vector<std::string> tags)
 int TaggingUtils::GetId(string table, string itemName)
 {
 	string output;
+
 	string querey = "SELECT ID FROM "+ table + " WHERE Name = '" + itemName + "'";
 
 	if (!dbController->DoDBQuerey(querey, output))
@@ -399,6 +407,7 @@ int TaggingUtils::GetId(string table, string itemName)
 //---------------------------------------------------------------------------------------------------------------
 int TaggingUtils::GetTagId(std::string tagName)
 {
+	StringUtils::ToLower(tagName);
 	return GetId(TAGS_TABLE, tagName);
 }
 //---------------------------------------------------------------------------------------------------------------
