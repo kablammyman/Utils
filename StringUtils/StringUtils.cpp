@@ -649,7 +649,7 @@ void StringUtils::SanitizeJsonString(std::string& value)
 		}
 		else if (value[i] == '"')
 		{
-			ret += '\'';
+			ret += '\"';
 		}
 		else if (value[i] == '\\')
 		{
