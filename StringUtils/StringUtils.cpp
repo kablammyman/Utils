@@ -901,9 +901,16 @@ std::string StringUtils::GetJsonEntryValue(std::string& json, std::string name)
 		//bad formatting of the json string?
 		if(endQuote == std::string::npos)
 			return ret;
+		//what if the brace is inside a json string value, lets find the real end of json just in case
+		if (brace > quote && brace < endQuote)
+			brace = json.find("}", endQuote);
 
 		comma = json.find(",", endQuote);
 	}
+	
+	
+	
+
 
 	//prob bad json formatting
 	if (comma == std::string::npos && brace == std::string::npos)
