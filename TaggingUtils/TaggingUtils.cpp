@@ -347,12 +347,8 @@ int TaggingUtils::TagItem(std::string itemName, std::vector<std::string> tags)
 int TaggingUtils::TagItem(int itemID, std::string tagName)
 {
 
-	int tagID =  GetTagId(tagName);
-	if(tagID < 1)
-	{
-		//we CAN add the tag if it doesnt exist yet since tags are simple to add
-		tagID = AddTag(tagName );
-	}
+	int tagID = AddTag(tagName);
+	
 	//only add if the link between these 2 dont exist
 	int ret = GetItemTagId(itemID,tagID);
 	if(ret == -1)
@@ -362,21 +358,13 @@ int TaggingUtils::TagItem(int itemID, std::string tagName)
 //---------------------------------------------------------------------------------------------------------------
 int TaggingUtils::TagItem(int itemID, std::vector<std::string> tags)
 {
+	int ret = -1;
 	for(size_t i = 0; i < tags.size(); i++)
 	{
-		int tagID =  GetTagId(tags[i]);
-		if(tagID < 1)
-		{
-			//we CAN add the tag if it doesnt exist yet since tags are simple to add
-			tagID = AddTag(tags[i] );
-		}
-
-		//only add if the link between these 2 dont exist
-		if(GetItemTagId(itemID,tagID) == -1)
-			AddItemTagsEntry( itemID, tagID);
+		ret = TagItem(itemID, tags[i]);
 	}
 
-	return dbController->GetLatestRowID();
+	return ret;
 }
 //---------------------------------------------------------------------------------------------------------------
 //this will work for any of the 3 tables, since they all have an ID and a name

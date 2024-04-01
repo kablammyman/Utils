@@ -795,6 +795,15 @@ void DatabaseController::RemoveTableNameFromOutput(string &inputData)
 		return;
 	inputData.erase(0, f+1);
 
+	string ret;
+	for (size_t i = 0; i < inputData.size(); i++)
+		if (inputData[i] == '\n')
+			break;
+		else
+			ret += inputData[i];
+
+	inputData = ret;
+
 	if(inputData.back() == '\n')
 		inputData.pop_back();
 }

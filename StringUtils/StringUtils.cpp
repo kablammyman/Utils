@@ -443,11 +443,22 @@ bool StringUtils::IsPrevCharNonAlpha(std::string line,std::string word)
 }
 bool StringUtils::IsNumber(std::string word)
 {
+	//when I have string like "--" or "++" this should fail!
+	bool hasDigits = false;
+
 	for (size_t i = 0; i < word.size(); i++)
 		//should I include the $ or %?
 		if (!isdigit(word[i]) && word[i] != '.' && word[i] != '-' && word[i] != '$' && word[i] != ',')
 			return false;
-	return true;
+		else
+		{
+			//i prob should have a check to make sure that its a valid number so something like 9- or 6+7++4 isnt accepted or something
+			if (isdigit(word[i]))
+				hasDigits = true;
+		}
+	if(hasDigits)
+		return true;
+	return false;
 }
 
 bool StringUtils::IsPostCharNonAlpha(std::string line,std::string word)
