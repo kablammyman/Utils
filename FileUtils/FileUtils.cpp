@@ -33,7 +33,7 @@ int FileUtils::GetRandomInt(int min, int max)
 
 }
 //--------------------------------------------------------------------------------------------------
-bool FileUtils::DoesPathExist(string &path)
+bool FileUtils::DoesPathExist(string path)
 {
 #ifdef _WIN32
 	DWORD ftyp = GetFileAttributesA(path.c_str());
@@ -64,7 +64,7 @@ bool FileUtils::DoesPathExist(string &path)
 #endif
 }
 //--------------------------------------------------------------------------------------------------
-bool FileUtils::DoesFileExist(string &path)
+bool FileUtils::DoesFileExist(string path)
 {
     if (FILE *file = fopen(path.c_str(), "r"))
 	{
@@ -93,7 +93,7 @@ string FileUtils::GetFileExt(string fullPath)
 	return fullPath.substr(found + 1);
 }
 //--------------------------------------------------------------------------------------------------
-string FileUtils::GetFileNameNoExt(string &fullPath)
+string FileUtils::GetFileNameNoExt(string fullPath)
 {
 	string name = GetFileNameFromPathString(fullPath);
 	if (name == "")//if we passed in a file name without path
@@ -102,7 +102,7 @@ string FileUtils::GetFileNameNoExt(string &fullPath)
 	return name.substr(0,found);
 }
 //--------------------------------------------------------------------------------------------------
-int FileUtils::GetNumFoldersinDir(string &path)//needs to have *.fileExt to work
+int FileUtils::GetNumFoldersinDir(string path)//needs to have *.fileExt to work
 {
 	if (DoesPathExist(path) == false)
 		return -1;
@@ -144,7 +144,7 @@ int FileUtils::GetNumFoldersinDir(string &path)//needs to have *.fileExt to work
 	return folderNum;
 }
 //--------------------------------------------------------------------------------------------------
-vector<string> FileUtils::GetAllFolderNamesInDir(string &path)//needs to have *.fileExt to work
+vector<string> FileUtils::GetAllFolderNamesInDir(string path)//needs to have *.fileExt to work
 {
 	vector<string> folderList;
 	if (DoesPathExist(path) == false)
@@ -208,7 +208,7 @@ vector<string> FileUtils::GetAllFolderNamesInDir(string &path)//needs to have *.
 	return folderList;
 }
 //--------------------------------------------------------------------------------------------------
-int FileUtils::GetNumFilesInDir(string &path, string ext)//needs to have *.fileExt to work
+int FileUtils::GetNumFilesInDir(string path, string ext)//needs to have *.fileExt to work
 {
 	if (DoesPathExist(path) == false)
 		return-1;
@@ -390,7 +390,7 @@ bool FileUtils::Delete_File(string file, bool permanetDelete)
 #endif
 }
 //--------------------------------------------------------------------------------------------------
-string FileUtils::DeleteAllFilesInDir(string &path)
+string FileUtils::DeleteAllFilesInDir(string path)
 {
 
 	string returnString = "";
@@ -411,7 +411,7 @@ string FileUtils::DeleteAllFilesInDir(string &path)
 }
 //--------------------------------------------------------------------------------------------------------
 //pics a dir from the master list, then "digs" down to get soething new
-string FileUtils::GetRandomDirQuick(string &path)
+string FileUtils::GetRandomDirQuick(string path)
 {
 	if (DoesPathExist(path) == false)
 		return "";
@@ -449,7 +449,7 @@ string FileUtils::GetRandomDirQuick(string &path)
 }
 //--------------------------------------------------------------------------------------------------------
 //enumerates all files, and pics a random one
-string FileUtils::GetRandomFileQuick(string &path)
+string FileUtils::GetRandomFileQuick(string path)
 {
 	vector<string> allFiles = GetAllFileNamesInDir(path, "", true);
 
@@ -462,17 +462,17 @@ string FileUtils::GetRandomFileQuick(string &path)
 	return ""; //this dir was empty, return empty string
 }
 //--------------------------------------------------------------------------------------------------------
-string FileUtils::GetFileNameFromPathString(string &path)
+string FileUtils::GetFileNameFromPathString(string path)
 {
 	return DirectoryTree::GetFileNameFromPathString(path);
 }
 //--------------------------------------------------------------------------------------------------------
-string FileUtils::GetPathFromFullyQualifiedPathString(string &path)
+string FileUtils::GetPathFromFullyQualifiedPathString(string path)
 {
 	return DirectoryTree::GetPathFromFullyQualifiedPathString(path);
 }
 //--------------------------------------------------------------------------------------------------
-void FileUtils::AddDirTree(string &path, int numThreads)
+void FileUtils::AddDirTree(string path, int numThreads)
 {
 	if (DoesPathExist(path) == false)
 		return;
@@ -487,7 +487,7 @@ void FileUtils::AddDirTree(string &path, int numThreads)
 	return dirTree.getDirTreeRoot();
 }
 //--------------------------------------------------------------------------------------------------
-DirNode* FileUtils::getDirTree(string &path)
+DirNode* FileUtils::getDirTree(string path)
 {
 	return dirTree.getDirNode(path);
 }*/
@@ -502,7 +502,7 @@ int FileUtils::GetNumFilesInTree()
 	return  dirTree.GetNumFilesInTree();
 }
 //--------------------------------------------------------------------------------------------------
-void FileUtils::StartDirTreeStep(string &path)
+void FileUtils::StartDirTreeStep(string path)
 {
 	dirTree.StartProcessFilesFromDirStep(path);
 }
@@ -569,7 +569,7 @@ void FileUtils::DumpTreeToVector(vector<string> &ret)
 	return dirNode->ToString();
 }*/
 //--------------------------------------------------------------------------------------------------
-long long FileUtils::GetDirSize(string &path)
+long long FileUtils::GetDirSize(string path)
 {
 	return DirectoryTree::GetDirSize(path);
 }
@@ -616,7 +616,7 @@ int FileUtils::Test()
 }
 
 //---------------------------------------------------------------------------------------------------------------
-void FileUtils::CreateNewFileFromTagTemaplateFile(string templatePath, string newFilePath, DocumentTags tagMap)
+bool FileUtils::CreateNewFileFromTagTemaplateFile(string templatePath, string newFilePath, DocumentTags tagMap)
 {
 
 	//if not os.path.exists(outputFolderBase):
@@ -632,7 +632,7 @@ void FileUtils::CreateNewFileFromTagTemaplateFile(string templatePath, string ne
 	{
 		templateFile.close();
 		printf("CreateNewFileFromTagTemaplateFile error 1: couldnt open template: %s\n", templatePath.c_str());
-		return;
+		return false;
 	}
 
 	//when you ha e 2 paercels in one deal, this needs to change, otherwise you get this:
@@ -641,7 +641,7 @@ void FileUtils::CreateNewFileFromTagTemaplateFile(string templatePath, string ne
 	{
 		newFile.close();
 		printf("CreateNewFileFromTagTemaplateFile error 2: couldnt open new file: %s\n", newFilePath.c_str());
-		return;
+		return false;
 	}
 
 	string line;
@@ -654,4 +654,5 @@ void FileUtils::CreateNewFileFromTagTemaplateFile(string templatePath, string ne
 
 	templateFile.close();
 	newFile.close();
+	return true;
 }
