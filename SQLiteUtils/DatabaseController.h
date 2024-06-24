@@ -112,6 +112,7 @@ public:
 		}
 	};
 	DatabaseController();
+	DatabaseController(std::string path);
 	~DatabaseController();
 	struct Error
 	{

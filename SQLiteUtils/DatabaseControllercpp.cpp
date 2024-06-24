@@ -7,6 +7,10 @@ DatabaseController::DatabaseController()
 	db = NULL;
 	dbName = "";
 }
+DatabaseController::DatabaseController(string path)
+{
+	OpenDB(path);
+}
 
 DatabaseController::~DatabaseController()
 {
