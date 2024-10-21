@@ -55,6 +55,7 @@ public:
 	DateTime(std::string date);
 	void Clear();
 	void ParseDateString(std::string dateString);
+	void ParseSlashDateString(std::string dateString);
 	void ParseISO8601DateString(std::string dateString);
 	void ParseEmailDateString(std::string dateString);
 	std::string ToString(bool includeTime = false);

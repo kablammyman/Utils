@@ -8,27 +8,28 @@ DateTime::Time::Time(int h, int m, int s)
 {
 	Init(h, m, s);
 }
+//--------------------------------------------------------------------------------------------------
 DateTime::Time::Time(int h, int m)
 {
 	hour = h;
 	minute = m;
 	second = 0;
 }
+//--------------------------------------------------------------------------------------------------
 DateTime::Time::Time()
 {
 	hour = 0;
 	minute = 0;
 	second = 0;
 }
-
-
+//--------------------------------------------------------------------------------------------------
 void DateTime::Time::Init(int h, int m, int s)
 {
 	hour = h;
 	minute = m;
 	second = s;
 }
-
+//--------------------------------------------------------------------------------------------------
 void DateTime::Time::SetTimeFromString(std::string timeString)
 {
 	std::vector<std::string> timeVec = StringUtils::Tokenize(timeString, ":");
@@ -39,7 +40,7 @@ void DateTime::Time::SetTimeFromString(std::string timeString)
 	if (timeVec.size() > 2)
 		second = StringUtils::GetIntFromString(timeVec[2]);
 }
-
+//--------------------------------------------------------------------------------------------------
 std::string DateTime::Time::ToString()
 {
 	std::string ret;
@@ -60,21 +61,21 @@ std::string DateTime::Time::ToString()
 
 	return ret;
 }
-
+//--------------------------------------------------------------------------------------------------
 bool DateTime::Time::IsEmpty() const
 {
 	if (hour == 0 && minute == 0 && second == 0)
 		return true;
 	return false;
 }
-
+//--------------------------------------------------------------------------------------------------
 void DateTime::Time::Clear()
 {
 	hour = 0;
 	minute = 0;
 	second = 0;
 }
-
+//--------------------------------------------------------------------------------------------------
 //DateTime DateTime::operator=(const DateTime& d)
 
 bool DateTime::Time::operator==(const Time& t)
@@ -83,13 +84,14 @@ bool DateTime::Time::operator==(const Time& t)
 		return true;
 	return false;
 }
+//--------------------------------------------------------------------------------------------------
 bool DateTime::Time::operator!=(const Time& t)
 {
 	if (hour != t.hour || minute != t.minute || second != t.second)
 		return true;
 	return false;
 }
-
+//--------------------------------------------------------------------------------------------------
 bool DateTime::Time::operator>(const Time& t)
 {
 	if (hour > t.hour)
@@ -112,7 +114,7 @@ bool DateTime::Time::operator>(const Time& t)
 	}
 	return false;
 }
-
+//--------------------------------------------------------------------------------------------------
 bool DateTime::Time::operator<(const Time& t)
 {
 	if (hour > t.hour)
@@ -135,7 +137,7 @@ bool DateTime::Time::operator<(const Time& t)
 	}
 	return false;
 }
-
+//--------------------------------------------------------------------------------------------------
 bool DateTime::Time::operator>=(const Time& t)
 {
 	if (hour >= t.hour)
@@ -152,6 +154,7 @@ bool DateTime::Time::operator>=(const Time& t)
 
 	return false;
 }
+//--------------------------------------------------------------------------------------------------
 bool  DateTime::Time::operator<=(const Time& t)
 {
 	if (hour <= t.hour)
@@ -166,8 +169,7 @@ bool  DateTime::Time::operator<=(const Time& t)
 
 	return false;
 }
-
-
+//--------------------------------------------------------------------------------------------------
 void DateTime::Time::IncTime(DateTime::Time& otherTime)
 {
 	//first convert hours to min
@@ -179,7 +181,7 @@ void DateTime::Time::IncTime(DateTime::Time& otherTime)
 
 	SetTimeFromSeconds(totalSeconds);
 }
-
+//--------------------------------------------------------------------------------------------------
 void DateTime::Time::DecTime(DateTime::Time& otherTime)
 {
 	//first convert hours to min
@@ -191,21 +193,21 @@ void DateTime::Time::DecTime(DateTime::Time& otherTime)
 
 	SetTimeFromSeconds(totalSeconds);
 }
-
+//--------------------------------------------------------------------------------------------------
 void DateTime::Time::IncTime(std::string timeString)
 {
 	DateTime::Time time;
 	time.SetTimeFromString(timeString);
 	IncTime(time);
 }
-
+//--------------------------------------------------------------------------------------------------
 void DateTime::Time::DecTime(std::string timeString)
 {
 	DateTime::Time time;
 	time.SetTimeFromString(timeString);
 	DecTime(time);
 }
-
+//--------------------------------------------------------------------------------------------------
 DateTime::Time DateTime::Time::TimeDiff(DateTime::Time& otherTime)
 {
 	//the times we have should already be in 24hr format...so we aint checking!
@@ -221,31 +223,30 @@ DateTime::Time DateTime::Time::TimeDiff(DateTime::Time& otherTime)
 
 	return ret;
 }
-
+//--------------------------------------------------------------------------------------------------
 int DateTime::Time::GetTimeInSeconds()
 {
 	return (hour * 3600) + (minute * 60) + second;
 }
-
+//--------------------------------------------------------------------------------------------------
 void DateTime::Time::SetTimeFromSeconds(int totalSeconds)
 {
 	hour = totalSeconds / 3600;
 	minute = (totalSeconds % 3600) / 60;
 	second = totalSeconds % 60;
 }
-
+//--------------------------------------------------------------------------------------------------
 void DateTime::Time::SetTimeFromMilis(int mili)
 {
 	float totalSeconds = ((float)mili / (float)1000);
 	SetTimeFromSeconds((int) /*std*/::round(totalSeconds));
 }
-
-
+//--------------------------------------------------------------------------------------------------
 DateTime::DateTime()
 {
 
 };
-
+//--------------------------------------------------------------------------------------------------
 DateTime::DateTime(int y, int m, int d)
 {
 	year = y;
@@ -253,6 +254,7 @@ DateTime::DateTime(int y, int m, int d)
 	day = d;
 	myTime.Init(0, 0, 0);
 }
+//--------------------------------------------------------------------------------------------------
 DateTime::DateTime(int y, int m, int d, int h, int min, int s)
 {
 	year = y;
@@ -260,6 +262,7 @@ DateTime::DateTime(int y, int m, int d, int h, int min, int s)
 	day = d;
 	myTime.Init(h,min,s);
 }
+//--------------------------------------------------------------------------------------------------
 DateTime::DateTime(std::string date)
 {
 	myTime.Init(0, 0, 0);
@@ -269,14 +272,14 @@ DateTime::DateTime(std::string date)
 	else
 		ParseDateString(date);
 }
-
+//--------------------------------------------------------------------------------------------------
 bool DateTime::IsEmpty()
 {
 	if (year == 1900 && month == 1 && day == 1)
 		return true;
 	return false;
 }
-
+//--------------------------------------------------------------------------------------------------
 void DateTime::Clear()
 {
 	year = 1900;
@@ -284,6 +287,7 @@ void DateTime::Clear()
 	day = 1;
 	myTime.Clear();
 }
+//--------------------------------------------------------------------------------------------------
 void DateTime::ParseDateString(std::string dateString)
 {
 	std::vector<std::string> date;
@@ -333,7 +337,29 @@ void DateTime::ParseDateString(std::string dateString)
 		myTime.SetTimeFromString(tokens.back());
 	}
 }
+//--------------------------------------------------------------------------------------------------
+void DateTime::ParseSlashDateString(std::string dateString)
+{
+	std::string convertedDate = ConvertSlashDate(dateString);
 
+	std::vector<std::string> date = StringUtils::Tokenize(convertedDate, " ");
+	
+	if (date.size() < 3) 
+	{
+		year = 1900;
+		month = 1;
+		day = 1;
+	}
+	else
+	{
+		year = atoi(date[0].c_str());
+		month = atoi(date[1].c_str());
+		day = atoi(date[2].c_str());
+		if(date.size() == 4)
+			myTime.SetTimeFromString(date[3]);
+	}
+}
+//--------------------------------------------------------------------------------------------------
 void DateTime::ParseISO8601DateString(std::string dateString)
 {
 	//2022-10-31T22:28:02.746037Z
@@ -360,7 +386,7 @@ void DateTime::ParseISO8601DateString(std::string dateString)
 	myTime.second = StringUtils::GetIntFromString(s);
 	//myTime.SetTimeFromString(dateTokens[4]);
 }
-
+//--------------------------------------------------------------------------------------------------
 //this is the format that bluehost emails are in...maybe all emails?
 void DateTime::ParseEmailDateString(std::string dateString)
 {
@@ -372,7 +398,7 @@ void DateTime::ParseEmailDateString(std::string dateString)
 	year = StringUtils::GetIntFromString(dateTokens[3]);
 	myTime.SetTimeFromString(dateTokens[4]);
 }
-
+//--------------------------------------------------------------------------------------------------
 std::string DateTime::DigitToString(int num)
 {
 	if (num < 10)
@@ -380,7 +406,7 @@ std::string DateTime::DigitToString(int num)
 
 	return std::to_string(num);
 }
-
+//--------------------------------------------------------------------------------------------------
 std::string DateTime::ToString(bool includeTime)
 {
 	std::string ret = std::to_string(year) + " ";
@@ -395,9 +421,7 @@ std::string DateTime::ToString(bool includeTime)
 	}
 	return ret;
 }
-
-
-
+//--------------------------------------------------------------------------------------------------
 void DateTime::SetCurrentDateTime()
 {
 	time_t now = time(0);
@@ -426,8 +450,7 @@ void DateTime::SetCurrentDateTime()
 	myTime.minute = buf.tm_min;
 	myTime.second = buf.tm_sec;
 }
-
-
+//--------------------------------------------------------------------------------------------------
 std::string DateTime::GetCurrentDayOfWeekString()
 {
 	time_t now = time(0);
@@ -458,7 +481,7 @@ std::string DateTime::GetCurrentDayOfWeekString()
 		"Unknown";
 	}
 }
-
+//--------------------------------------------------------------------------------------------------
 //sunday = 0
 int DateTime::GetCurrentDayOfWeek()
 {
@@ -472,7 +495,7 @@ int DateTime::GetCurrentDayOfWeek()
 
 	return buf.tm_wday;
 }
-
+//--------------------------------------------------------------------------------------------------
 int DateTime::TimeDiff(DateTime& otherDate)
 {
 	if (year == otherDate.year && month == otherDate.month)
@@ -493,7 +516,7 @@ int DateTime::TimeDiff(DateTime& otherDate)
 
 	return abs(otherNumDays - myNumDays);
 }
-
+//--------------------------------------------------------------------------------------------------
 DateTime DateTime::TimeDiffAsObj(DateTime& otherDate)
 {
 	int daysDiff = TimeDiff(otherDate);
@@ -517,7 +540,7 @@ DateTime DateTime::TimeDiffAsObj(DateTime& otherDate)
 
 	return ret;
 }
-
+//--------------------------------------------------------------------------------------------------
 int DateTime::GetDayOfYear()
 {
 	int numDays = 0;
@@ -528,13 +551,39 @@ int DateTime::GetDayOfYear()
 
 	return numDays;
 }
+//--------------------------------------------------------------------------------------------------
 //convert a date string that looks like mon/day/year to my format
 std::string DateTime::ConvertSlashDate(std::string slashDate)
 {
 	std::vector<std::string> date = StringUtils::Tokenize(slashDate, "/");
-	return date[2] + " " + date[0] + " " + date[1];
-}
+	std::string year = "1900";
+	std::string month = "01";
+	std::string day = "01";
+	std::string time;
 
+	if (date.size() > 2)
+	{
+		if (date[2].size() > 4)//has a date
+		{
+			//10/16/2024 06:27 PM
+			std::vector<std::string> parts = StringUtils::Tokenize(date[2], " ");
+			year = parts[0];
+			time = parts[1];
+		}
+		else
+		{
+			year = date[2];
+			
+		}
+		month = date[0];
+		day = date[1];
+	}
+	std::string ret = year + " " + month + " " + day;
+	if (!time.empty())
+		ret += " " + time;
+	return ret;
+}
+//--------------------------------------------------------------------------------------------------
 std::string DateTime::Now()
 {
 	DateTime temp;
@@ -542,7 +591,7 @@ std::string DateTime::Now()
 
 	return temp.ToString();
 }
-
+//--------------------------------------------------------------------------------------------------
 std::string DateTime::PrettyPrintNow()
 {
 	DateTime temp;
@@ -550,7 +599,7 @@ std::string DateTime::PrettyPrintNow()
 
 	return temp.PrettyPrint();
 }
-
+//--------------------------------------------------------------------------------------------------
 DateTime DateTime::operator=(const DateTime& d)
 {
 	this->year = d.year;
@@ -561,6 +610,7 @@ DateTime DateTime::operator=(const DateTime& d)
 	this->myTime.second = d.myTime.second;
 	return *this;
 }
+//--------------------------------------------------------------------------------------------------
 bool DateTime::IsDateEqual(const DateTime& d)
 {
 	if (this->year == d.year &&
@@ -569,6 +619,7 @@ bool DateTime::IsDateEqual(const DateTime& d)
 		return true;
 	return false;
 }
+//--------------------------------------------------------------------------------------------------
 bool DateTime::operator==(const DateTime& d)
 {
 	if (myTime.IsEmpty() || d.myTime.IsEmpty())
@@ -583,6 +634,7 @@ bool DateTime::operator==(const DateTime& d)
 
 	return false;
 }
+//--------------------------------------------------------------------------------------------------
 bool DateTime::operator!=(const DateTime& d)
 {
 	if (this->myTime.IsEmpty() || d.myTime.IsEmpty())
@@ -600,6 +652,7 @@ bool DateTime::operator!=(const DateTime& d)
 
 	return false;
 }
+//--------------------------------------------------------------------------------------------------
 bool DateTime::operator>(const DateTime& d)
 {
 	if (this->year > d.year)
@@ -625,7 +678,7 @@ bool DateTime::operator>(const DateTime& d)
 
 	return false;
 }
-
+//--------------------------------------------------------------------------------------------------
 bool DateTime::operator<(const DateTime& d)
 {
 	if (this->year < d.year)
@@ -651,7 +704,7 @@ bool DateTime::operator<(const DateTime& d)
 
 	return false;
 }
-
+//--------------------------------------------------------------------------------------------------
 bool DateTime::operator>=(const DateTime& d)
 {
 	if (*this == d)
@@ -661,7 +714,7 @@ bool DateTime::operator>=(const DateTime& d)
 
 	return false;
 }
-
+//--------------------------------------------------------------------------------------------------
 bool DateTime::operator<=(const DateTime& d)
 {
 	if (*this == d)
@@ -672,7 +725,7 @@ bool DateTime::operator<=(const DateTime& d)
 
 	return false;
 }
-
+//--------------------------------------------------------------------------------------------------
 void DateTime::IncDay(int amt)
 {
 	day += amt;
@@ -685,7 +738,7 @@ void DateTime::IncDay(int amt)
 	}
 
 }
-
+//--------------------------------------------------------------------------------------------------
 void DateTime::DecDay(int amt)
 {
 	day -= amt;
@@ -697,7 +750,7 @@ void DateTime::DecDay(int amt)
 		day += daysInCurMonth;
 	}
 }
-
+//--------------------------------------------------------------------------------------------------
 void DateTime::IncMonth(int amt)
 {
 	month += amt;
@@ -707,7 +760,7 @@ void DateTime::IncMonth(int amt)
 		month -= 12;
 	}
 }
-
+//--------------------------------------------------------------------------------------------------
 void DateTime::DecMonth(int amt)
 {
 	month -= amt;
@@ -717,9 +770,7 @@ void DateTime::DecMonth(int amt)
 		month += 12;
 	}
 }
-
-
-
+//--------------------------------------------------------------------------------------------------
 int DateTime::GetDaysInMonth(int mon)
 {
 	int days = 31;
@@ -738,20 +789,22 @@ int DateTime::GetDaysInMonth(int mon)
 
 	return days;
 }
-
-
+//--------------------------------------------------------------------------------------------------
 std::string DateTime::GetMonthAbrv()
 {
 	return GetMonthAbrv(month);
 }
+//--------------------------------------------------------------------------------------------------
 std::string DateTime::GetMonthWord()
 {
 	return GetMonthWord(month);
 }
+//--------------------------------------------------------------------------------------------------
 std::string DateTime::GetDayOfMonthWord()
 {
 	return GetDayOfMonthWord(day);
 }
+//--------------------------------------------------------------------------------------------------
 std::string DateTime::GetMonthWord(int month)
 {
 	switch (month)
@@ -784,6 +837,7 @@ std::string DateTime::GetMonthWord(int month)
 			return "";
 	}
 }
+//--------------------------------------------------------------------------------------------------
 void DateTime::SetMonthFromWord(std::string monthWord)
 {
 	StringUtils::ToUpper(monthWord);
@@ -812,7 +866,7 @@ void DateTime::SetMonthFromWord(std::string monthWord)
 	else if (monthWord == "DECEMBER")
 		month = 12;
 }
-
+//--------------------------------------------------------------------------------------------------
 std::string DateTime::GetMonthAbrv(int month)
 {
 	switch (month)
@@ -845,6 +899,7 @@ std::string DateTime::GetMonthAbrv(int month)
 		return "";
 	}
 }
+//--------------------------------------------------------------------------------------------------
 void DateTime::SetMonthFromAbrv(std::string monthAbrv)
 {
 	StringUtils::ToUpper(monthAbrv);
@@ -873,7 +928,7 @@ void DateTime::SetMonthFromAbrv(std::string monthAbrv)
 	else if (monthAbrv == "DEC")
 		month = 12;
 }
-
+//--------------------------------------------------------------------------------------------------
 std::string DateTime::GetDayOfMonthWord(int day)
 {
 	std::string word = std::to_string(day);
@@ -886,7 +941,7 @@ std::string DateTime::GetDayOfMonthWord(int day)
 	else
 		return word + "th";
 }
-
+//--------------------------------------------------------------------------------------------------
 std::string DateTime::PrettyPrint(bool includeTime)
 {
 	std::string ret =  GetMonthWord() + " " + GetDayOfMonthWord() + " " + std::to_string(year);
@@ -897,7 +952,7 @@ std::string DateTime::PrettyPrint(bool includeTime)
 	}
 	return ret;
 }
-
+//--------------------------------------------------------------------------------------------------
 std::string DateTime::PrintFormattedString(std::string format)
 {
 	std::string ret;
@@ -929,12 +984,12 @@ std::string DateTime::PrintFormattedString(std::string format)
 	}
 	return ret;
 }
-
+//--------------------------------------------------------------------------------------------------
 int DateTime::ConvertDaysIntoSeconds(int days)
 {
 	return 86400 * days;
 }
-
+//--------------------------------------------------------------------------------------------------
 int DateTime::ConvertDateTimeIntoSeconds()
 {
 	int dateAsSeconds = ConvertDaysIntoSeconds(GetDayOfYear());

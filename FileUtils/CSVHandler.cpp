@@ -48,6 +48,73 @@ bool CSVHandler::ReadCSVFile(std::string file, char d, bool hasHeader )
 	return false;
 }
 
+bool CSVHandler::ReadCSVFile2(std::string file, char d, bool hasHeader )
+{
+	inputDelim = d;
+	inputCSV.open(file);
+	string line;
+	bool insideQuotesData = false;
+	if (!inputCSV.is_open())
+		return false;
+	
+	//first line is always the header if it exists
+	if (hasHeader)
+	{
+		getline(inputCSV, line);
+		vector<string> tokens = CSVTokenize(line);
+		for (size_t i = 0; i < tokens.size(); i++)
+		{
+			//sometimes a null terminator is added to a header for some weird reason, so lets remove it if its there!
+			if (i == tokens.size() - 1)
+			{
+				RemoveNullTerminator(tokens[i]);
+			}
+			csvHeader.push_back(tokens[i]);//this preserves the order of the header
+			headerLookup[tokens[i]] = i;
+		}
+	}
+	line.clear();
+	char ch;
+	while (inputCSV.get(ch))
+	{
+		if (ch == '"' && !insideQuotesData)
+		{
+			insideQuotesData = true;
+			line += ch;
+			continue;
+		}
+
+		if (insideQuotesData)
+		{
+			if (ch == '"')
+			{
+				insideQuotesData = false;
+				line += ch;
+				continue;
+			}
+		}
+		
+
+
+		if ((ch == '\n' || ch == '\r') && !insideQuotesData) 
+		{
+			if (ch == '\r' && inputCSV.peek() == '\n') 
+			{
+				inputCSV.get(); // Consume the '\n' after '\r'
+			}
+			RemoveNullTerminator(line);
+			csvEntry.push_back(line);
+			line.clear();
+		}
+		else
+			line += ch;
+	}
+
+	inputCSV.close();
+	return true;
+
+}
+
 vector<string> CSVHandler::GetCSVHeader()
 {
 	if(!csvHeader.empty())
