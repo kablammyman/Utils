@@ -106,7 +106,7 @@ void StockBitmapFont::Create1bppBin(unsigned char *pngData)
 			count--;
 			if (count == 0)
 			{
-				uint32_t szBytesWritten = fwrite(&row, 1, sizeof(unsigned char), ptr_file);
+				unsigned int szBytesWritten = fwrite(&row, 1, sizeof(unsigned char), ptr_file);
 				count = reset;
 				row = 0;
 			}
