@@ -93,6 +93,7 @@ public:
 	static std::string PrettyPhone(std::string phoneToUpdate);
 	static bool IsValidPhone(std::string phone);
 	static std::string UrlDecode(std::string urlEncoded, char delim = '%');
+    static std::string UrlDecode2(std::string urlEncoded, char delim = '%');
 	static std::string UnEscapeString(std::string origString);
 
 	static std::map<std::string, int> GetAllTagsInFile(std::string filePath);

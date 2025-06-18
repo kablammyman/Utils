@@ -1364,7 +1364,7 @@ bool IsCharHexValue(char val)
 std::string StringUtils::UrlDecode(std::string urlEncoded,char delim)
 {
 	std::string ret;
-	char inBytes[2];
+	char inBytes[3];
 	size_t i = 0;
 	while( i < urlEncoded.size())
 	{
@@ -1372,7 +1372,37 @@ std::string StringUtils::UrlDecode(std::string urlEncoded,char delim)
 		{
 			inBytes[0] = urlEncoded[i + 1];
 			inBytes[1] = urlEncoded[i + 2];
+            inBytes[2] = '\0';
+			//ret += std::stoul(inBytes, nullptr, 16);
+            ret += static_cast<char>(std::stoul(inBytes, nullptr, 16));
+			i += 3;
+		}
+		else
+		{
+			if (urlEncoded[i] == '+')
+				ret += " ";
+			else
+				ret += urlEncoded[i];
+			i++;
+		}
+	}
+	return ret;
+}
+
+std::string StringUtils::UrlDecode2(std::string urlEncoded,char delim)
+{
+	std::string ret;
+	char inBytes[3];
+	size_t i = 0;
+	while( i < urlEncoded.size())
+	{
+		if (urlEncoded[i] == delim && IsCharHexValue(urlEncoded[i+1]) && IsCharHexValue(urlEncoded[i + 2]))
+		{
+			inBytes[0] = urlEncoded[i + 1];
+			inBytes[1] = urlEncoded[i + 2];
+            inBytes[2] = '\0';
 			ret += std::stoul(inBytes, nullptr, 16);
+            //ret += static_cast<char>(std::stoul(inBytes, nullptr, 16));
 			i += 3;
 		}
 		else
