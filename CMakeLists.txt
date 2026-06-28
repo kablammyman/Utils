@@ -28,10 +28,10 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${PROJECT_SOURCE_DIR}/x64/Release)
 
 set (CMAKE_CXX_STANDARD 11)
 IF (APPLE)
-	set (CMAKE_CXX_FLAGS "-I/usr/include/i386-linux-gnu/c++/4.8 -I/usr/include/c++/4.8 -std=c++11 -g3 -Wall -O3")
+	set (CMAKE_CXX_FLAGS "-std=c++11 -stdlib=libc++ -pthread -Wall -O2 -fPIC")
 ELSE ()
 	IF (WIN32)
-		set (CMAKE_CXX_FLAGS "-I/usr/include/i386-linux-gnu/c++/4.8 -I/usr/include/c++/4.8 -W4 /EHsc")
+		set (CMAKE_CXX_FLAGS "-W4 /EHsc")
 		ADD_SUBDIRECTORY(WindowsUtils)
 		foreach( OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES} )
 			string( TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG )
@@ -41,7 +41,7 @@ ELSE ()
 		endforeach( OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES )
 
 	ELSE()
-		set (CMAKE_CXX_FLAGS "-I/usr/include/i386-linux-gnu/c++/4.8 -I/usr/include/c++/4.8 -std=c++11 -pthread -g3 -Wall -O2 -fPIC")
+		set (CMAKE_CXX_FLAGS "-std=c++11 -pthread -g3 -Wall -O2 -fPIC")
 		
 		
 	ENDIF()

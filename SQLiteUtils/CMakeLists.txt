@@ -21,7 +21,6 @@ ENDIF()
 # Gather all source files for SQLiteUtils
 file(GLOB SOURCES
     ${PROJECT_SOURCE_DIR}/../StringUtils/StringUtils.h
-    ${PROJECT_SOURCE_DIR}/../StringUtils/StringUtils.cpp
     ${PROJECT_SOURCE_DIR}/*.h
     ${PROJECT_SOURCE_DIR}/*.cpp
 )

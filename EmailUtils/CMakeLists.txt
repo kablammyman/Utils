@@ -18,7 +18,6 @@ ENDIF()
 
 file(GLOB SOURCES
 	${PROJECT_SOURCE_DIR}/../StringUtils/StringUtils.h
-	${PROJECT_SOURCE_DIR}/../StringUtils/StringUtils.cpp
 	${PROJECT_SOURCE_DIR}/*.h
 	${PROJECT_SOURCE_DIR}/*.cpp)
 ADD_LIBRARY(EmailUtils ${SOURCES})
