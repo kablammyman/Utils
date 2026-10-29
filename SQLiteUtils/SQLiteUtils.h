@@ -32,6 +32,11 @@ public:
 	void SetLastError(std::string errMsg);
 	bool ExecuteSQL(std::string command, std::string &output);
 
+	//values are bound with sqlite3_bind_text instead of being pasted into the sql, so they can hold
+	//quotes, pipes, newlines, code, etc. use a ? in the sql for each param. NULL cols come back as ""
+	bool QueryWithParams(std::string sql, std::vector<std::string> params, std::vector<std::vector<dbDataPair>> &rows);
+	bool ExecuteWithParams(std::string sql, std::vector<std::string> params);
+
 	bool createTable(std::string name, std::string query);
 	//std::vector<std::string> displayTable();
 

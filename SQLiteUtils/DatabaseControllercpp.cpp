@@ -61,6 +61,27 @@ bool DatabaseController::ExecuteSQL(string command, string &output)
 
 }
 
+bool DatabaseController::QueryWithParams(string sql, vector<string> params, vector<DBResult> &results)
+{
+	results.clear();
+	vector<vector<dbDataPair>> rows;
+	if (!db->QueryWithParams(sql, params, rows))
+		return false;
+
+	for (size_t i = 0; i < rows.size(); i++)
+	{
+		DBResult row;
+		row.data = rows[i];
+		results.push_back(row);
+	}
+	return true;
+}
+
+bool DatabaseController::ExecuteWithParams(string sql, vector<string> params)
+{
+	return db->ExecuteWithParams(sql, params);
+}
+
 bool DatabaseController::CreateNewDB(string newDBName, string createCommand)
 {
 	//close the current db before making a new one

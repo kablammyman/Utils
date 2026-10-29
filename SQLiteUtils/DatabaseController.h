@@ -124,6 +124,9 @@ public:
 	bool IsDBOpen();
 	bool CreateNewDB(string newDBName, string createCommand="");
 	bool ExecuteSQL(string command, string &output);
+	//safe versions that bind values instead of building the sql string. use a ? in the sql for each param
+	bool QueryWithParams(string sql, vector<string> params, vector<DBResult> &results);
+	bool ExecuteWithParams(string sql, vector<string> params);
 	string GetDBName();
 	string GetTable(string tableName);
 	string GetLastError();

@@ -216,11 +216,9 @@ bool SQLiteUtils::ExecuteSQL(string command, string &output)
 		
 		if (returnCode == SQLITE_BUSY || returnCode == SQLITE_LOCKED)
 		{
-#ifdef _WIN32
-			Sleep(1000);
-#else
-			sleep(1000);
-#endif
+			//sqlite3_sleep is in milliseconds on every platform. linux sleep() is in seconds, so sleep(1000) waited ~17 min
+			sqlite3_free(error);
+			sqlite3_sleep(1000);
 			continue;
 		}
 		else if (returnCode != SQLITE_OK)
@@ -228,7 +226,8 @@ bool SQLiteUtils::ExecuteSQL(string command, string &output)
 			output = sqlite3_errmsg(db);
 			SetLastError(error);
 			sqlite3_free(error);
-			//return false;
+			//a real error (bad sql, constraint, etc) wont fix itself, and retrying would rerun any statements before it
+			break;
 		}
 		else if (returnCode == SQLITE_OK)
 		{
@@ -242,6 +241,13 @@ bool SQLiteUtils::ExecuteSQL(string command, string &output)
 		output = returnData;
 		innerLastError.clear();
 		return true;
+	}
+
+	//we ran out of retries because another process is still holding the db
+	if (returnCode == SQLITE_BUSY || returnCode == SQLITE_LOCKED)
+	{
+		output = "database is locked (still busy after 3 tries)";
+		SetLastError(output);
 	}
 	return false;
 
@@ -694,3 +700,59 @@ void SQLiteUtils::GetAllColsInTable(string tableName,std::vector<std::string> &r
 
 }
 
+//--------------------------------------------------------------------------------------------------
+bool SQLiteUtils::QueryWithParams(string sql, vector<string> params, vector<vector<dbDataPair>> &rows)
+{
+	rows.clear();
+	if (db == nullptr)
+	{
+		SetLastError("the database hasnt been opened!");
+		return false;
+	}
+
+	sqlite3_stmt *statement = nullptr;
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &statement, 0) != SQLITE_OK)
+	{
+		SetLastError(sqlite3_errmsg(db));
+		return false;
+	}
+
+	for (size_t i = 0; i < params.size(); i++)
+	{
+		//SQLITE_TRANSIENT makes sqlite copy the string, so the param can go out of scope
+		if (sqlite3_bind_text(statement, (int)i + 1, params[i].c_str(), (int)params[i].size(), SQLITE_TRANSIENT) != SQLITE_OK)
+		{
+			SetLastError(sqlite3_errmsg(db));
+			sqlite3_finalize(statement);
+			return false;
+		}
+	}
+
+	int cols = sqlite3_column_count(statement);
+	int result;
+	while ((result = sqlite3_step(statement)) == SQLITE_ROW)
+	{
+		vector<dbDataPair> row;
+		for (int col = 0; col < cols; col++)
+		{
+			const char *val = (const char *)sqlite3_column_text(statement, col);
+			row.push_back(make_pair(string(sqlite3_column_name(statement, col)), val ? string(val, sqlite3_column_bytes(statement, col)) : string()));
+		}
+		rows.push_back(row);
+	}
+
+	bool ok = (result == SQLITE_DONE);
+	if (ok)
+		innerLastError.clear();
+	else
+		SetLastError(sqlite3_errmsg(db));
+
+	sqlite3_finalize(statement);
+	return ok;
+}
+//--------------------------------------------------------------------------------------------------
+bool SQLiteUtils::ExecuteWithParams(string sql, vector<string> params)
+{
+	vector<vector<dbDataPair>> rows;
+	return QueryWithParams(sql, params, rows);
+}
