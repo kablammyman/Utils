@@ -9,16 +9,14 @@ DatabaseController::DatabaseController()
 }
 DatabaseController::DatabaseController(string path)
 {
+	db = NULL;
 	OpenDB(path);
 }
 
 DatabaseController::~DatabaseController()
 {
-	if (IsDBOpen())
-	{
-		string output;
-		db->closeSQLiteDB(output);
-	}
+	delete db; //SQLiteUtils' destructor closes the connection
+	db = NULL;
 }
 
 bool DatabaseController::OpenDB(string path)
@@ -26,15 +24,20 @@ bool DatabaseController::OpenDB(string path)
 	//prob should parse the path and seperate that from the name at some point
 	//right nopw, path should only eb the name of the db file
 	dbName = path;
-	db = new SQLiteUtils(path);
-	
+	//close whatever was open before. use the empty constructor: SQLiteUtils(path) already opens the
+	//file, so opening it again below used to leave a second connection open that was never closed
+	delete db;
+	db = new SQLiteUtils();
+
 	string output;
 
 	if (!db->openSQLiteDB(dbName, output))
 	{
 		printf("couldnt open %s, %s", path.c_str(), output.c_str());
 		dbName = "";
-		db->closeSQLiteDB(output);
+		lastOpenError = output;
+		delete db;
+		db = NULL;
 		return false;
 	}
 
@@ -47,7 +50,8 @@ string DatabaseController::GetDBName()
 }
 bool DatabaseController::IsDBOpen()
 {
-	return db->IsOpen();
+	//db is NULL until OpenDB/CreateNewDB, and after a failed open
+	return db != NULL && db->IsOpen();
 }
 
 bool DatabaseController::ExecuteSQL(string command, string &output)
@@ -86,12 +90,8 @@ bool DatabaseController::CreateNewDB(string newDBName, string createCommand)
 {
 	//close the current db before making a new one
 	string output;
-	if (IsDBOpen())
-	{
-		db->closeSQLiteDB(output);
-		delete db;
-		db = NULL;
-	}
+	delete db; //closes it if it was open
+	db = NULL;
 
 	//not sure if this is needed...test and remove if this is useless code
 	/*FILE * pFile;
@@ -100,6 +100,14 @@ bool DatabaseController::CreateNewDB(string newDBName, string createCommand)
 
 	//create the new db
 	db = new SQLiteUtils(newDBName);
+	if (!db->IsOpen())
+	{
+		lastOpenError = db->GetLastError();
+		delete db;
+		db = NULL;
+		return false;
+	}
+	dbName = newDBName;
 
 	//create the table, if we have a create command
 	if(createCommand != "")
@@ -110,6 +118,8 @@ bool DatabaseController::CreateNewDB(string newDBName, string createCommand)
 
 string DatabaseController::GetLastError()
 {
+	if (db == NULL)
+		return lastOpenError.empty() ? "no database open" : lastOpenError;
 	return db->GetLastError();
 }
 

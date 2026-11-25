@@ -41,6 +41,8 @@ bool FileUtils::DoesPathExist(string path)
 		return false;  //something is wrong with your path!
 	return true;
 #else
+	if(path.empty())
+		return false;
 	if(path.back() == '\r')
 		path.pop_back();
 
@@ -89,7 +91,11 @@ bool FileUtils::Move_File(string oldName, string newName)
 //--------------------------------------------------------------------------------------------------
 string FileUtils::GetFileExt(string fullPath)
 {
+	//only a dot in the file name counts (a folder like "St. Francis" isnt an extension), none = ""
+	std::size_t slash = fullPath.find_last_of("/\\");
 	std::size_t found = fullPath.find_last_of(".");
+	if (found == string::npos || (slash != string::npos && found < slash))
+		return "";
 	return fullPath.substr(found + 1);
 }
 //--------------------------------------------------------------------------------------------------
@@ -144,6 +150,23 @@ int FileUtils::GetNumFoldersinDir(string path)//needs to have *.fileExt to work
 	return folderNum;
 }
 //--------------------------------------------------------------------------------------------------
+#ifndef _WIN32
+//d_type is DT_UNKNOWN on some filesystems (xfs/nfs/cifs) and DT_LNK for symlinks; stat() tells us what it really is
+static unsigned char DirEntryType(const string &dir, struct dirent *entry)
+{
+	if (entry->d_type != DT_UNKNOWN && entry->d_type != DT_LNK)
+		return entry->d_type;
+	string full = dir;
+	if (!full.empty() && full.back() != '/')
+		full += '/';
+	full += entry->d_name;
+	struct stat st;
+	if (stat(full.c_str(), &st) != 0)
+		return DT_UNKNOWN;
+	return S_ISDIR(st.st_mode) ? DT_DIR : S_ISREG(st.st_mode) ? DT_REG : DT_UNKNOWN;
+}
+#endif
+//--------------------------------------------------------------------------------------------------
 vector<string> FileUtils::GetAllFolderNamesInDir(string path)//needs to have *.fileExt to work
 {
 	vector<string> folderList;
@@ -187,17 +210,18 @@ vector<string> FileUtils::GetAllFolderNamesInDir(string path)//needs to have *.f
 	struct dirent * entry;
 
 	dirp = opendir(path.c_str());
+	if (dirp == NULL) //no permission, or deleted since DoesPathExist
+		return folderList;
 	while ((entry = readdir(dirp)) != NULL)
 	{
 		if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)//ignore anything we put in this list
 			continue;
-		if (entry->d_type == DT_DIR)
+		if (DirEntryType(path, entry) == DT_DIR)
 		{
 			sTmp = curDir;
-			string temp = entry->d_name;
-			if(temp[0] == ' ')
-				temp.erase(temp[0]);
-			sTmp += temp;
+			//(this used to strip a leading space with temp.erase(temp[0]), which actually cut the name to 32 chars,
+			//and the path wouldnt exist without the space anyway)
+			sTmp += entry->d_name;
 			sTmp += SLASH;
 			folderList.push_back(sTmp);
 		}
@@ -289,6 +313,23 @@ vector<string> FileUtils::GetAllFileNamesInDir(string path)
 
 		} while (FindNextFile(hFind, &FindFileData));
 		FindClose(hFind);
+#else
+	//same as windows: just the file names (no path), no folders
+	if(!path.empty() && path.back() == '\r')
+		path.pop_back();
+
+	DIR * dirp = opendir(path.c_str());
+	if (dirp == NULL)
+		return fileList;
+	struct dirent * entry;
+	while ((entry = readdir(dirp)) != NULL)
+	{
+		if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+			continue;
+		if (DirEntryType(path, entry) == DT_REG)
+			fileList.push_back(entry->d_name);
+	}
+	closedir(dirp);
 #endif
 	return fileList;
 }
@@ -335,18 +376,22 @@ vector<string> FileUtils::GetAllFileNamesInDir(string path,string ext, bool incl
 		} while (FindNextFile(hFind, &FindFileData));
 		FindClose(hFind);
 #else
-	if(path.back() == '\r')
+	if(!path.empty() && path.back() == '\r')
 		path.pop_back();
 
 	DIR * dirp;
 	struct dirent * entry;
 
 	dirp = opendir(path.c_str());
+	if (dirp == NULL)
+		return fileList;
 	while ((entry = readdir(dirp)) != NULL)
 	{
 		if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)//ignore anything we put in this list
 			continue;
-		if (entry->d_type == DT_REG)
+		//only files with this extension, like windows does (linux used to return every file).
+		//note: linux always returns the full path, whatever includePath says (callers rely on that)
+		if (DirEntryType(path, entry) == DT_REG && (ext == "" || GetFileExt(entry->d_name) == ext))
 		{
 			sTmp = curDir;
 			sTmp += entry->d_name;
@@ -577,14 +622,8 @@ long long FileUtils::GetDirSize(string path)
 
 bool FileUtils::CreateNewDir(string path)
 {
-	string strCommand;
 #if _WIN32
-	strCommand = "if not exist \"" + path + "\" mkdir \"" + path +"\"";
-#else
-	strCommand = "mkdir - p \"" + path + "\"";
-#endif
-
-
+	string strCommand = "if not exist \"" + path + "\" mkdir \"" + path +"\"";
 	int iResult = system(strCommand.c_str());
 	if (iResult != 0)
 	{
@@ -592,6 +631,22 @@ bool FileUtils::CreateNewDir(string path)
 		return false;
 	}
 	return true;
+#else
+	//make each folder on the way down, no shell. (this used to run "mkdir - p", which made folders called
+	//"-" and "p" in the current dir, couldnt make parents, and let a " or $ in the path run commands)
+	if (path.empty())
+		return false;
+	for (size_t i = 1; i <= path.size(); i++)
+	{
+		if (i < path.size() && path[i] != '/')
+			continue;
+		string part = path.substr(0, i);
+		if (mkdir(part.c_str(), 0775) != 0 && errno != EEXIST)
+			return false;
+	}
+	struct stat st;
+	return stat(path.c_str(), &st) == 0 && S_ISDIR(st.st_mode);
+#endif
 }
 
 //--------------------------------------------------------------------------------------------------

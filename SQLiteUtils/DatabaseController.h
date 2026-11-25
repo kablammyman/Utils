@@ -13,6 +13,7 @@ class DatabaseController
 {
 	SQLiteUtils *db;
 	string dbName;
+	string lastOpenError; //why the last OpenDB/CreateNewDB failed (db is NULL then)
 	static string DataGrabber(string &word, size_t &startPos);
 
 public:
@@ -113,6 +114,9 @@ public:
 	};
 	DatabaseController();
 	DatabaseController(std::string path);
+	//it owns the connection and deletes it in the destructor, so a copy would close it twice. pass pointers/references
+	DatabaseController(const DatabaseController &) = delete;
+	DatabaseController &operator=(const DatabaseController &) = delete;
 	~DatabaseController();
 	struct Error
 	{
