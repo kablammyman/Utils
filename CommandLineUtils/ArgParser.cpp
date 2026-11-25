@@ -20,11 +20,16 @@ void ArgParser::AddArg(string name, Action action,  string shortFlag, string lon
 }
 void ArgParser::StoreFilePath(Args &curArg, string path)
 {
-	if (path[0] == '\"')
+	if (!path.empty() && path[0] == '\"')
 		path.erase(0, 1);
-	if (path[path.size() - 1] == '\"')
+	if (!path.empty() && path[path.size() - 1] == '\"')
 		path.pop_back();
 	curArg.enabled = true;
+	if (path.empty())//nothing to resolve (used to read past the end of an empty string)
+	{
+		curArg.returnValue = path;
+		return;
+	}
 	
 	size_t found = path.find_last_of("/\\");
 	bool inSubdir = (path[0] == '.' && path.find_first_of("/\\") == 1);
@@ -37,8 +42,13 @@ void ArgParser::StoreFilePath(Args &curArg, string path)
 		{
 			path.erase(0, 2);
 		}
+#ifdef _WIN32
 		curArg.returnValue = basePath.substr(0, basePath.find_last_of("/\\") + 1) + path;
-
+#else
+		//basePath is the current dir here (not the exe's dir like on windows): a bare file name is in it,
+		//not in its parent (taskorg --export list.csv used to land one folder up)
+		curArg.returnValue = basePath + "/" + path;
+#endif
 	}
 	else
 		curArg.returnValue = path;
@@ -75,7 +85,7 @@ int ArgParser::GetArgFromFlag(string flag)
 {
 	for (size_t i = 0; i < args.size(); i++)
 	{
-		if (flag == args[i].shortFlag || flag == args[i].longFlag)
+		if ((!args[i].shortFlag.empty() && flag == args[i].shortFlag) || (!args[i].longFlag.empty() && flag == args[i].longFlag))
 			return i;
 	}
 	return -1;
@@ -95,6 +105,12 @@ bool ArgParser::ParseArgs(int argc, const char* argv[])
 	char cwd[PATH_MAX];
 	if (getcwd(cwd, sizeof(cwd)) != NULL) 
 		basePath = cwd;
+	if (argc > 0)//argv[0] is the program, not an option (it used to print "unrecognized param: ./prog")
+	{
+		string temp = argv[0];
+		exeName = temp.substr(temp.find_last_of("/") + 1);
+		start = 1;
+	}
 #endif
 	int argsCounted = 0;
 	for (int i = start; i < argc; i++)
@@ -120,11 +136,16 @@ bool ArgParser::ParseArgs(int argc, const char* argv[])
 			else
 				cout << "path arg: " << curArg << " doesnt have a path or file to go with it!\n";
 		}
-		else if (args[index].action == Action::STORE)//store file path
+		else if (args[index].action == Action::STORE)//store a value
 		{
-			StoreStringValue(args[index], argv[i + 1]);
-			i++;
-			argsCounted++;
+			if (argc > i + 1)//the value has to be there (used to read past the end of argv)
+			{
+				StoreStringValue(args[index], argv[i + 1]);
+				i++;
+				argsCounted++;
+			}
+			else
+				cout << "arg: " << curArg << " doesnt have a value to go with it!\n";
 		}
 		else if (args[index].action == Action::FLAG)//store file path
 		{

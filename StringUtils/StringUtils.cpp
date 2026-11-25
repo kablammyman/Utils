@@ -161,13 +161,15 @@ void StringUtils::TrimWhiteSpace(std::string &input)
 	if(input.empty())
 		return;
 
-	input.erase(0, input.find_first_not_of(' '));       //prefixing spaces
-	input.erase(0, input.find_first_not_of('\n'));       //prefixing new lines
-	input.erase(0, input.find_first_not_of('\t'));       //prefixing tabs
-
-	input.erase(input.find_last_not_of(' ')+1);         //surfixing spaces
-	input.erase(input.find_last_not_of('\n')+1);         //surfixing new lines
-	input.erase(input.find_last_not_of('\t')+1);         //surfixing tabs
+	//any mix of spaces, tabs, new lines and \r (windows line ends) on either end.
+	//(one pass per kind used to leave some: "\t x" came back as " x")
+	const char *ws = " \t\n\r";
+	input.erase(0, input.find_first_not_of(ws));       //prefixing
+	size_t last = input.find_last_not_of(ws);
+	if (last == std::string::npos)
+		input.clear();
+	else
+		input.erase(last + 1);                          //surfixing
 }
 
 std::string StringUtils::GetDataBetweenChars(std::string line, char char1, char char2, size_t &start)
